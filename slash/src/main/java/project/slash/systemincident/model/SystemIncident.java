@@ -7,9 +7,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import project.slash.taskrequest.model.TaskRequest;
 
 @Entity
+@Table(name = "system_incident")
 public class SystemIncident {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "system_incident_id")

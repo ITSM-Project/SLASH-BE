@@ -10,11 +10,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import project.slash.system.model.Equipment;
 import project.slash.taskrequest.model.constant.RequestStatus;
 import project.slash.user.model.User;
 
 @Entity
+@Table(name = "task_request")
 public class TaskRequest extends BaseTimeEntity{
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "request_id")

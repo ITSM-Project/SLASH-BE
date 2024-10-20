@@ -10,10 +10,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import project.slash.contract.model.Contract;
 import project.slash.serviceassessment.model.constant.Category;
 
 @Entity
+@Table(name = "evaluation_items")
 public class EvaluationItems {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "evalutation_item_id")
