@@ -17,5 +17,5 @@ public class Equipment {
 	private String name;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "system_id")
-	private System system;
+	private Systems systems;
 }
