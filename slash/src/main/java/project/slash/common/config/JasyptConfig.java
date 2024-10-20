@@ -13,17 +13,17 @@ import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties
 @Configuration
 @EnableEncryptableProperties
 public class JasyptConfig {
-    @Value("${jasypt.encryptor.password}")
-    private String encryptKey;
+	@Value("${jasypt.encryptor.password}")
+	private String encryptKey;
 
-    @Bean(name = "jasyptStringEncryptor")
-    public StringEncryptor stringEncryptor() {
-        StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
+	@Bean(name = "jasyptStringEncryptor")
+	public StringEncryptor stringEncryptor() {
+		StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
 
-        encryptor.setPassword(encryptKey);
-        encryptor.setSaltGenerator(new RandomSaltGenerator());
-        encryptor.setIvGenerator(new NoIvGenerator());
+		encryptor.setPassword(encryptKey);
+		encryptor.setSaltGenerator(new RandomSaltGenerator());
+		encryptor.setIvGenerator(new NoIvGenerator());
 
-        return encryptor;
-    }
+		return encryptor;
+	}
 }

@@ -11,12 +11,11 @@ import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Equipment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "equipment_id")
-    private Long id;
-    private String name;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "system_id")
-    private System system;
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "equipment_id")
+	private Long id;
+	private String name;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "system_id")
+	private System system;
 }
