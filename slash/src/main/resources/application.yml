@@ -10,3 +10,4 @@ spring:
       ddl-auto: create
     properties:
       hibernate.format_sql: true
+      hibernate.show_sql: true
