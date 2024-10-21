@@ -17,7 +17,7 @@ public class TaskRequestController {
 	private final TaskRequestService taskRequestService;
 
 	@PostMapping("/task-type")
-	public BaseResponse<Void> createTaskType(@RequestBody List<CreateTaskTypeDto> createTaskTypes){
+	public BaseResponse<Void> createTaskType(@RequestBody List<CreateTaskTypeDto> createTaskTypes) {
 		taskRequestService.createTaskType(createTaskTypes);
 
 		return BaseResponse.ok();

@@ -14,8 +14,9 @@ import project.slash.contract.service.ContractService;
 public class ContractController {
 
 	private final ContractService contractService;
+
 	@PostMapping("/contract")
-	public BaseResponse<Void> createContract(@RequestBody CreateContractDto createContractDto){
+	public BaseResponse<Void> createContract(@RequestBody CreateContractDto createContractDto) {
 		contractService.createContract(createContractDto);
 
 		return BaseResponse.ok();

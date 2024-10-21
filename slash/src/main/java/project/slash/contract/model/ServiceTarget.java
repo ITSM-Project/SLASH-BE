@@ -15,7 +15,8 @@ import lombok.Getter;
 @Table(name = "service_target")
 @Getter
 public class ServiceTarget {
-	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "target_id")
 	private Long id;
 

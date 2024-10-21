@@ -13,11 +13,11 @@ class CategoryTest {
 
 	@DisplayName("이름으로 Category를 찾을 수 있다.")
 	@Test
-	void getCategory(){
-	    //given
+	void getCategory() {
+		//given
 		String name = "서비스 가동률";
 
-	    //when
+		//when
 		Category category = Category.getCategory(name);
 
 		//then
@@ -26,11 +26,11 @@ class CategoryTest {
 
 	@DisplayName("이름이 일치하지 않는 경우 예외가 발생한다.")
 	@Test
-	void getCategoryWithUnknown(){
-	    //given
+	void getCategoryWithUnknown() {
+		//given
 		String unknown = "프로그램 가동률";
 
-	    //when //then
+		//when //then
 		assertThatThrownBy(() -> Category.getCategory(unknown))
 			.isInstanceOf(BusinessException.class)
 			.hasFieldOrPropertyWithValue("ErrorCode", NOT_FOUND_ITEMS);
