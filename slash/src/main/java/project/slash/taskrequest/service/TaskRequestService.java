@@ -42,15 +42,23 @@ public class TaskRequestService {
 
 	@Transactional
 	public void createRequest(TaskRequestDto taskRequestDto) {
-		TaskType taskType = taskTypeRepository.findTaskTypeByTaskRequestInfo(taskRequestDto.getTaskType(),
-			taskRequestDto.getTaskDetail(),
-			taskRequestDto.isServiceRelevance()).orElseThrow(() -> new BusinessException(NOT_FOUND_TASK_TYPE));
+		TaskType taskType = findTaskType(taskRequestDto);
 
-		Equipment equipment = equipmentRepository.findById(taskRequestDto.getEquipmentId())
-			.orElseThrow(() -> new BusinessException(NOT_FOUND_EQUIPMENT));
+		Equipment equipment = findEquipment(taskRequestDto);
 
 		TaskRequest taskRequest = TaskRequest.from(taskRequestDto, taskType, null, equipment); //TODO: 유저는 로그인 기능 완료 후 넣기
 
 		taskRequestRepository.save(taskRequest);
+	}
+
+	private Equipment findEquipment(TaskRequestDto taskRequestDto) {
+		return equipmentRepository.findById(taskRequestDto.getEquipmentId())
+			.orElseThrow(() -> new BusinessException(NOT_FOUND_EQUIPMENT));
+	}
+
+	private TaskType findTaskType(TaskRequestDto taskRequestDto) {
+		return taskTypeRepository.findTaskTypeByTaskRequestInfo(taskRequestDto.getTaskType(),
+			taskRequestDto.getTaskDetail(),
+			taskRequestDto.isServiceRelevance()).orElseThrow(() -> new BusinessException(NOT_FOUND_TASK_TYPE));
 	}
 }

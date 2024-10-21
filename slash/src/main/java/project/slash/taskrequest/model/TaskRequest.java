@@ -1,7 +1,5 @@
 package project.slash.taskrequest.model;
 
-import static project.slash.taskrequest.model.constant.RequestStatus.*;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

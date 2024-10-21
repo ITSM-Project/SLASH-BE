@@ -26,7 +26,7 @@ public class TaskType {
 	@Column(name = "service_relevance")
 	private boolean serviceRelevance;
 
-	@Column(name = "inclusionStatus")
+	@Column(name = "inclusion_status")
 	private boolean inclusionStatus;
 
 	private TaskType(String taskType, String taskDetail, int deadline, boolean serviceRelevance, boolean inclusionStatus) {
