@@ -11,7 +11,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import project.slash.system.dto.response.AllSystemsInfo;
 import project.slash.system.dto.response.EquipmentInfo;
-
 public class SystemsRepositoryImpl implements SystemsRepositoryCustom {
 	private final JPAQueryFactory queryFactory;
 
