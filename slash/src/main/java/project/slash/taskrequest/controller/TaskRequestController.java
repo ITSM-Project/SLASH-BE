@@ -2,8 +2,10 @@ package project.slash.taskrequest.controller;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
@@ -21,5 +23,12 @@ public class TaskRequestController {
 		taskRequestService.createTaskType(createTaskTypes);
 
 		return BaseResponse.ok();
+	}
+
+	@GetMapping("/tasks")
+	public BaseResponse<?> requestTaskTypes(@RequestParam(value = "type", required = false) String taskType) {
+		List<String> taskTypes = taskRequestService.showTaskTypes(taskType);
+
+		return BaseResponse.ok(taskTypes);
 	}
 }

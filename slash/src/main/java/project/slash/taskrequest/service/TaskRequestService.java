@@ -12,6 +12,7 @@ import project.slash.taskrequest.repository.TaskTypeRepository;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class TaskRequestService {
 	private final TaskTypeRepository taskTypeRepository;
 
@@ -22,5 +23,9 @@ public class TaskRequestService {
 			.toList();
 
 		taskTypeRepository.saveAll(taskTypes);
+	}
+
+	public List<String> showTaskTypes(String taskType) {
+		return taskTypeRepository.findAllByTaskType(taskType);
 	}
 }
