@@ -7,7 +7,7 @@ public class TaskRequestDto {
 	private String taskType;
 	private Long equipmentId;
 	private String taskDetail;
-	private Boolean serviceRelevance;
+	private boolean serviceRelevance;
 	private String title;
 	private String content;
 }

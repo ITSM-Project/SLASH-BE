@@ -10,4 +10,5 @@ public class CreateTaskTypeDto {
 	private String taskDetail;
 	private int deadline;
 	private boolean serviceRelevance;
+	private boolean inclusionStatus;
 }

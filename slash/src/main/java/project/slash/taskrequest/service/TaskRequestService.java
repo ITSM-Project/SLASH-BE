@@ -44,12 +44,12 @@ public class TaskRequestService {
 	public void createRequest(TaskRequestDto taskRequestDto) {
 		TaskType taskType = taskTypeRepository.findTaskTypeByTaskRequestInfo(taskRequestDto.getTaskType(),
 			taskRequestDto.getTaskDetail(),
-			taskRequestDto.getServiceRelevance()).orElseThrow(() -> new BusinessException(NOT_FOUND_TASK_TYPE));
+			taskRequestDto.isServiceRelevance()).orElseThrow(() -> new BusinessException(NOT_FOUND_TASK_TYPE));
 
 		Equipment equipment = equipmentRepository.findById(taskRequestDto.getEquipmentId())
 			.orElseThrow(() -> new BusinessException(NOT_FOUND_EQUIPMENT));
 
-		TaskRequest taskRequest = TaskRequest.from(taskRequestDto, taskType, null, equipment);//TODO: 유저는 로그인 기능 완료 후 넣기
+		TaskRequest taskRequest = TaskRequest.from(taskRequestDto, taskType, null, equipment); //TODO: 유저는 로그인 기능 완료 후 넣기
 
 		taskRequestRepository.save(taskRequest);
 	}
