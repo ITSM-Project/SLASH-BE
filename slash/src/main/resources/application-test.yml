@@ -1,0 +1,20 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+  application:
+    name: slash
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: ENC(XmYdAMm9NfHXAyjUheyDPfMElMzW4/pg8r/WWNqKc4QfybY0ITHlFqhiWJ2XpsJXVc92xtZ8X1C6pPIo/v4jgIwl+BhPUt1JolIW1Xow+uKNt1SLyO3A6gTfjZZU7s/G)
+    username: ENC(C+ss2jpceFBfruGb+dAWcA==)
+    password: ENC(Nr2b5BJrRekec/rMB56pMQ==)
+  jpa:
+    open-in-view: true
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate.format_sql: true
+      hibernate.show_sql: true
+      hibernate:
+          dialect: org.hibernate.dialect.MySQLDialect
