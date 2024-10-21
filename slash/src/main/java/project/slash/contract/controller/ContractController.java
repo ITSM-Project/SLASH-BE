@@ -15,9 +15,9 @@ public class ContractController {
 
 	private final ContractService contractService;
 	@PostMapping("/contract")
-	public BaseResponse<?> createContract(@RequestBody CreateContractDto createContractDto){
-		Long contractId = contractService.createContract(createContractDto);
+	public BaseResponse<Void> createContract(@RequestBody CreateContractDto createContractDto){
+		contractService.createContract(createContractDto);
 
-		return BaseResponse.ok(contractId);
+		return BaseResponse.ok();
 	}
 }
