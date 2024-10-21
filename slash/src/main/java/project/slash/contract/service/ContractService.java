@@ -33,12 +33,12 @@ public class ContractService {
 	}
 
 	private Contract saveContract(CreateContractDto createContractDto) {
-		Contract contract = Contract.createOf(createContractDto);
+		Contract contract = Contract.from(createContractDto);
 		return contractRepository.save(contract);
 	}
 
 	private EvaluationItems createEvaluationItems(EvaluationItemDto item, Contract contract) {
-		EvaluationItems evaluationItem = EvaluationItems.createOf(item, contract);
+		EvaluationItems evaluationItem = EvaluationItems.of(item, contract);
 
 		List<ServiceTarget> serviceTargets = item.getServiceTargets();
 		evaluationItem.addServiceTargets(serviceTargets);

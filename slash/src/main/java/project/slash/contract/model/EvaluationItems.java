@@ -53,7 +53,7 @@ public class EvaluationItems {
 		this.contract = contract;
 	}
 
-	public static EvaluationItems createOf(EvaluationItemDto evaluationItemDto, Contract contract) {
+	public static EvaluationItems of(EvaluationItemDto evaluationItemDto, Contract contract) {
 		Category category = Category.getCategory(evaluationItemDto.getCategory());
 
 		return new EvaluationItems(category, evaluationItemDto.getWeight(), evaluationItemDto.getPeriod(), contract);
