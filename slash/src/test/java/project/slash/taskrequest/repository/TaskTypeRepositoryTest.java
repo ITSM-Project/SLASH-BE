@@ -1,7 +1,9 @@
 package project.slash.taskrequest.repository;
+
+import static org.assertj.core.api.Assertions.*;
+
 import java.util.List;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -44,7 +46,7 @@ class TaskTypeRepositoryTest {
 		List<String> result = taskTypeRepository.findAllByTaskType(taskType);
 
 		//then
-		Assertions.assertThat(result).hasSize(2)
+		assertThat(result).hasSize(2)
 			.containsExactlyInAnyOrder("업무 지원", "단순 장애");
 	}
 
@@ -58,7 +60,24 @@ class TaskTypeRepositoryTest {
 		List<String> result = taskTypeRepository.findAllByTaskType(taskType);
 
 		//then
-		Assertions.assertThat(result).hasSize(1)
+		assertThat(result).hasSize(1)
 			.containsExactlyInAnyOrder("업무 지원");
+	}
+
+	@DisplayName("요청 정보를 바탕으로 해당하는 업무 유형을 찾을 수 있다.")
+	@Test
+	void findTaskTypeByTaskRequestInfo() {
+		//given
+		String taskType = "서비스 요청";
+		String taskDetail = "업무 지원";
+		boolean serviceRelevance = false;
+
+		//when
+		TaskType result = taskTypeRepository.findTaskTypeByTaskRequestInfo(taskType, taskDetail, serviceRelevance)
+			.get();
+
+		//then
+		assertThat(result).extracting("taskType", "taskDetail")
+			.containsExactly("서비스 요청", "업무 지원");
 	}
 }

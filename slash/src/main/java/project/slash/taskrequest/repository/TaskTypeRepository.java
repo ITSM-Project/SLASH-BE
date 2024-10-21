@@ -16,5 +16,5 @@ public interface TaskTypeRepository extends JpaRepository<TaskType, Long> {
 	@Query("select tt from TaskType tt where tt.taskType = :taskType and tt.taskDetail = :taskDetail and tt.serviceRelevance = :serviceRelevance")
 	Optional<TaskType> findTaskTypeByTaskRequestInfo(@Param("taskType") String taskType,
 		@Param("taskDetail") String taskDetail,
-		@Param("serviceRelevance") Boolean serviceRelevance);
+		@Param("serviceRelevance") boolean serviceRelevance);
 }
