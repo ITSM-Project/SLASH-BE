@@ -1,5 +1,7 @@
 package project.slash.taskrequest.model;
 
+import static project.slash.taskrequest.model.constant.RequestStatus.*;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -11,12 +13,20 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import project.slash.system.model.Equipment;
+import project.slash.taskrequest.dto.request.TaskRequestDto;
 import project.slash.taskrequest.model.constant.RequestStatus;
 import project.slash.user.model.User;
 
 @Entity
 @Table(name = "task_request")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
 public class TaskRequest extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,4 +52,15 @@ public class TaskRequest extends BaseTimeEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "equipment_id")
 	private Equipment equipment;
+
+	public static TaskRequest from(TaskRequestDto taskRequestDto, TaskType taskType, User requester, Equipment equipment) {
+		return TaskRequest.builder()
+			.title(taskRequestDto.getTitle())
+			.content(taskRequestDto.getContent())
+			.status(RequestStatus.REGISTERED)
+			.taskType(taskType)
+			.requester(requester)
+			.equipment(equipment)
+			.build();
+	}
 }

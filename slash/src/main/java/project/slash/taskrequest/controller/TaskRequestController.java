@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
 import project.slash.taskrequest.dto.request.CreateTaskTypeDto;
+import project.slash.taskrequest.dto.request.TaskRequestDto;
 import project.slash.taskrequest.service.TaskRequestService;
 
 @RestController
@@ -30,5 +31,12 @@ public class TaskRequestController {
 		List<String> taskTypes = taskRequestService.showTaskTypes(taskType);
 
 		return BaseResponse.ok(taskTypes);
+	}
+
+	@PostMapping("/request")
+	public BaseResponse<Void> createRequest(@RequestBody TaskRequestDto taskRequestDto) {
+		taskRequestService.createRequest(taskRequestDto);
+
+		return BaseResponse.ok();
 	}
 }
