@@ -5,13 +5,19 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import project.slash.contract.dto.request.CreateContractDto;
 
 import java.time.LocalDate;
 
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class Contract {
-	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "contract_id")
 	private Long id;
 	@Column(name = "start_date")
@@ -22,4 +28,15 @@ public class Contract {
 	private boolean isTerminate;
 	@Column(name = "company_name")
 	private String companyName;
+
+	private Contract(LocalDate startDate, LocalDate endDate, String companyName) {
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.companyName = companyName;
+	}
+
+	public static Contract from(CreateContractDto createContractDto) {
+		return new Contract(createContractDto.getStartDate(), createContractDto.getEndDate(),
+			createContractDto.getCompanyName());
+	}
 }

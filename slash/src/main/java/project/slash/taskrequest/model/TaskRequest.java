@@ -17,8 +17,9 @@ import project.slash.user.model.User;
 
 @Entity
 @Table(name = "task_request")
-public class TaskRequest extends BaseTimeEntity{
-	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class TaskRequest extends BaseTimeEntity {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "request_id")
 	private Long id;
 	@Column(name = "additional_time")
