@@ -50,16 +50,4 @@ public class CustomUserDetails implements UserDetails {
 	public boolean isEnabled() {
 		return true;
 	}
-
-	public String getName() {
-		return user.getName();
-	}
-
-	public String getEmail() {
-		return user.getEmail();
-	}
-
-	public String getPhoneNum() {
-		return user.getPhoneNum();
-	}
 }
