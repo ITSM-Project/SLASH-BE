@@ -9,30 +9,25 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import lombok.RequiredArgsConstructor;
 import project.slash.security.auth.CustomUserDetailService;
 import project.slash.security.auth.UserAuthFailureHandler;
 import project.slash.security.auth.UserAuthSuccessHandler;
 
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig {
 
 	private final CustomUserDetailService customUserDetailsService;
 	private final UserAuthSuccessHandler successHandler;
 	private final UserAuthFailureHandler failureHandler;
 
-	public SecurityConfig(CustomUserDetailService customUserDetailsService, UserAuthSuccessHandler successHandler,
-		UserAuthFailureHandler failureHandler) {
-		this.customUserDetailsService = customUserDetailsService;
-		this.successHandler = successHandler;
-		this.failureHandler = failureHandler;
-	}
-
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
-			.csrf(csrf->csrf.disable())
+			.csrf(csrf -> csrf.disable())
 			.authorizeHttpRequests((requests) -> requests
-				.requestMatchers("/","/login","/perform_login","/home", "/error").permitAll()
+				.requestMatchers("/", "/login", "/perform_login", "/home", "/error").permitAll()
 				.requestMatchers("/contract-admin/**").hasRole("CONTRACT_ADMIN")
 				.requestMatchers("/service-admin/**").hasRole("SERVICE_ADMIN")
 				.requestMatchers("/user/**").hasRole("USER")
