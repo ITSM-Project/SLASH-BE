@@ -10,7 +10,6 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import project.slash.system.dto.response.AllSystemsInfo;
-import project.slash.system.dto.response.EquipmentInfo;
 
 public class SystemsRepositoryImpl implements SystemsRepositoryCustom {
 	private final JPAQueryFactory queryFactory;
@@ -26,10 +25,7 @@ public class SystemsRepositoryImpl implements SystemsRepositoryCustom {
 			.transform(GroupBy.groupBy(systems.id).list(
 				Projections.constructor(AllSystemsInfo.class,
 					systems.name.as("systemName"),
-					GroupBy.list(Projections.constructor(EquipmentInfo.class,
-						equipment.id.as("equipmentId"),
-						equipment.name)
-					)
+					GroupBy.list(equipment.name)
 				)
 			));
 	}
