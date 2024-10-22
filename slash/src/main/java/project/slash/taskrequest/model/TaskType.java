@@ -26,15 +26,19 @@ public class TaskType {
 	@Column(name = "service_relevance")
 	private boolean serviceRelevance;
 
-	private TaskType(String taskType, String taskDetail, int deadline, boolean serviceRelevance) {
+	@Column(name = "inclusion_status")
+	private boolean inclusionStatus;
+
+	private TaskType(String taskType, String taskDetail, int deadline, boolean serviceRelevance, boolean inclusionStatus) {
 		this.taskType = taskType;
 		this.taskDetail = taskDetail;
 		this.deadline = deadline;
 		this.serviceRelevance = serviceRelevance;
+		this.inclusionStatus = inclusionStatus;
 	}
 
 	public static TaskType from(CreateTaskTypeDto createTaskTypeDto) {
 		return new TaskType(createTaskTypeDto.getTaskType(), createTaskTypeDto.getTaskDetail(),
-			createTaskTypeDto.getDeadline(), createTaskTypeDto.isServiceRelevance());
+			createTaskTypeDto.getDeadline(), createTaskTypeDto.isServiceRelevance(), createTaskTypeDto.isInclusionStatus());
 	}
 }
