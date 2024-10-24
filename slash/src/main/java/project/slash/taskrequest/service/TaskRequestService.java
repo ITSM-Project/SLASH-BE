@@ -52,7 +52,7 @@ public class TaskRequestService {
 	}
 
 	private Equipment findEquipment(TaskRequestDto taskRequestDto) {
-		return equipmentRepository.findById(taskRequestDto.getEquipmentId())
+		return equipmentRepository.findByName(taskRequestDto.getEquipmentName())
 			.orElseThrow(() -> new BusinessException(NOT_FOUND_EQUIPMENT));
 	}
 

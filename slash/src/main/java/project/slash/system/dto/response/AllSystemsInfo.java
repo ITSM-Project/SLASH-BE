@@ -9,5 +9,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class AllSystemsInfo {
 	private String systemName;
-	private List<EquipmentInfo> equipmentInfos;
+	private List<String> equipmentInfos;
 }
