@@ -6,16 +6,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UserController {
 
-	@GetMapping("/")
-	public String homePage() {
-		return "home";
-	}
-
-	@GetMapping("/login")
-	public String loginPage() {
-		return "login-page";
-	}
-
 	@GetMapping("/contract-admin/dashboard")
 	public String contractAdminDashboard() {
 		return "contract-admin/dashboard";
