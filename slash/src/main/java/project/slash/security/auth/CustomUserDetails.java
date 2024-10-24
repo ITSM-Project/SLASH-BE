@@ -3,18 +3,17 @@ package project.slash.security.auth;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import lombok.RequiredArgsConstructor;
 import project.slash.user.model.User;
 
 import java.util.Collection;
 import java.util.Collections;
 
+@RequiredArgsConstructor
 public class CustomUserDetails implements UserDetails {
 
 	private final User user;
-
-	public CustomUserDetails(User user) {
-		this.user = user;
-	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -52,15 +51,16 @@ public class CustomUserDetails implements UserDetails {
 		return true;
 	}
 
-	public String getName() {
-		return user.getName();
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof CustomUserDetails) {
+			return this.user.getId().equals(((CustomUserDetails)obj).user.getId());
+		}
+		return false;
 	}
 
-	public String getEmail() {
-		return user.getEmail();
-	}
-
-	public String getPhoneNum() {
-		return user.getPhoneNum();
+	@Override
+	public int hashCode() {
+		return this.user.getId().hashCode();
 	}
 }
