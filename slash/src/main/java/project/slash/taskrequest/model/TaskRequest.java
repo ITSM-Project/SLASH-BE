@@ -30,23 +30,32 @@ public class TaskRequest extends BaseTimeEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "request_id")
 	private Long id;
+
 	@Column(name = "additional_time")
 	private int additionalTime;
+
 	private String title;
+
 	private String content;
+
 	@Column(name = "due_on_time")
 	private boolean dueOnTime;
+
 	@Enumerated(EnumType.STRING)
 	private RequestStatus status;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "task_type_id")
 	private TaskType taskType;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "requester_id")
 	private User requester;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "manager_id")
 	private User manager;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "equipment_id")
 	private Equipment equipment;
