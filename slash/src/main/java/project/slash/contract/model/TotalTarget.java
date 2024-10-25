@@ -9,15 +9,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.Getter;
 
 @Entity
-@Table(name = "service_target")
-@Getter
-public class ServiceTarget {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "target_id")
+@Table(name = "total_target")
+public class TotalTarget {
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "total_target_id")
 	private Long id;
 
 	private String grade;
@@ -32,13 +29,7 @@ public class ServiceTarget {
 	@Column(name = "max_inclusive")
 	private boolean maxInclusive;
 
-	private double score;
-
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "evaluation_item_id")
-	private EvaluationItems evaluationItems;
-
-	void setEvaluationItems(EvaluationItems evaluationItems) {
-		this.evaluationItems = evaluationItems;
-	}
+	@JoinColumn(name = "contract_id")
+	private Contract contract;
 }

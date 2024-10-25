@@ -18,8 +18,6 @@ public class SystemIncident {
 	private Long id;
 	@Column(name = "incident_time")
 	private long incidentTime;
-	@Column(name = "is_include")
-	private boolean isInclude;
 	@OneToOne
 	@JoinColumn(name = "request_id")
 	private TaskRequest taskRequest;
