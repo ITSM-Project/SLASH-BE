@@ -24,7 +24,13 @@ public class ServiceTarget {
 
 	private double min;
 
+	@Column(name = "min_inclusive")
+	private boolean minInclusive;
+
 	private double max;
+
+	@Column(name = "max_inclusive")
+	private boolean maxInclusive;
 
 	private double score;
 
