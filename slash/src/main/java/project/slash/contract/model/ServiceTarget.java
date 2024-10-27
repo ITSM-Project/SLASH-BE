@@ -41,7 +41,7 @@ public class ServiceTarget {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "evaluation_item_id")
-	private EvaluationItems evaluationItem;
+	private EvaluationItem evaluationItem;
 
 	@Builder
 	private ServiceTarget(String grade, double min, boolean minInclusive, double max, boolean maxInclusive,
@@ -64,7 +64,7 @@ public class ServiceTarget {
 			.build();
 	}
 
-	void setEvaluationItem(EvaluationItems evaluationItems) {
+	void setEvaluationItem(EvaluationItem evaluationItems) {
 		this.evaluationItem = evaluationItems;
 	}
 }

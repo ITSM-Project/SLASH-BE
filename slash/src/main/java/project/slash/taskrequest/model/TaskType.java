@@ -11,7 +11,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import project.slash.contract.model.EvaluationItems;
 import project.slash.taskrequest.dto.request.CreateTaskTypeDto;
 
 @Entity
