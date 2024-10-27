@@ -35,7 +35,7 @@ public class TaskType {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "evaluation_item_id")
-	private EvaluationItems evaluationItems;
+	private EvaluationItems evaluationItem;
 
 	private TaskType(String taskType, String taskDetail, int deadline, boolean serviceRelevance, boolean inclusionStatus) {
 		this.taskType = taskType;
@@ -48,5 +48,13 @@ public class TaskType {
 	public static TaskType from(CreateTaskTypeDto createTaskTypeDto) {
 		return new TaskType(createTaskTypeDto.getTaskType(), createTaskTypeDto.getTaskDetail(),
 			createTaskTypeDto.getDeadline(), createTaskTypeDto.isServiceRelevance(), createTaskTypeDto.isInclusionStatus());
+	}
+
+	public void setEvaluationItems(EvaluationItems evaluationItem) {
+		this.evaluationItem = evaluationItem;
+
+		if (evaluationItem != null && !evaluationItem.getTaskTypes().contains(this)) {
+			evaluationItem.getTaskTypes().add(this);
+		}
 	}
 }

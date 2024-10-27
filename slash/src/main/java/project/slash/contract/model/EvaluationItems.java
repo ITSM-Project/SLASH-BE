@@ -15,14 +15,19 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.slash.contract.dto.request.EvaluationItemDto;
+import project.slash.taskrequest.model.TaskType;
 
 @Entity
 @Table(name = "evaluation_items")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
 public class EvaluationItems {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,24 +50,36 @@ public class EvaluationItems {
 	@JoinColumn(name = "contract_id")
 	private Contract contract;
 
-	@OneToMany(mappedBy = "evaluationItems", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "evaluationItem", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ServiceTarget> serviceTargets = new ArrayList<>();
 
-	private EvaluationItems(String category, int weight, String period, Contract contract) {
-		this.category = category;
-		this.weight = weight;
-		this.period = period;
-		this.contract = contract;
+	@OneToMany(mappedBy = "evaluationItem", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<TaskType> taskTypes = new ArrayList<>();
+
+	public static EvaluationItems of(EvaluationItemDto itemDto, Contract contract) {
+		EvaluationItems evaluationItem = EvaluationItems.builder()
+			.category(itemDto.getCategory())
+			.weight(itemDto.getWeight())
+			.period(itemDto.getPeriod())
+			.purpose(itemDto.getPurpose())
+			.formula(itemDto.getFormula())
+			.unit(itemDto.getUnit())
+			.contract(contract)
+			.serviceTargets(itemDto.getServiceTargets().stream().map(ServiceTarget::from).toList())
+			.taskTypes(itemDto.getTaskTypes().stream().map(TaskType::from).toList())
+			.build();
+
+		evaluationItem.addEvaluationItemsToTaskTypes();
+		evaluationItem.addServiceTargets();
+
+		return evaluationItem;
 	}
 
-	public static EvaluationItems of(EvaluationItemDto evaluationItemDto, Contract contract) {
-		return new EvaluationItems(evaluationItemDto.getCategory(), evaluationItemDto.getWeight(), evaluationItemDto.getPeriod(), contract);
+	private void addServiceTargets() {
+		serviceTargets.forEach(target -> target.setEvaluationItem(this));
 	}
 
-	public void addServiceTargets(List<ServiceTarget> serviceTargets) {
-		for (ServiceTarget serviceTarget : serviceTargets) {
-			serviceTarget.setEvaluationItems(this);
-			this.serviceTargets.add(serviceTarget);
-		}
+	private void addEvaluationItemsToTaskTypes() {
+		this.taskTypes.forEach(taskType -> taskType.setEvaluationItems(this));
 	}
 }

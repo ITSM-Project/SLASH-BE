@@ -9,11 +9,20 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import project.slash.contract.dto.request.GradeDto;
 
 @Entity
 @Table(name = "total_target")
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
 public class TotalTarget {
-	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "total_target_id")
 	private Long id;
 
@@ -32,4 +41,18 @@ public class TotalTarget {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "contract_id")
 	private Contract contract;
+
+	public static TotalTarget from(GradeDto gradeDto) {
+		return TotalTarget.builder()
+			.grade(gradeDto.getGrade())
+			.min(gradeDto.getMin())
+			.minInclusive(gradeDto.isMinInclusive())
+			.max(gradeDto.getMax())
+			.maxInclusive((gradeDto.isMaxInclusive()))
+			.build();
+	}
+
+	void setContract(Contract contract) {
+		this.contract = contract;
+	}
 }
