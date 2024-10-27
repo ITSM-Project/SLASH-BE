@@ -8,10 +8,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.slash.contract.dto.ContractDto;
-import project.slash.contract.dto.GradeDto;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -19,7 +19,9 @@ import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
+@Builder
 public class Contract {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,53 +46,14 @@ public class Contract {
 	@OneToMany(mappedBy = "contract", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<EvaluationItem> evaluationItems = new ArrayList<>();
 
-	private Contract(LocalDate startDate, LocalDate endDate, String companyName) {
-		this.startDate = startDate;
-		this.endDate = endDate;
-		this.companyName = companyName;
+	// 연관관계 편의 메서드
+	public void addTotalTarget(TotalTarget totalTarget) {
+		this.totalTargets.add(totalTarget);
+		totalTarget.setContract(this);
 	}
 
-	public static Contract from(ContractDto contractDto) {
-		Contract contract = new Contract(contractDto.getStartDate(), contractDto.getEndDate(), contractDto.getCompanyName());
-
-		contract.addTotalTargets(contractDto.getTotalTargets());
-		contract.addEvaluationItems(contractDto.getCategories());
-
-		return contract;
-	}
-
-	private void addTotalTargets(List<GradeDto> targets) {
-		targets.stream()
-			.map(TotalTarget::from)
-			.forEach(this::addTotalTarget);
-	}
-
-	private void addTotalTarget(TotalTarget target) {
-		totalTargets.add(target);
-		target.setContract(this);
-	}
-
-	private void addEvaluationItems(List<String> categories) {
-		categories.stream()
-			.map(category -> EvaluationItem.of(category, this))
-			.forEach(this::addEvaluationItem);
-	}
-
-	private void addEvaluationItem(EvaluationItem item) {
-		evaluationItems.add(item);
-		item.setContract(this);
-	}
-
-	@Override
-	public String toString() {
-		return "Contract{" +
-			"id=" + id +
-			", startDate=" + startDate +
-			", endDate=" + endDate +
-			", isTerminate=" + isTerminate +
-			", companyName='" + companyName + '\'' +
-			", totalTargets=" + totalTargets +
-			", evaluationItems=" + evaluationItems +
-			'}';
+	public void addEvaluationItem(EvaluationItem evaluationItem) {
+		this.evaluationItems.add(evaluationItem);
+		evaluationItem.setContract(this);
 	}
 }
