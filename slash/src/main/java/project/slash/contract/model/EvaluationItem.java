@@ -9,9 +9,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "evaluation_item")
+@NoArgsConstructor
 public class EvaluationItem {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,4 +25,17 @@ public class EvaluationItem {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "contract_id")
 	private Contract contract;
+
+	private EvaluationItem(String category, Contract contract) {
+		this.category = category;
+		this.contract = contract;
+	}
+
+	public static EvaluationItem of(String category, Contract contract) {
+		return new EvaluationItem(category, contract);
+	}
+
+	void setContract(Contract contract) {
+		this.contract = contract;
+	}
 }

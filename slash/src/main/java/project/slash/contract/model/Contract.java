@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.slash.contract.dto.request.CreateContractDto;
+import project.slash.contract.dto.request.GradeDto;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -40,27 +41,43 @@ public class Contract {
 	@OneToMany(mappedBy = "contract", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<TotalTarget> totalTargets = new ArrayList<>();
 
-	private Contract(LocalDate startDate, LocalDate endDate, String companyName, List<TotalTarget> totalTargets) {
+	@OneToMany(mappedBy = "contract", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<EvaluationItem> evaluationItems = new ArrayList<>();
+
+	private Contract(LocalDate startDate, LocalDate endDate, String companyName) {
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.companyName = companyName;
-		this.totalTargets = totalTargets;
 	}
 
 	public static Contract from(CreateContractDto createContractDto) {
-		List<TotalTarget> totalTargets = createContractDto.getTotalTargets().stream()
-			.map(TotalTarget::from)
-			.toList();
+		Contract contract = new Contract(createContractDto.getStartDate(), createContractDto.getEndDate(), createContractDto.getCompanyName());
 
-		Contract contract = new Contract(createContractDto.getStartDate(), createContractDto.getEndDate(),
-			createContractDto.getCompanyName(), totalTargets);
-
-		contract.addTotalTargets();
+		contract.addTotalTargets(createContractDto.getTotalTargets());
+		contract.addEvaluationItems(createContractDto.getCategorys());
 
 		return contract;
 	}
 
-	private void addTotalTargets() {
-		totalTargets.forEach(target -> target.setContract(this));
+	private void addTotalTargets(List<GradeDto> targets) {
+		targets.stream()
+			.map(TotalTarget::from)
+			.forEach(this::addTotalTarget);
+	}
+
+	private void addTotalTarget(TotalTarget target) {
+		totalTargets.add(target);
+		target.setContract(this);
+	}
+
+	private void addEvaluationItems(List<String> categories) {
+		categories.stream()
+			.map(category -> EvaluationItem.of(category, this))
+			.forEach(this::addEvaluationItem);
+	}
+
+	private void addEvaluationItem(EvaluationItem item) {
+		evaluationItems.add(item);
+		item.setContract(this);
 	}
 }
