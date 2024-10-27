@@ -12,14 +12,16 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.slash.contract.dto.request.GradeDto;
+import project.slash.contract.dto.GradeDto;
 
 @Entity
 @Table(name = "total_target")
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
+@Getter
 public class TotalTarget {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,13 +48,25 @@ public class TotalTarget {
 		return TotalTarget.builder()
 			.grade(gradeDto.getGrade())
 			.min(gradeDto.getMin())
-			.minInclusive(gradeDto.isMinInclusive())
+			.minInclusive(gradeDto.getMinInclusive())
 			.max(gradeDto.getMax())
-			.maxInclusive((gradeDto.isMaxInclusive()))
+			.maxInclusive((gradeDto.getMaxInclusive()))
 			.build();
 	}
 
 	void setContract(Contract contract) {
 		this.contract = contract;
+	}
+
+	@Override
+	public String toString() {
+		return "TotalTarget{" +
+			"id=" + id +
+			", grade='" + grade + '\'' +
+			", min=" + min +
+			", minInclusive=" + minInclusive +
+			", max=" + max +
+			", maxInclusive=" + maxInclusive +
+			'}';
 	}
 }

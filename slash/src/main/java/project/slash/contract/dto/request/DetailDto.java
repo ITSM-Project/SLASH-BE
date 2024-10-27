@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import project.slash.contract.dto.GradeDto;
 import project.slash.taskrequest.dto.request.CreateTaskTypeDto;
 
 @Getter

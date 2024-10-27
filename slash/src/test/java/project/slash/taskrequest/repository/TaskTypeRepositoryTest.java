@@ -25,10 +25,10 @@ class TaskTypeRepositoryTest {
 	void initData() {
 		CreateTaskTypeDto serviceType = new CreateTaskTypeDto("서비스 요청", "업무 지원", 0, false, false);
 		CreateTaskTypeDto incidentType = new CreateTaskTypeDto("장애 요청", "단순 장애", 4, true, true);
-		TaskType taskType1 = TaskType.from(serviceType);
-		TaskType taskType2 = TaskType.from(incidentType);
+		// TaskType taskType1 = TaskType.from(serviceType);
+		// TaskType taskType2 = TaskType.from(incidentType);
 
-		taskTypeRepository.saveAll(List.of(taskType1, taskType2));
+		// taskTypeRepository.saveAll(List.of(taskType1, taskType2));
 	}
 
 	@AfterEach

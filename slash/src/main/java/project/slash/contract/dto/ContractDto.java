@@ -1,4 +1,4 @@
-package project.slash.contract.dto.request;
+package project.slash.contract.dto;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateContractDto {
+public class ContractDto {
 	@NotBlank(message = "회사 이름은 필수입니다.")
 	private String companyName;
 
@@ -24,7 +24,7 @@ public class CreateContractDto {
 	private LocalDate endDate;
 
 	@NotNull(message = "서비스 평가 항목은 필수입니다.")
-	private List<String> categorys;
+	private List<String> categories;
 
 	@Valid
 	@NotNull(message = "종합 평가 점수 기준은 필수입니다.")

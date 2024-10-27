@@ -9,15 +9,17 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "evaluation_item")
 @NoArgsConstructor
+@Getter
 public class EvaluationItem {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "evalutation_item_id")
+	@Column(name = "evaluation_item_id")
 	private Long id;
 
 	private String category;    //서비스 항목
@@ -37,5 +39,13 @@ public class EvaluationItem {
 
 	void setContract(Contract contract) {
 		this.contract = contract;
+	}
+
+	@Override
+	public String toString() {
+		return "EvaluationItem{" +
+			"id=" + id +
+			", category='" + category + '\'' +
+			'}';
 	}
 }

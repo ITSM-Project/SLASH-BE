@@ -13,7 +13,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.slash.contract.dto.request.GradeDto;
+import project.slash.contract.dto.GradeDto;
 
 @Entity
 @Table(name = "service_target")
@@ -59,9 +59,9 @@ public class ServiceTarget {
 		return ServiceTarget.builder()
 			.grade(serviceTarget.getGrade())
 			.min(serviceTarget.getMin())
-			.minInclusive(serviceTarget.isMinInclusive())
+			.minInclusive(serviceTarget.getMinInclusive())
 			.max(serviceTarget.getMax())
-			.maxInclusive(serviceTarget.isMaxInclusive())
+			.maxInclusive(serviceTarget.getMaxInclusive())
 			.evaluationItem(evaluationItem)
 			.build();
 	}

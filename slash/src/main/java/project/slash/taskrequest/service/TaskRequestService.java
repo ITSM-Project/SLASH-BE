@@ -27,14 +27,14 @@ public class TaskRequestService {
 	private final TaskRequestRepository taskRequestRepository;
 	private final EquipmentRepository equipmentRepository;
 
-	@Transactional
-	public void createTaskType(List<CreateTaskTypeDto> createTaskTypes) {
-		List<TaskType> taskTypes = createTaskTypes.stream()
-			.map(TaskType::from)
-			.toList();
-
-		taskTypeRepository.saveAll(taskTypes);
-	}
+	// @Transactional
+	// public void createTaskType(List<CreateTaskTypeDto> createTaskTypes) {
+	// 	List<TaskType> taskTypes = createTaskTypes.stream()
+	// 		.map(TaskType::from)
+	// 		.toList();
+	//
+	// 	taskTypeRepository.saveAll(taskTypes);
+	// }
 
 	public List<String> showTaskTypes(String taskType) {
 		return taskTypeRepository.findAllByTaskType(taskType);

@@ -10,8 +10,8 @@ import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.slash.contract.dto.request.CreateContractDto;
-import project.slash.contract.dto.request.GradeDto;
+import project.slash.contract.dto.ContractDto;
+import project.slash.contract.dto.GradeDto;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -50,11 +50,11 @@ public class Contract {
 		this.companyName = companyName;
 	}
 
-	public static Contract from(CreateContractDto createContractDto) {
-		Contract contract = new Contract(createContractDto.getStartDate(), createContractDto.getEndDate(), createContractDto.getCompanyName());
+	public static Contract from(ContractDto contractDto) {
+		Contract contract = new Contract(contractDto.getStartDate(), contractDto.getEndDate(), contractDto.getCompanyName());
 
-		contract.addTotalTargets(createContractDto.getTotalTargets());
-		contract.addEvaluationItems(createContractDto.getCategorys());
+		contract.addTotalTargets(contractDto.getTotalTargets());
+		contract.addEvaluationItems(contractDto.getCategories());
 
 		return contract;
 	}
@@ -79,5 +79,18 @@ public class Contract {
 	private void addEvaluationItem(EvaluationItem item) {
 		evaluationItems.add(item);
 		item.setContract(this);
+	}
+
+	@Override
+	public String toString() {
+		return "Contract{" +
+			"id=" + id +
+			", startDate=" + startDate +
+			", endDate=" + endDate +
+			", isTerminate=" + isTerminate +
+			", companyName='" + companyName + '\'' +
+			", totalTargets=" + totalTargets +
+			", evaluationItems=" + evaluationItems +
+			'}';
 	}
 }

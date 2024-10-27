@@ -41,11 +41,6 @@ public class TaskType {
 	@JoinColumn(name = "evaluation_item_id")
 	private EvaluationItem evaluationItem;
 
-	// public static TaskType from(CreateTaskTypeDto createTaskTypeDto) {
-	// 	return new TaskType(createTaskTypeDto.getTaskType(), createTaskTypeDto.getTaskDetail(),
-	// 		createTaskTypeDto.getDeadline(), createTaskTypeDto.isServiceRelevance(), createTaskTypeDto.isInclusionStatus());
-	// }
-	//
 	public static TaskType from(CreateTaskTypeDto createTaskTypeDto, EvaluationItem evaluationItem) {
 		return TaskType.builder()
 			.taskType(createTaskTypeDto.getTaskType())
@@ -56,12 +51,4 @@ public class TaskType {
 			.evaluationItem(evaluationItem)
 			.build();
 	}
-
-	// public void setEvaluationItems(EvaluationItems evaluationItem) {
-	// 	this.evaluationItem = evaluationItem;
-	//
-	// 	if (evaluationItem != null && !evaluationItem.getTaskTypes().contains(this)) {
-	// 		evaluationItem.getTaskTypes().add(this);
-	// 	}
-	// }
 }
