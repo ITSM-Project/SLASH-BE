@@ -10,12 +10,17 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
+import project.slash.contract.model.EvaluationItem;
 import project.slash.taskrequest.dto.request.CreateTaskTypeDto;
 
 @Entity
 @Table(name = "task_type")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
 public class TaskType {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,26 +39,29 @@ public class TaskType {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "evaluation_item_id")
-	private EvaluationItems evaluationItem;
+	private EvaluationItem evaluationItem;
 
-	private TaskType(String taskType, String taskDetail, int deadline, boolean serviceRelevance, boolean inclusionStatus) {
-		this.taskType = taskType;
-		this.taskDetail = taskDetail;
-		this.deadline = deadline;
-		this.serviceRelevance = serviceRelevance;
-		this.inclusionStatus = inclusionStatus;
+	// public static TaskType from(CreateTaskTypeDto createTaskTypeDto) {
+	// 	return new TaskType(createTaskTypeDto.getTaskType(), createTaskTypeDto.getTaskDetail(),
+	// 		createTaskTypeDto.getDeadline(), createTaskTypeDto.isServiceRelevance(), createTaskTypeDto.isInclusionStatus());
+	// }
+	//
+	public static TaskType from(CreateTaskTypeDto createTaskTypeDto, EvaluationItem evaluationItem) {
+		return TaskType.builder()
+			.taskType(createTaskTypeDto.getTaskType())
+			.taskDetail(createTaskTypeDto.getTaskDetail())
+			.deadline(createTaskTypeDto.getDeadline())
+			.serviceRelevance(createTaskTypeDto.isServiceRelevance())
+			.inclusionStatus(createTaskTypeDto.isInclusionStatus())
+			.evaluationItem(evaluationItem)
+			.build();
 	}
 
-	public static TaskType from(CreateTaskTypeDto createTaskTypeDto) {
-		return new TaskType(createTaskTypeDto.getTaskType(), createTaskTypeDto.getTaskDetail(),
-			createTaskTypeDto.getDeadline(), createTaskTypeDto.isServiceRelevance(), createTaskTypeDto.isInclusionStatus());
-	}
-
-	public void setEvaluationItems(EvaluationItems evaluationItem) {
-		this.evaluationItem = evaluationItem;
-
-		if (evaluationItem != null && !evaluationItem.getTaskTypes().contains(this)) {
-			evaluationItem.getTaskTypes().add(this);
-		}
-	}
+	// public void setEvaluationItems(EvaluationItems evaluationItem) {
+	// 	this.evaluationItem = evaluationItem;
+	//
+	// 	if (evaluationItem != null && !evaluationItem.getTaskTypes().contains(this)) {
+	// 		evaluationItem.getTaskTypes().add(this);
+	// 	}
+	// }
 }

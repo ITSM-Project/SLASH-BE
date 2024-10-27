@@ -45,26 +45,24 @@ public class ServiceTarget {
 
 	@Builder
 	private ServiceTarget(String grade, double min, boolean minInclusive, double max, boolean maxInclusive,
-		double score) {
+		double score, EvaluationItem evaluationItem) {
 		this.grade = grade;
 		this.min = min;
 		this.minInclusive = minInclusive;
 		this.max = max;
 		this.maxInclusive = maxInclusive;
 		this.score = score;
+		this.evaluationItem = evaluationItem;
 	}
 
-	public static ServiceTarget from(GradeDto serviceTarget) {
+	public static ServiceTarget from(GradeDto serviceTarget, EvaluationItem evaluationItem) {
 		return ServiceTarget.builder()
 			.grade(serviceTarget.getGrade())
 			.min(serviceTarget.getMin())
 			.minInclusive(serviceTarget.isMinInclusive())
 			.max(serviceTarget.getMax())
 			.maxInclusive(serviceTarget.isMaxInclusive())
+			.evaluationItem(evaluationItem)
 			.build();
-	}
-
-	void setEvaluationItem(EvaluationItem evaluationItems) {
-		this.evaluationItem = evaluationItems;
 	}
 }

@@ -7,18 +7,17 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
-import project.slash.contract.dto.request.CreateContractDto;
-import project.slash.contract.service.ContractService;
+import project.slash.contract.dto.request.DetailDto;
+import project.slash.contract.service.EvaluationItemService;
 
-@RestController
 @RequiredArgsConstructor
-public class ContractController {
+@RestController
+public class EvaluationItemController {
+	private final EvaluationItemService evaluationItemService;
 
-	private final ContractService contractService;
-
-	@PostMapping("/contract")
-	public BaseResponse<Void> createContract(@RequestBody @Valid CreateContractDto createContractDto) {
-		contractService.createContract(createContractDto);
+	@PostMapping("/detail")
+	public BaseResponse<?> createDetail(@RequestBody @Valid DetailDto detailDto) {
+		evaluationItemService.createDetail(detailDto);
 
 		return BaseResponse.ok();
 	}

@@ -9,9 +9,17 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import project.slash.contract.dto.request.DetailDto;
 
 @Entity
 @Table(name = "service_detail")
+@Builder
+@NoArgsConstructor(access =  AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ServiceDetail {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,4 +39,15 @@ public class ServiceDetail {
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "evaluation_item_id")
 	private EvaluationItem evaluationItem;
+
+	public static ServiceDetail from(DetailDto detailDto, EvaluationItem evaluationItem) {
+		return ServiceDetail.builder()
+			.weight(detailDto.getWeight())
+			.period(detailDto.getPeriod())
+			.purpose(detailDto.getPurpose())
+			.formula(detailDto.getFormula())
+			.unit(detailDto.getUnit())
+			.evaluationItem(evaluationItem)
+			.build();
+	}
 }
