@@ -17,7 +17,6 @@ import project.slash.contract.model.ServiceTarget;
 import project.slash.contract.repository.evaluationItem.EvaluationItemRepository;
 import project.slash.contract.repository.ServiceDetailRepository;
 import project.slash.contract.repository.ServiceTargetRepository;
-import project.slash.taskrequest.dto.request.CreateTaskTypeDto;
 import project.slash.taskrequest.model.TaskType;
 import project.slash.taskrequest.repository.TaskTypeRepository;
 
@@ -41,7 +40,7 @@ public class EvaluationItemService {
 		saveTaskTypes(detailDto.getTaskTypes(), evaluationItem);
 	}
 
-	private void saveTaskTypes(List<CreateTaskTypeDto> types, EvaluationItem evaluationItem) {
+	private void saveTaskTypes(List<DetailDto.TaskTypeDto> types, EvaluationItem evaluationItem) {
 		List<TaskType> taskTypes = types.stream()
 			.map(taskType -> TaskType.from(taskType, evaluationItem))
 			.toList();

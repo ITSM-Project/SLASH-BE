@@ -8,10 +8,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import project.slash.contract.dto.ContractDto;
+import project.slash.contract.dto.GradeDto;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -19,9 +20,7 @@ import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
-@Builder
 public class Contract {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,19 +40,46 @@ public class Contract {
 	private String companyName;
 
 	@OneToMany(mappedBy = "contract", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<TotalTarget> totalTargets = new ArrayList<>();
+	private final List<TotalTarget> totalTargets = new ArrayList<>();
 
 	@OneToMany(mappedBy = "contract", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<EvaluationItem> evaluationItems = new ArrayList<>();
+	private final List<EvaluationItem> evaluationItems = new ArrayList<>();
 
-	// 연관관계 편의 메서드
-	public void addTotalTarget(TotalTarget totalTarget) {
-		this.totalTargets.add(totalTarget);
-		totalTarget.setContract(this);
+	@Builder
+	private Contract(LocalDate startDate, LocalDate endDate, String companyName) {
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.companyName = companyName;
 	}
 
-	public void addEvaluationItem(EvaluationItem evaluationItem) {
-		this.evaluationItems.add(evaluationItem);
-		evaluationItem.setContract(this);
+	public static Contract from(ContractDto dto) {
+		Contract contract = Contract.builder()
+			.startDate(dto.getStartDate())
+			.endDate(dto.getEndDate())
+			.companyName(dto.getCompanyName())
+			.build();
+
+		contract.addTotalTargets(dto.getTotalTargets());
+		contract.addEvaluationItems(dto.getCategories());
+
+		return contract;
+	}
+
+	public void addTotalTargets(List<GradeDto> targets) {
+		targets.forEach(target -> addTotalTarget(TotalTarget.from(target)));
+	}
+
+	public void addEvaluationItems(List<String> categories) {
+		categories.forEach(category -> addEvaluationItem(EvaluationItem.of(category, this)));
+	}
+
+	private void addTotalTarget(TotalTarget target) {
+		totalTargets.add(target);
+		target.setContract(this);
+	}
+
+	private void addEvaluationItem(EvaluationItem item) {
+		evaluationItems.add(item);
+		item.setContract(this);
 	}
 }

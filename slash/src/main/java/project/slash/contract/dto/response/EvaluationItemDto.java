@@ -1,9 +1,5 @@
 package project.slash.contract.dto.response;
 
-import java.util.Optional;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

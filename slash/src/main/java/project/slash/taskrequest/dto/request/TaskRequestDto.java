@@ -10,7 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TaskRequestDto {
-	private String taskType;
+	private String type;
 	private String equipmentName;
 	private String taskDetail;
 	private boolean serviceRelevance;

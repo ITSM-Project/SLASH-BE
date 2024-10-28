@@ -13,8 +13,8 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import project.slash.contract.dto.request.DetailDto;
 import project.slash.contract.model.EvaluationItem;
-import project.slash.taskrequest.dto.request.CreateTaskTypeDto;
 
 @Entity
 @Table(name = "task_type")
@@ -26,11 +26,14 @@ public class TaskType {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "task_type_id")
 	private Long id;
-	@Column(name = "task_type")
-	private String taskType;	//장애 요청, 서비스 요청 ..
+
+	private String type;	//장애 요청, 서비스 요청 ..
+
 	@Column(name = "task_detail")
 	private String taskDetail;	//단순 장애, 복합 장애 ..
+
 	private int deadline;
+
 	@Column(name = "service_relevance")
 	private boolean serviceRelevance;
 
@@ -41,13 +44,13 @@ public class TaskType {
 	@JoinColumn(name = "evaluation_item_id")
 	private EvaluationItem evaluationItem;
 
-	public static TaskType from(CreateTaskTypeDto createTaskTypeDto, EvaluationItem evaluationItem) {
+	public static TaskType from(DetailDto.TaskTypeDto taskTypeDto, EvaluationItem evaluationItem) {
 		return TaskType.builder()
-			.taskType(createTaskTypeDto.getTaskType())
-			.taskDetail(createTaskTypeDto.getTaskDetail())
-			.deadline(createTaskTypeDto.getDeadline())
-			.serviceRelevance(createTaskTypeDto.isServiceRelevance())
-			.inclusionStatus(createTaskTypeDto.isInclusionStatus())
+			.type(taskTypeDto.getType())
+			.taskDetail(taskTypeDto.getTaskDetail())
+			.deadline(taskTypeDto.getDeadline())
+			.serviceRelevance(taskTypeDto.isServiceRelevance())
+			.inclusionStatus(taskTypeDto.isInclusionStatus())
 			.evaluationItem(evaluationItem)
 			.build();
 	}

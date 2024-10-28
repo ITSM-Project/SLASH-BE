@@ -1,7 +1,5 @@
 package project.slash.contract.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,12 +18,6 @@ public class EvaluationItemController {
 	@PostMapping("/detail")
 	public BaseResponse<?> createDetail(@RequestBody @Valid DetailDto detailDto) {
 		evaluationItemService.createDetail(detailDto);
-
-		return BaseResponse.ok();
-	}
-
-	@GetMapping("/detail/{categoryId}")
-	public BaseResponse<?> showDetail(@PathVariable("categoryId") Long categoryId) {
 
 		return BaseResponse.ok();
 	}

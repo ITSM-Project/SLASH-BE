@@ -20,22 +20,14 @@ public class ContractInfoDto {
 			contract.getCompanyName(),
 			contract.getStartDate(),
 			contract.getEndDate(),
-			getCategories(contract),
-			getTotalTargets(contract)
+			contract.getEvaluationItems().stream()
+				.map(EvaluationItem::getCategory)
+				.toList(),
+			contract.getTotalTargets().stream()
+				.map(GradeDto::createTotalGradeDto)
+				.toList()
 		);
 
 		return new ContractInfoDto(contractDto, evaluationItems);
-	}
-
-	private static List<GradeDto> getTotalTargets(Contract contract) {
-		return contract.getTotalTargets().stream()
-			.map(GradeDto::createTotalGradeDto)
-			.toList();
-	}
-
-	private static List<String> getCategories(Contract contract) {
-		return contract.getEvaluationItems().stream()
-			.map(EvaluationItem::getCategory)
-			.toList();
 	}
 }

@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import project.slash.contract.dto.GradeDto;
 
 @Entity
 @Table(name = "total_target")
@@ -45,8 +46,15 @@ public class TotalTarget {
 
 	void setContract(Contract contract) {
 		this.contract = contract;
-		if (!contract.getTotalTargets().contains(this)) {
-			contract.addTotalTarget(this);
-		}
+	}
+
+	public static TotalTarget from(GradeDto gradeDto) {
+		return TotalTarget.builder()
+			.grade(gradeDto.getGrade())
+			.min(gradeDto.getMin())
+			.minInclusive(gradeDto.getMinInclusive())
+			.max(gradeDto.getMax())
+			.maxInclusive((gradeDto.getMaxInclusive()))
+			.build();
 	}
 }

@@ -8,7 +8,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import project.slash.contract.dto.GradeDto;
-import project.slash.taskrequest.dto.request.CreateTaskTypeDto;
 
 @Getter
 public class DetailDto {
@@ -30,9 +29,24 @@ public class DetailDto {
 	@NotBlank(message = "측정단위는 필수입니다.")
 	private String unit;
 
-	private List<CreateTaskTypeDto> taskTypes = new ArrayList<>();
+	private List<TaskTypeDto> taskTypes = new ArrayList<>();
 
 	@Valid
 	@NotNull(message = "서비스 목표는 필수입니다.")
-	private List<GradeDto> serviceTargets;
+	private List<GradeDto> serviceTargets = new ArrayList<>();
+
+	@Getter
+	public static class TaskTypeDto {
+		@NotBlank(message = "Task 타입은 필수입니다.")
+		private String type;
+
+		@NotBlank(message = "Task 상세는 필수입니다.")
+		private String taskDetail;
+
+		@NotNull(message = "데드라인은 필수입니다.")
+		private int deadline;
+
+		private boolean serviceRelevance;
+		private boolean inclusionStatus;
+	}
 }
