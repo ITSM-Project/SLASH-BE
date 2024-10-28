@@ -15,6 +15,12 @@ import project.slash.contract.service.EvaluationItemService;
 public class EvaluationItemController {
 	private final EvaluationItemService evaluationItemService;
 
+	/**
+	 * 서비스 항목 세부 내용 설정 메서드입니다.
+	 *
+	 * @param detailDto 세부 내용 정보
+	 * @return 성공 여부
+	 */
 	@PostMapping("/detail")
 	public BaseResponse<?> createDetail(@RequestBody @Valid DetailDto detailDto) {
 		evaluationItemService.createDetail(detailDto);

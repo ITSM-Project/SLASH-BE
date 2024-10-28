@@ -18,6 +18,11 @@ import project.slash.taskrequest.service.TaskRequestService;
 public class TaskRequestController {
 	private final TaskRequestService taskRequestService;
 
+	/**
+	 * 현재 계약의 업무 유형 조회 메서드 입니다.
+	 *
+	 * @return 업무 유형
+	 */
 	@GetMapping("/all-task-types")
 	public BaseResponse<?> allTaskTypes() {
 		List<TaskTypeDto> allTaskTypes = taskRequestService.allTaskTypes();
@@ -25,6 +30,12 @@ public class TaskRequestController {
 		return BaseResponse.ok(allTaskTypes);
 	}
 
+	/**
+	 * 요청 생성 메서드입니다.
+	 *
+	 * @param taskRequestDto 요청 정보
+	 * @return 성공 여부
+	 */
 	@PostMapping("/request")
 	public BaseResponse<Void> createRequest(@RequestBody TaskRequestDto taskRequestDto) {
 		taskRequestService.createRequest(taskRequestDto);

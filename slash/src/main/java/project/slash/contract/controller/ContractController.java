@@ -18,6 +18,12 @@ public class ContractController {
 
 	private final ContractService contractService;
 
+	/**
+	 * 계약 생성 메서드입니다.
+	 *
+	 * @param contractDto 계약 생성 정보
+	 * @return 성공 여부
+	 */
 	@PostMapping("/contract")
 	public BaseResponse<Void> createContract(@RequestBody @Valid ContractDto contractDto) {
 		contractService.createContract(contractDto);
@@ -25,6 +31,11 @@ public class ContractController {
 		return BaseResponse.ok();
 	}
 
+	/**
+	 * 계약 내용 조회 메서드입니다.
+	 *
+	 * @return 계약 내용
+	 */
 	@GetMapping("/contract")
 	public BaseResponse<?> showContractInfo() {
 		ContractInfoDto contractInfoDto = contractService.showContractInfo();

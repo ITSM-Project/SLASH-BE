@@ -15,6 +15,11 @@ import project.slash.system.service.SystemService;
 public class SystemController {
 	private final SystemService systemService;
 
+	/**
+	 * 저장된 모든 시스템-장비 조회하는 메서드 입니다.
+	 *
+	 * @return 시스템-장비 정보
+	 */
 	@GetMapping("/all-systems")
 	public BaseResponse<?> showAllSystems(){
 		List<AllSystemsInfo> allSystemsInfos = systemService.showAllSystems();
