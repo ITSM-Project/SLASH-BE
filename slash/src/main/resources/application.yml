@@ -13,6 +13,11 @@ spring:
       hibernate.show_sql: true
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+server:
+  servlet:
+    session:
+      timeout: 24h
+
 logging:
   level:
     org.springframework.security: DEBUG
