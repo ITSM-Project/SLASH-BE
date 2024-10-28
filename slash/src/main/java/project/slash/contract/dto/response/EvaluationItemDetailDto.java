@@ -6,12 +6,14 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import project.slash.contract.dto.GradeDto;
 import project.slash.contract.dto.TaskTypeDto;
 
 @Getter
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
+@NoArgsConstructor
 public class EvaluationItemDetailDto{
 	private Long categoryId;
 	private String categoryName;
@@ -23,7 +25,11 @@ public class EvaluationItemDetailDto{
 	private List<GradeDto> serviceTargets;
 	private List<TaskTypeDto> taskTypes;
 
-	public void setTaskTypes(List<TaskTypeDto> taskTypes) {
-		this.taskTypes = taskTypes;
+	public EvaluationItemDetailDto withTaskTypes(List<TaskTypeDto> taskTypes) {
+		return new EvaluationItemDetailDto(
+			this.categoryId, this.categoryName, this.weight,
+			this.period, this.purpose, this.formula, this.unit,
+			this.serviceTargets, taskTypes
+		);
 	}
 }

@@ -32,20 +32,21 @@ public class EvaluationItemService {
 
 	@Transactional
 	public void createDetail(CreateDetailDto detailDto) {
-		EvaluationItem evaluationItem = findEvaluation(detailDto.getCategoryId());
-
-		ServiceDetail serviceDetail = ServiceDetail.from(detailDto, evaluationItem);
-
-		serviceDetailRepository.save(serviceDetail);
+		EvaluationItem evaluationItem = findEvaluationById(detailDto.getCategoryId());
+		saveServiceDetail(detailDto, evaluationItem);
 		saveServiceTargets(detailDto.getServiceTargets(), evaluationItem);
 		saveTaskTypes(detailDto.getTaskTypes(), evaluationItem);
+	}
+
+	private void saveServiceDetail(CreateDetailDto detailDto, EvaluationItem evaluationItem) {
+		ServiceDetail serviceDetail = ServiceDetail.from(detailDto, evaluationItem);
+		serviceDetailRepository.save(serviceDetail);
 	}
 
 	private void saveTaskTypes(List<TaskTypeDto> types, EvaluationItem evaluationItem) {
 		List<TaskType> taskTypes = types.stream()
 			.map(taskType -> TaskType.from(taskType, evaluationItem))
 			.toList();
-
 		taskTypeRepository.saveAll(taskTypes);
 	}
 
@@ -53,22 +54,20 @@ public class EvaluationItemService {
 		List<ServiceTarget> serviceTargets = targets.stream()
 			.map(target -> ServiceTarget.from(target, evaluationItem))
 			.toList();
-
 		serviceTargetRepository.saveAll(serviceTargets);
 	}
 
 	public EvaluationItemDetailDto findDetailByCategoryId(Long categoryId) {
-		EvaluationItem evaluation = findEvaluation(categoryId);
+		EvaluationItemDetailDto evaluationItemDetail = evaluationItemRepository.findEvaluationItemDetail(categoryId)
+			.orElseThrow(() -> new BusinessException(NOT_FOUND_ITEMS));
 
 		List<TaskTypeDto> taskTypes = taskTypeRepository.findTaskTypesByEvaluationItemId(categoryId).stream()
 			.map(TaskTypeDto::from).toList();
 
-		EvaluationItemDetailDto evaluationItemDetail = evaluationItemRepository.findEvaluationItemDetail(categoryId);
-		evaluationItemDetail.setTaskTypes(taskTypes);
-		return evaluationItemDetail;
+		return evaluationItemDetail.withTaskTypes(taskTypes);
 	}
 
-	private EvaluationItem findEvaluation(Long categoryId) {
+	private EvaluationItem findEvaluationById(Long categoryId) {
 		return evaluationItemRepository.findById(categoryId)
 			.orElseThrow(() -> new BusinessException(NOT_FOUND_ITEMS));
 	}

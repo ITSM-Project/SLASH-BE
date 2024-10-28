@@ -8,6 +8,7 @@ import static project.slash.contract.model.QServiceTarget.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -46,7 +47,7 @@ public class EvaluationItemRepositoryCustomImpl implements EvaluationItemReposit
 	}
 
 	@Override
-	public EvaluationItemDetailDto findEvaluationItemDetail(Long categoryId) {
+	public Optional<EvaluationItemDetailDto> findEvaluationItemDetail(Long categoryId) {
 		return queryFactory
 			.from(evaluationItem)
 			.leftJoin(serviceDetail).on(serviceDetail.evaluationItem.id.eq(evaluationItem.id))
@@ -65,7 +66,7 @@ public class EvaluationItemRepositoryCustomImpl implements EvaluationItemReposit
 						),
 						Expressions.constant(new ArrayList<>())
 					)
-				)).get(0);
+				)).stream().findFirst();
 	}
 
 	private static ConstructorExpression<GradeDto> constructGradeDto() {
