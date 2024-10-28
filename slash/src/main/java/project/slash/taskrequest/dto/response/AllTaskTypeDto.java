@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class TaskTypeDto {
+public class AllTaskTypeDto {
 	private String type;
 	private List<String> typeDetails;
 }

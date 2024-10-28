@@ -2,8 +2,8 @@ package project.slash.taskrequest.repository;
 
 import java.util.List;
 
-import project.slash.taskrequest.dto.response.TaskTypeDto;
+import project.slash.taskrequest.dto.response.AllTaskTypeDto;
 
 public interface TaskTypeRepositoryCustom {
-	List<TaskTypeDto> findAllTaskTypes();
+	List<AllTaskTypeDto> findAllTaskTypes();
 }

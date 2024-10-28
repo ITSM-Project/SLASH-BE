@@ -4,19 +4,21 @@ import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import project.slash.contract.dto.ContractDto;
+import lombok.NoArgsConstructor;
 import project.slash.contract.dto.GradeDto;
 import project.slash.contract.model.Contract;
 import project.slash.contract.model.EvaluationItem;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class ContractInfoDto {
+	private Long contractId;
 	private ContractDto contract;
 	private List<EvaluationItemDto> evaluationItemInfos;
 
 	public static ContractInfoDto of(Contract contract, List<EvaluationItemDto> evaluationItems) {
-		ContractDto contractDto = new ContractDto(
+		ContractDto showContractDto = new ContractDto(
 			contract.getCompanyName(),
 			contract.getStartDate(),
 			contract.getEndDate(),
@@ -28,6 +30,6 @@ public class ContractInfoDto {
 				.toList()
 		);
 
-		return new ContractInfoDto(contractDto, evaluationItems);
+		return new ContractInfoDto(contract.getId(), showContractDto, evaluationItems);
 	}
 }

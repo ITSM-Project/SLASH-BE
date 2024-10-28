@@ -9,8 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import project.slash.common.exception.BusinessException;
-import project.slash.contract.dto.request.DetailDto;
 import project.slash.contract.dto.GradeDto;
+import project.slash.contract.dto.TaskTypeDto;
+import project.slash.contract.dto.request.CreateDetailDto;
+import project.slash.contract.dto.response.EvaluationItemDetailDto;
 import project.slash.contract.model.EvaluationItem;
 import project.slash.contract.model.ServiceDetail;
 import project.slash.contract.model.ServiceTarget;
@@ -29,9 +31,8 @@ public class EvaluationItemService {
 	private final TaskTypeRepository taskTypeRepository;
 
 	@Transactional
-	public void createDetail(DetailDto detailDto) {
-		EvaluationItem evaluationItem = evaluationItemRepository.findById(detailDto.getCategoryId())
-			.orElseThrow(() -> new BusinessException(NOT_FOUND_ITEMS));
+	public void createDetail(CreateDetailDto detailDto) {
+		EvaluationItem evaluationItem = findEvaluation(detailDto.getCategoryId());
 
 		ServiceDetail serviceDetail = ServiceDetail.from(detailDto, evaluationItem);
 
@@ -40,7 +41,7 @@ public class EvaluationItemService {
 		saveTaskTypes(detailDto.getTaskTypes(), evaluationItem);
 	}
 
-	private void saveTaskTypes(List<DetailDto.TaskTypeDto> types, EvaluationItem evaluationItem) {
+	private void saveTaskTypes(List<TaskTypeDto> types, EvaluationItem evaluationItem) {
 		List<TaskType> taskTypes = types.stream()
 			.map(taskType -> TaskType.from(taskType, evaluationItem))
 			.toList();
@@ -54,5 +55,21 @@ public class EvaluationItemService {
 			.toList();
 
 		serviceTargetRepository.saveAll(serviceTargets);
+	}
+
+	public EvaluationItemDetailDto findDetailByCategoryId(Long categoryId) {
+		EvaluationItem evaluation = findEvaluation(categoryId);
+
+		List<TaskTypeDto> taskTypes = taskTypeRepository.findTaskTypesByEvaluationItemId(categoryId).stream()
+			.map(TaskTypeDto::from).toList();
+
+		EvaluationItemDetailDto evaluationItemDetail = evaluationItemRepository.findEvaluationItemDetail(categoryId);
+		evaluationItemDetail.setTaskTypes(taskTypes);
+		return evaluationItemDetail;
+	}
+
+	private EvaluationItem findEvaluation(Long categoryId) {
+		return evaluationItemRepository.findById(categoryId)
+			.orElseThrow(() -> new BusinessException(NOT_FOUND_ITEMS));
 	}
 }

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
-import project.slash.contract.dto.ContractDto;
+import project.slash.contract.dto.request.CreateContractDto;
 import project.slash.contract.dto.response.ContractInfoDto;
 import project.slash.contract.service.ContractService;
 
@@ -21,12 +21,12 @@ public class ContractController {
 	/**
 	 * 계약 생성 메서드입니다.
 	 *
-	 * @param contractDto 계약 생성 정보
+	 * @param createContractDto 계약 생성 정보
 	 * @return 성공 여부
 	 */
 	@PostMapping("/contract")
-	public BaseResponse<Void> createContract(@RequestBody @Valid ContractDto contractDto) {
-		contractService.createContract(contractDto);
+	public BaseResponse<Void> createContract(@RequestBody @Valid CreateContractDto createContractDto) {
+		contractService.createContract(createContractDto);
 
 		return BaseResponse.ok();
 	}
@@ -37,7 +37,7 @@ public class ContractController {
 	 * @return 계약 내용
 	 */
 	@GetMapping("/contract")
-	public BaseResponse<?> showContractInfo() {
+	public BaseResponse<ContractInfoDto> showContractInfo() {
 		ContractInfoDto contractInfoDto = contractService.showContractInfo();
 
 		return BaseResponse.ok(contractInfoDto);

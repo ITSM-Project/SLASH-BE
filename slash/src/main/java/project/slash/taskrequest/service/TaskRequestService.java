@@ -13,7 +13,7 @@ import project.slash.common.exception.BusinessException;
 import project.slash.system.model.Equipment;
 import project.slash.system.repository.EquipmentRepository;
 import project.slash.taskrequest.dto.request.TaskRequestDto;
-import project.slash.taskrequest.dto.response.TaskTypeDto;
+import project.slash.taskrequest.dto.response.AllTaskTypeDto;
 import project.slash.taskrequest.model.TaskRequest;
 import project.slash.taskrequest.model.TaskType;
 import project.slash.taskrequest.repository.TaskRequestRepository;
@@ -43,7 +43,7 @@ public class TaskRequestService {
 			.orElseThrow(() -> new BusinessException(NOT_FOUND_EQUIPMENT));
 	}
 
-	public List<TaskTypeDto> allTaskTypes() {
+	public List<AllTaskTypeDto> allTaskTypes() {
 		return taskTypeRepository.findAllTaskTypes();
 	}
 
