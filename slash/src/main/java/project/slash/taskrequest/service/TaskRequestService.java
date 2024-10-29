@@ -12,8 +12,8 @@ import lombok.RequiredArgsConstructor;
 import project.slash.common.exception.BusinessException;
 import project.slash.system.model.Equipment;
 import project.slash.system.repository.EquipmentRepository;
-import project.slash.taskrequest.dto.request.CreateTaskTypeDto;
 import project.slash.taskrequest.dto.request.TaskRequestDto;
+import project.slash.taskrequest.dto.response.TaskTypeDto;
 import project.slash.taskrequest.model.TaskRequest;
 import project.slash.taskrequest.model.TaskType;
 import project.slash.taskrequest.repository.TaskRequestRepository;
@@ -26,19 +26,6 @@ public class TaskRequestService {
 	private final TaskTypeRepository taskTypeRepository;
 	private final TaskRequestRepository taskRequestRepository;
 	private final EquipmentRepository equipmentRepository;
-
-	@Transactional
-	public void createTaskType(List<CreateTaskTypeDto> createTaskTypes) {
-		List<TaskType> taskTypes = createTaskTypes.stream()
-			.map(TaskType::from)
-			.toList();
-
-		taskTypeRepository.saveAll(taskTypes);
-	}
-
-	public List<String> showTaskTypes(String taskType) {
-		return taskTypeRepository.findAllByTaskType(taskType);
-	}
 
 	@Transactional
 	public void createRequest(TaskRequestDto taskRequestDto) {
@@ -56,8 +43,12 @@ public class TaskRequestService {
 			.orElseThrow(() -> new BusinessException(NOT_FOUND_EQUIPMENT));
 	}
 
+	public List<TaskTypeDto> allTaskTypes() {
+		return taskTypeRepository.findAllTaskTypes();
+	}
+
 	private TaskType findTaskType(TaskRequestDto taskRequestDto) {
-		return taskTypeRepository.findTaskTypeByTaskRequestInfo(taskRequestDto.getTaskType(),
+		return taskTypeRepository.findTaskTypeByTaskRequestInfo(taskRequestDto.getType(),
 			taskRequestDto.getTaskDetail(),
 			taskRequestDto.isServiceRelevance()).orElseThrow(() -> new BusinessException(NOT_FOUND_TASK_TYPE));
 	}

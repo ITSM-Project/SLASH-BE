@@ -8,7 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import project.slash.contract.model.EvaluationItems;
+import project.slash.contract.model.EvaluationItem;
 
 import java.time.LocalDate;
 
@@ -33,5 +33,5 @@ public class Statistics {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "evaluation_item_id")
-	private EvaluationItems evaluationItems;
+	private EvaluationItem evaluationItems;
 }

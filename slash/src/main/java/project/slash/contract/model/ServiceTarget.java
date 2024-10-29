@@ -9,10 +9,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import project.slash.contract.dto.GradeDto;
 
 @Entity
 @Table(name = "service_target")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class ServiceTarget {
 	@Id
@@ -36,9 +41,28 @@ public class ServiceTarget {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "evaluation_item_id")
-	private EvaluationItems evaluationItems;
+	private EvaluationItem evaluationItem;
 
-	void setEvaluationItems(EvaluationItems evaluationItems) {
-		this.evaluationItems = evaluationItems;
+	@Builder
+	private ServiceTarget(String grade, double min, boolean minInclusive, double max, boolean maxInclusive,
+		double score, EvaluationItem evaluationItem) {
+		this.grade = grade;
+		this.min = min;
+		this.minInclusive = minInclusive;
+		this.max = max;
+		this.maxInclusive = maxInclusive;
+		this.score = score;
+		this.evaluationItem = evaluationItem;
+	}
+
+	public static ServiceTarget from(GradeDto serviceTarget, EvaluationItem evaluationItem) {
+		return ServiceTarget.builder()
+			.grade(serviceTarget.getGrade())
+			.min(serviceTarget.getMin())
+			.minInclusive(serviceTarget.getMinInclusive())
+			.max(serviceTarget.getMax())
+			.maxInclusive(serviceTarget.getMaxInclusive())
+			.evaluationItem(evaluationItem)
+			.build();
 	}
 }
