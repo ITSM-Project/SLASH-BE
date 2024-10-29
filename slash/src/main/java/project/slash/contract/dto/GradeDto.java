@@ -10,9 +10,9 @@ import lombok.Getter;
 import project.slash.contract.model.TotalTarget;
 
 @Getter
-@AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
+@AllArgsConstructor
 public class GradeDto {
 	@NotBlank(message = "등급은 필수입니다.")
 	private String grade;

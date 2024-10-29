@@ -72,21 +72,4 @@ public class TaskRequest extends BaseTimeEntity {
 			.equipment(equipment)
 			.build();
 	}
-
-	@Override
-	public String toString() {
-		return "TaskRequest{" +
-			"id=" + id +
-			", additionalTime=" + additionalTime +
-			", title='" + title + '\'' +
-			", content='" + content + '\'' +
-			", dueOnTime=" + dueOnTime +
-			", status=" + status +
-			", taskType=" + taskType +
-			", requester=" + requester +
-			", manager=" + manager +
-			", equipment=" + equipment +
-			", createTime=" + createTime +
-			'}';
-	}
 }
