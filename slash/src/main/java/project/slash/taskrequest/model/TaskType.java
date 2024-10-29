@@ -12,8 +12,9 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.slash.contract.dto.request.DetailDto;
+import project.slash.contract.dto.TaskTypeDto;
 import project.slash.contract.model.EvaluationItem;
 
 @Entity
@@ -21,6 +22,7 @@ import project.slash.contract.model.EvaluationItem;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
+@Getter
 public class TaskType {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,7 +46,7 @@ public class TaskType {
 	@JoinColumn(name = "evaluation_item_id")
 	private EvaluationItem evaluationItem;
 
-	public static TaskType from(DetailDto.TaskTypeDto taskTypeDto, EvaluationItem evaluationItem) {
+	public static TaskType from(TaskTypeDto taskTypeDto, EvaluationItem evaluationItem) {
 		return TaskType.builder()
 			.type(taskTypeDto.getType())
 			.taskDetail(taskTypeDto.getTaskDetail())

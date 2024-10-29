@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
 import project.slash.taskrequest.dto.request.TaskRequestDto;
-import project.slash.taskrequest.dto.response.TaskTypeDto;
+import project.slash.taskrequest.dto.response.AllTaskTypeDto;
 import project.slash.taskrequest.service.TaskRequestService;
 
 @RestController
@@ -25,7 +25,7 @@ public class TaskRequestController {
 	 */
 	@GetMapping("/all-task-types")
 	public BaseResponse<?> allTaskTypes() {
-		List<TaskTypeDto> allTaskTypes = taskRequestService.allTaskTypes();
+		List<AllTaskTypeDto> allTaskTypes = taskRequestService.allTaskTypes();
 
 		return BaseResponse.ok(allTaskTypes);
 	}

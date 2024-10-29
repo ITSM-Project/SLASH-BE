@@ -13,7 +13,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-import project.slash.contract.dto.request.DetailDto;
+import project.slash.contract.dto.request.CreateDetailDto;
 
 @Entity
 @Table(name = "service_detail")
@@ -40,7 +40,7 @@ public class ServiceDetail {
 	@JoinColumn(name = "evaluation_item_id")
 	private EvaluationItem evaluationItem;
 
-	public static ServiceDetail from(DetailDto detailDto, EvaluationItem evaluationItem) {
+	public static ServiceDetail from(CreateDetailDto detailDto, EvaluationItem evaluationItem) {
 		return ServiceDetail.builder()
 			.weight(detailDto.getWeight())
 			.period(detailDto.getPeriod())
