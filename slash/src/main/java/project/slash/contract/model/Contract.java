@@ -11,7 +11,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.slash.contract.dto.GradeDto;
 import project.slash.contract.dto.request.CreateContractDto;
 
 import java.time.LocalDate;
@@ -59,27 +58,16 @@ public class Contract {
 			.companyName(dto.getCompanyName())
 			.build();
 
-		contract.addTotalTargets(dto.getTotalTargets());
-		contract.addEvaluationItems(dto.getCategories());
+		dto.getTotalTargets().forEach(gradeDto -> {
+			TotalTarget totalTarget = TotalTarget.from(gradeDto);
+			totalTarget.setContract(contract);
+		});
+
+		dto.getCategories().forEach(category -> {
+			EvaluationItem evaluationItem = EvaluationItem.from(category);
+			evaluationItem.setContract(contract);
+		});
 
 		return contract;
-	}
-
-	public void addTotalTargets(List<GradeDto> targets) {
-		targets.forEach(target -> addTotalTarget(TotalTarget.from(target)));
-	}
-
-	public void addEvaluationItems(List<String> categories) {
-		categories.forEach(category -> addEvaluationItem(EvaluationItem.of(category, this)));
-	}
-
-	private void addTotalTarget(TotalTarget target) {
-		totalTargets.add(target);
-		target.setContract(this);
-	}
-
-	private void addEvaluationItem(EvaluationItem item) {
-		evaluationItems.add(item);
-		item.setContract(this);
 	}
 }
