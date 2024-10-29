@@ -10,12 +10,25 @@ import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
 import project.slash.taskrequest.dto.request.TaskRequestDto;
 import project.slash.taskrequest.dto.response.RequestManagerMainResponseDto;
+import project.slash.taskrequest.dto.response.AllTaskTypeDto;
 import project.slash.taskrequest.service.TaskRequestService;
 
 @RestController
 @RequiredArgsConstructor
 public class TaskRequestController {
 	private final TaskRequestService taskRequestService;
+
+	/**
+	 * 현재 계약의 업무 유형 조회 메서드 입니다.
+	 *
+	 * @return 업무 유형
+	 */
+	@GetMapping("/all-task-types")
+	public BaseResponse<?> allTaskTypes() {
+		List<AllTaskTypeDto> allTaskTypes = taskRequestService.allTaskTypes();
+
+		return BaseResponse.ok(allTaskTypes);
+	}
 
 	/**
 	 * 요청 생성 메서드입니다.

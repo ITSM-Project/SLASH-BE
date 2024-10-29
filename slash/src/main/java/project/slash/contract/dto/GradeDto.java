@@ -5,11 +5,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import project.slash.contract.model.TotalTarget;
 
 @Getter
 @AllArgsConstructor
+@Builder
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class GradeDto {
 	@NotBlank(message = "등급은 필수입니다.")
@@ -30,13 +32,12 @@ public class GradeDto {
 	private Boolean maxInclusive;
 
 	public static GradeDto createTotalGradeDto(TotalTarget target) {
-		return new GradeDto(
-			target.getGrade(),
-			target.getMin(),
-			target.getMax(),
-			null,
-			target.isMinInclusive(),
-			target.isMaxInclusive()
-		);
+		return GradeDto.builder()
+			.grade(target.getGrade())
+			.min(target.getMin())
+			.max(target.getMax())
+			.minInclusive(target.isMinInclusive())
+			.maxInclusive(target.isMaxInclusive())
+			.build();
 	}
 }

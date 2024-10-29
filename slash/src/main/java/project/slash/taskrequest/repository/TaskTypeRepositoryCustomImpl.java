@@ -1,5 +1,6 @@
 package project.slash.taskrequest.repository;
 
+import static com.querydsl.core.types.Projections.*;
 import static project.slash.contract.model.QContract.*;
 import static project.slash.contract.model.QEvaluationItem.*;
 import static project.slash.taskrequest.model.QTaskType.*;
@@ -7,11 +8,10 @@ import static project.slash.taskrequest.model.QTaskType.*;
 import java.util.List;
 
 import com.querydsl.core.group.GroupBy;
-import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
-import project.slash.taskrequest.dto.response.TaskTypeDto;
+import project.slash.taskrequest.dto.response.AllTaskTypeDto;
 
 public class TaskTypeRepositoryCustomImpl implements TaskTypeRepositoryCustom {
 	private final JPAQueryFactory queryFactory;
@@ -21,7 +21,7 @@ public class TaskTypeRepositoryCustomImpl implements TaskTypeRepositoryCustom {
 	}
 
 	@Override
-	public List<TaskTypeDto> findAllTaskTypes() {
+	public List<AllTaskTypeDto> findAllTaskTypes() {
 		return queryFactory
 			.from(taskType)
 			.where(taskType.evaluationItem.id.in(
@@ -34,7 +34,7 @@ public class TaskTypeRepositoryCustomImpl implements TaskTypeRepositoryCustom {
 					))
 			))
 			.transform(GroupBy.groupBy(taskType.type).list(
-				Projections.constructor(TaskTypeDto.class,
+				constructor(AllTaskTypeDto.class,
 					taskType.type,
 					GroupBy.list(taskType.taskDetail))
 			));

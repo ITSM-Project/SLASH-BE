@@ -11,8 +11,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.slash.contract.dto.ContractDto;
 import project.slash.contract.dto.GradeDto;
+import project.slash.contract.dto.request.CreateContractDto;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public class Contract {
 		this.companyName = companyName;
 	}
 
-	public static Contract from(ContractDto dto) {
+	public static Contract from(CreateContractDto dto) {
 		Contract contract = Contract.builder()
 			.startDate(dto.getStartDate())
 			.endDate(dto.getEndDate())

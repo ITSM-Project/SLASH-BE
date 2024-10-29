@@ -21,6 +21,7 @@ import project.slash.taskrequest.dto.response.SystemCountDto;
 import project.slash.taskrequest.dto.request.TaskRequestDto;
 import project.slash.taskrequest.dto.response.TaskTypeCountDto;
 import project.slash.taskrequest.dto.response.RequestManagerMainResponseDto;
+import project.slash.taskrequest.dto.response.AllTaskTypeDto;
 import project.slash.taskrequest.model.TaskRequest;
 import project.slash.taskrequest.model.TaskType;
 import project.slash.taskrequest.model.constant.RequestStatus;
@@ -54,6 +55,10 @@ public class TaskRequestService {
 	private Equipment findEquipment(TaskRequestDto taskRequestDto) {
 		return equipmentRepository.findByName(taskRequestDto.getEquipmentName())
 			.orElseThrow(() -> new BusinessException(NOT_FOUND_EQUIPMENT));
+	}
+
+	public List<AllTaskTypeDto> allTaskTypes() {
+		return taskTypeRepository.findAllTaskTypes();
 	}
 
 	private TaskType findTaskType(TaskRequestDto taskRequestDto) {
