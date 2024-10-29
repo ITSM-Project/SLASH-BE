@@ -2,6 +2,8 @@ package project.slash.security.auth;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,25 +23,37 @@ public class UserAuthSuccessHandler implements AuthenticationSuccessHandler {
 		// 사용자의 권한 정보 가져오기
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
-		// 역할에 따라 리다이렉트할 URL 결정
-		String redirectUrl = determineRedirectUrl(authorities);
+		// 역할에 따라 이동할 경로 결정
+		String targetUrl = determineRedirectUrl(authorities);
 
-		// 지정된 URL로 리다이렉트
-		response.sendRedirect(redirectUrl);
+		response.setContentType("application/json");
+		response.setCharacterEncoding("UTF-8");
+
+		// 성공시 redirectUrl 반환
+		Map<String, String> responseBody = new HashMap<>();
+		responseBody.put("message", "로그인 성공");
+		responseBody.put("redirectUrl", targetUrl);
+
+		response.getWriter().write(new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(responseBody));
+		response.getWriter().flush();
 	}
 
 	private String determineRedirectUrl(Collection<? extends GrantedAuthority> authorities) {
 		for (GrantedAuthority authority : authorities) {
 			String role = authority.getAuthority();
-			if (role.equals("ROLE_USER")) {
-				return "/user/dashboard";
-			} else if (role.equals("ROLE_CONTRACT_ADMIN")) {
-				return "/contract-admin/dashboard";
-			} else if (role.equals("ROLE_SERVICE_ADMIN")) {
-				return "/service-admin/dashboard";
+			switch (role) {
+				case "ROLE_USER" -> {
+					return "user";
+				}
+				case "ROLE_REQUEST_MANAGER" -> {
+					return "requestManager";
+				}
+				case "ROLE_CONTRACT_MANAGER" -> {
+					return "contractManager";
+				}
 			}
 		}
-		// 기본 리다이렉트 경로 (예: 권한 없는 사용자)
-		return "/";
+		// 기본 경로
+		return "no-role";
 	}
 }
