@@ -14,6 +14,7 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.slash.system.model.Equipment;
 import project.slash.taskrequest.dto.request.TaskRequestDto;
@@ -25,6 +26,7 @@ import project.slash.user.model.User;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
+@Getter
 public class TaskRequest extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -69,5 +71,22 @@ public class TaskRequest extends BaseTimeEntity {
 			.requester(requester)
 			.equipment(equipment)
 			.build();
+	}
+
+	@Override
+	public String toString() {
+		return "TaskRequest{" +
+			"id=" + id +
+			", additionalTime=" + additionalTime +
+			", title='" + title + '\'' +
+			", content='" + content + '\'' +
+			", dueOnTime=" + dueOnTime +
+			", status=" + status +
+			", taskType=" + taskType +
+			", requester=" + requester +
+			", manager=" + manager +
+			", equipment=" + equipment +
+			", createTime=" + createTime +
+			'}';
 	}
 }

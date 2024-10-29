@@ -40,12 +40,4 @@ public class EvaluationItem {
 	void setContract(Contract contract) {
 		this.contract = contract;
 	}
-
-	@Override
-	public String toString() {
-		return "EvaluationItem{" +
-			"id=" + id +
-			", category='" + category + '\'' +
-			'}';
-	}
 }
