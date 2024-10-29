@@ -9,8 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import project.slash.common.exception.BusinessException;
-import project.slash.contract.dto.request.DetailDto;
 import project.slash.contract.dto.GradeDto;
+import project.slash.contract.dto.TaskTypeDto;
+import project.slash.contract.dto.request.CreateDetailDto;
+import project.slash.contract.dto.response.EvaluationItemDetailDto;
 import project.slash.contract.model.EvaluationItem;
 import project.slash.contract.model.ServiceDetail;
 import project.slash.contract.model.ServiceTarget;
@@ -29,22 +31,22 @@ public class EvaluationItemService {
 	private final TaskTypeRepository taskTypeRepository;
 
 	@Transactional
-	public void createDetail(DetailDto detailDto) {
-		EvaluationItem evaluationItem = evaluationItemRepository.findById(detailDto.getCategoryId())
-			.orElseThrow(() -> new BusinessException(NOT_FOUND_ITEMS));
-
-		ServiceDetail serviceDetail = ServiceDetail.from(detailDto, evaluationItem);
-
-		serviceDetailRepository.save(serviceDetail);
+	public void createDetail(CreateDetailDto detailDto) {
+		EvaluationItem evaluationItem = findEvaluationById(detailDto.getCategoryId());
+		saveServiceDetail(detailDto, evaluationItem);
 		saveServiceTargets(detailDto.getServiceTargets(), evaluationItem);
 		saveTaskTypes(detailDto.getTaskTypes(), evaluationItem);
 	}
 
-	private void saveTaskTypes(List<DetailDto.TaskTypeDto> types, EvaluationItem evaluationItem) {
+	private void saveServiceDetail(CreateDetailDto detailDto, EvaluationItem evaluationItem) {
+		ServiceDetail serviceDetail = ServiceDetail.from(detailDto, evaluationItem);
+		serviceDetailRepository.save(serviceDetail);
+	}
+
+	private void saveTaskTypes(List<TaskTypeDto> types, EvaluationItem evaluationItem) {
 		List<TaskType> taskTypes = types.stream()
 			.map(taskType -> TaskType.from(taskType, evaluationItem))
 			.toList();
-
 		taskTypeRepository.saveAll(taskTypes);
 	}
 
@@ -52,7 +54,21 @@ public class EvaluationItemService {
 		List<ServiceTarget> serviceTargets = targets.stream()
 			.map(target -> ServiceTarget.from(target, evaluationItem))
 			.toList();
-
 		serviceTargetRepository.saveAll(serviceTargets);
+	}
+
+	public EvaluationItemDetailDto findDetailByCategoryId(Long categoryId) {
+		EvaluationItemDetailDto evaluationItemDetail = evaluationItemRepository.findEvaluationItemDetail(categoryId)
+			.orElseThrow(() -> new BusinessException(NOT_FOUND_ITEMS));
+
+		List<TaskTypeDto> taskTypes = taskTypeRepository.findTaskTypesByEvaluationItemId(categoryId).stream()
+			.map(TaskTypeDto::from).toList();
+
+		return evaluationItemDetail.withTaskTypes(taskTypes);
+	}
+
+	private EvaluationItem findEvaluationById(Long categoryId) {
+		return evaluationItemRepository.findById(categoryId)
+			.orElseThrow(() -> new BusinessException(NOT_FOUND_ITEMS));
 	}
 }

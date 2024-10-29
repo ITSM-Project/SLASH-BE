@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import project.slash.contract.dto.ContractDto;
+import project.slash.contract.dto.request.CreateContractDto;
 import project.slash.contract.dto.response.ContractInfoDto;
 import project.slash.contract.dto.response.EvaluationItemDto;
 import project.slash.contract.model.Contract;
@@ -21,8 +21,8 @@ public class ContractService {
 	private final EvaluationItemRepository evaluationItemRepository;
 
 	@Transactional
-	public void createContract(ContractDto contractDto) {
-		Contract contract = Contract.from(contractDto);
+	public void createContract(CreateContractDto createContractDto) {
+		Contract contract = Contract.from(createContractDto);
 
 		contractRepository.save(contract);
 	}
