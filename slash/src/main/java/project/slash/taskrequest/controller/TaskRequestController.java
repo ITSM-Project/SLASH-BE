@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
 import project.slash.taskrequest.dto.request.TaskRequestDto;
@@ -37,7 +38,7 @@ public class TaskRequestController {
 	 * @return 성공 여부
 	 */
 	@PostMapping("/request")
-	public BaseResponse<Void> createRequest(@RequestBody TaskRequestDto taskRequestDto) {
+	public BaseResponse<Void> createRequest(@RequestBody @Valid TaskRequestDto taskRequestDto) {
 		taskRequestService.createRequest(taskRequestDto);
 
 		return BaseResponse.ok();
