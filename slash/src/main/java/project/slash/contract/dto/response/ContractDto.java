@@ -22,5 +22,7 @@ public class ContractDto {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private LocalDate endDate;
 
+	private boolean isTerminate;
+
 	private List<GradeDto> totalTargets;
 }

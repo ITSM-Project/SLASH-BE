@@ -24,6 +24,8 @@ public class ContractInfoDto {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private LocalDate endDate;
 
+	private Boolean isTerminate;
+
 	private List<GradeDto> totalTargets;
 
 	private List<PreviewEvaluationItemDto> evaluationItems;
@@ -34,6 +36,7 @@ public class ContractInfoDto {
 			contractDto.getCompanyName(),
 			contractDto.getStartDate(),
 			contractDto.getEndDate(),
+			contractDto.isTerminate(),
 			contractDto.getTotalTargets(),
 			evaluationItems
 		);

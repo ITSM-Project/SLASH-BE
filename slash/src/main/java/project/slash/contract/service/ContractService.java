@@ -46,4 +46,13 @@ public class ContractService {
 		List<PreviewEvaluationItemDto> evaluationItems = evaluationItemRepository.findEvaluationItem(contractId);
 		return ContractInfoDto.of(contractId, contractDto, evaluationItems);
 	}
+
+	public void deleteContract(Long contractId) {
+		Contract contract = contractRepository.findById(contractId)
+			.orElseThrow(() -> new BusinessException(NOT_FOUND_CONTRACT));
+
+		if(!contract.isTerminate()){
+			throw new BusinessException(NOT_TERMINATE_CONTRACT);
+		}
+	}
 }
