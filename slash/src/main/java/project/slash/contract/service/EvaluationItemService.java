@@ -32,7 +32,9 @@ public class EvaluationItemService {
 
 	@Transactional
 	public void createDetail(CreateDetailDto detailDto) {
-		EvaluationItem evaluationItem = findEvaluationById(detailDto.getCategoryId());
+		EvaluationItem evaluationItem = evaluationItemRepository.findById(detailDto.getCategoryId())
+			.orElseThrow(() -> new BusinessException(NOT_FOUND_ITEMS));
+
 		saveServiceDetail(detailDto, evaluationItem);
 		saveServiceTargets(detailDto.getServiceTargets(), evaluationItem);
 		saveTaskTypes(detailDto.getTaskTypes(), evaluationItem);
@@ -65,10 +67,5 @@ public class EvaluationItemService {
 			.map(TaskTypeDto::from).toList();
 
 		return evaluationItemDetail.withTaskTypes(taskTypes);
-	}
-
-	private EvaluationItem findEvaluationById(Long categoryId) {
-		return evaluationItemRepository.findById(categoryId)
-			.orElseThrow(() -> new BusinessException(NOT_FOUND_ITEMS));
 	}
 }

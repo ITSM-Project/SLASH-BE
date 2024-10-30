@@ -22,6 +22,7 @@ import project.slash.taskrequest.dto.request.TaskRequestDto;
 import project.slash.taskrequest.dto.response.TaskTypeCountDto;
 import project.slash.taskrequest.dto.response.RequestManagerMainResponseDto;
 import project.slash.taskrequest.dto.response.AllTaskTypeDto;
+import project.slash.taskrequest.dto.response.RequestDetailDto;
 import project.slash.taskrequest.model.TaskRequest;
 import project.slash.taskrequest.model.TaskType;
 import project.slash.taskrequest.model.constant.RequestStatus;
@@ -67,6 +68,7 @@ public class TaskRequestService {
 			taskRequestDto.isServiceRelevance()).orElseThrow(() -> new BusinessException(NOT_FOUND_TASK_TYPE));
 	}
 
+
 	public StatusCountResponseDto findCountByStatus(int year, int month, String user) {
 		List<StatusCountDto> result = taskRequestRepository.findCountByStatus(year, month, user);
 
@@ -102,5 +104,12 @@ public class TaskRequestService {
 		List<SystemCountDto> systemCounts = findCountBySystem(year, month, user);
 
 		return new RequestManagerMainResponseDto(statusCounts, taskTypeCounts, systemCounts);
+
+	public RequestDetailDto showRequestDetail(Long requestId) {
+		TaskRequest taskRequest = taskRequestRepository.findById(requestId)
+			.orElseThrow(() -> new BusinessException(NOT_FOUND_REQUEST));
+
+		return RequestDetailDto.from(taskRequest);
+
 	}
 }

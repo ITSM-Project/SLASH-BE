@@ -9,13 +9,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "evaluation_item")
-@NoArgsConstructor
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EvaluationItem {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,24 +29,18 @@ public class EvaluationItem {
 	@JoinColumn(name = "contract_id")
 	private Contract contract;
 
-	private EvaluationItem(String category, Contract contract) {
+	private EvaluationItem(String category) {
 		this.category = category;
-		this.contract = contract;
 	}
 
-	public static EvaluationItem of(String category, Contract contract) {
-		return new EvaluationItem(category, contract);
+	public static EvaluationItem from(String category) {
+		return new EvaluationItem(category);
 	}
 
 	void setContract(Contract contract) {
 		this.contract = contract;
-	}
-
-	@Override
-	public String toString() {
-		return "EvaluationItem{" +
-			"id=" + id +
-			", category='" + category + '\'' +
-			'}';
+		if (!contract.getEvaluationItems().contains(this)) {
+			contract.getEvaluationItems().add(this);
+		}
 	}
 }
