@@ -47,8 +47,7 @@ public class TaskRequestService {
 
 		Equipment equipment = findEquipment(taskRequestDto);
 
-		TaskRequest taskRequest = TaskRequest.from(taskRequestDto, taskType, null,
-			equipment); //TODO: 유저는 로그인 기능 완료 후 넣기
+		TaskRequest taskRequest = TaskRequest.from(taskRequestDto, taskType, null, equipment); //TODO: 유저는 로그인 기능 완료 후 넣기
 
 		taskRequestRepository.save(taskRequest);
 	}
@@ -102,9 +101,24 @@ public class TaskRequestService {
 	}
 
 	public RequestDetailDto showRequestDetail(Long requestId) {
-		TaskRequest taskRequest = taskRequestRepository.findById(requestId)
-			.orElseThrow(() -> new BusinessException(NOT_FOUND_REQUEST));
+		TaskRequest taskRequest = findRequest(requestId);
 
 		return RequestDetailDto.from(taskRequest);
+	}
+
+	@Transactional
+	public void deleteRequest(Long requestId, String userId) {
+		TaskRequest request = findRequest(requestId);
+
+		if (!request.isDeletable() && request.isRequester(userId)) {
+			throw new BusinessException(CANNOT_DELETE_STARTED_TASK);
+		}
+
+		taskRequestRepository.deleteById(requestId);
+	}
+
+	private TaskRequest findRequest(Long requestId) {
+		return taskRequestRepository.findById(requestId)
+			.orElseThrow(() -> new BusinessException(NOT_FOUND_REQUEST));
 	}
 }

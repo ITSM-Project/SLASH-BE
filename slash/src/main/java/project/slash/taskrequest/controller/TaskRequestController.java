@@ -2,6 +2,7 @@ package project.slash.taskrequest.controller;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -67,5 +68,18 @@ public class TaskRequestController {
 
 		return BaseResponse.ok(requestDetailDto);
 
+	}
+
+	/**
+	 * 요청 삭제 메서드입니다.
+	 *
+	 * @param requestId 삭제할 요청 ID
+	 * @return 성공 여부
+	 */
+	@DeleteMapping("/request/{requestId}")
+	public BaseResponse<Void> deleteRequest(@PathVariable("requestId") Long requestId) {
+		taskRequestService.deleteRequest(requestId, "1");	//TODO: 로그인 된 사용자로 변경해야함
+
+		return BaseResponse.ok();
 	}
 }

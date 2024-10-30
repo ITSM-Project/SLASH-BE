@@ -36,7 +36,7 @@ public class ContractController {
 	/**
 	 * 계약 내용 조회 메서드입니다.
 	 *
-	 * @param contractId 조회 할 계약 아이디
+	 * @param contractId 조회 할 계약 ID
 	 * @return 게약 내용
 	 */
 	@GetMapping("/contract/{contractId}")
@@ -46,6 +46,12 @@ public class ContractController {
 		return BaseResponse.ok(contractInfoDto);
 	}
 
+	/**
+	 * 계약 삭제 메서드입니다.
+	 *
+	 * @param contractId 삭제할 계약 ID
+	 * @return 성공 여부
+	 */
 	@DeleteMapping("/contract/{contractId}")
 	public BaseResponse<Void> deleteContract(@PathVariable("contractId") Long contractId) {
 		contractService.deleteContract(contractId);

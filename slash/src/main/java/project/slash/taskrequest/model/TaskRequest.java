@@ -72,4 +72,12 @@ public class TaskRequest extends BaseTimeEntity {
 			.equipment(equipment)
 			.build();
 	}
+
+	public boolean isDeletable() {
+		return status == RequestStatus.REGISTERED;
+	}
+
+	public boolean isRequester(String userId) {
+		return requester.getId().equals(userId);
+	}
 }
