@@ -2,11 +2,8 @@ package project.slash.taskrequest.service;
 
 import static project.slash.system.exception.SystemsErrorCode.*;
 import static project.slash.taskrequest.exception.TaskRequestErrorCode.*;
-import static project.slash.taskrequest.model.constant.RequestStatus.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +13,6 @@ import project.slash.common.exception.BusinessException;
 import project.slash.system.model.Equipment;
 import project.slash.system.repository.EquipmentRepository;
 import project.slash.taskrequest.dto.response.StatusCountDto;
-import project.slash.taskrequest.dto.response.StatusCountResponseDto;
 import project.slash.taskrequest.dto.response.SystemCountDto;
 import project.slash.taskrequest.dto.request.TaskRequestDto;
 import project.slash.taskrequest.dto.response.TaskTypeCountDto;
@@ -25,7 +21,6 @@ import project.slash.taskrequest.dto.response.AllTaskTypeDto;
 import project.slash.taskrequest.dto.response.RequestDetailDto;
 import project.slash.taskrequest.model.TaskRequest;
 import project.slash.taskrequest.model.TaskType;
-import project.slash.taskrequest.model.constant.RequestStatus;
 import project.slash.taskrequest.repository.TaskRequestRepository;
 import project.slash.taskrequest.repository.TaskTypeRepository;
 
@@ -64,24 +59,8 @@ public class TaskRequestService {
 			taskRequestDto.isServiceRelevance()).orElseThrow(() -> new BusinessException(NOT_FOUND_TASK_TYPE));
 	}
 
-
-	public StatusCountResponseDto findCountByStatus(int year, int month, String user) {
-		List<StatusCountDto> result = taskRequestRepository.findCountByStatus(year, month, user);
-
-		Map<RequestStatus, Long> statusMap = new HashMap<>();
-		statusMap.put(REGISTERED, 0L);
-		statusMap.put(IN_PROGRESS, 0L);
-		statusMap.put(COMPLETED, 0L);
-		for (StatusCountDto statusCountDto : result) {
-			RequestStatus status = statusCountDto.getStatus();
-			statusMap.put(status, statusCountDto.getCount());
-		}
-		return new StatusCountResponseDto(
-			statusMap.get(REGISTERED) + statusMap.get(IN_PROGRESS) + statusMap.get(COMPLETED),
-			statusMap.get(REGISTERED),
-			statusMap.get(IN_PROGRESS),
-			statusMap.get(COMPLETED)
-		);
+	public List<StatusCountDto> findCountByStatus(int year, int month, String user){
+		return taskRequestRepository.findCountByStatus(year, month, user);
 	}
 
 	public List<TaskTypeCountDto> findCountByTaskType(int year, int month, String user) {
@@ -95,11 +74,12 @@ public class TaskRequestService {
 	}
 
 	public RequestManagerMainResponseDto getMonthlyRequestData(int year, int month, String user) {
-		StatusCountResponseDto statusCounts = findCountByStatus(year, month, user);
+		List<StatusCountDto> statusCounts = findCountByStatus(year, month, user);
 		List<TaskTypeCountDto> taskTypeCounts = findCountByTaskType(year, month, user);
 		List<SystemCountDto> systemCounts = findCountBySystem(year, month, user);
 
-		return new RequestManagerMainResponseDto(statusCounts, taskTypeCounts, systemCounts);}
+		return new RequestManagerMainResponseDto(statusCounts, taskTypeCounts, systemCounts);
+	}
 
 	public RequestDetailDto showRequestDetail(Long requestId) {
 		TaskRequest taskRequest = taskRequestRepository.findById(requestId)
