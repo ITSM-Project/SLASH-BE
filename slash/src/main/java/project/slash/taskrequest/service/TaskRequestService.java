@@ -37,10 +37,6 @@ public class TaskRequestService {
 	private final TaskRequestRepository taskRequestRepository;
 	private final EquipmentRepository equipmentRepository;
 
-	public List<String> showTaskTypes(String taskType) {
-		return taskTypeRepository.findAllByTaskType(taskType);
-	}
-
 	@Transactional
 	public void createRequest(TaskRequestDto taskRequestDto) {
 		TaskType taskType = findTaskType(taskRequestDto);
@@ -103,7 +99,7 @@ public class TaskRequestService {
 		List<TaskTypeCountDto> taskTypeCounts = findCountByTaskType(year, month, user);
 		List<SystemCountDto> systemCounts = findCountBySystem(year, month, user);
 
-		return new RequestManagerMainResponseDto(statusCounts, taskTypeCounts, systemCounts);
+		return new RequestManagerMainResponseDto(statusCounts, taskTypeCounts, systemCounts);}
 
 	public RequestDetailDto showRequestDetail(Long requestId) {
 		TaskRequest taskRequest = taskRequestRepository.findById(requestId)
