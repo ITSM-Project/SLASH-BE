@@ -20,9 +20,6 @@ public class CreateContractDto {
 	@NotNull(message = "계약 종료일은 필수입니다.")
 	LocalDate endDate;
 
-	@NotNull(message = "서비스 평가 항목은 필수입니다.")
-	List<String> categories;
-
 	@Valid @NotNull(message = "종합 평가 점수 기준은 필수입니다.")
 	List<GradeDto> totalTargets;
 }

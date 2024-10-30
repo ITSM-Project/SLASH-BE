@@ -46,11 +46,4 @@ public class EvaluationItem {
 	public static EvaluationItem from(String category) {
 		return new EvaluationItem(category);
 	}
-
-	void setContract(Contract contract) {
-		this.contract = contract;
-		if (!contract.getEvaluationItems().contains(this)) {
-			contract.getEvaluationItems().add(this);
-		}
-	}
 }

@@ -17,11 +17,11 @@ import lombok.NoArgsConstructor;
 import project.slash.contract.dto.GradeDto;
 
 @Entity
+@Getter
 @Table(name = "total_target")
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
-@Getter
 public class TotalTarget {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,12 +52,5 @@ public class TotalTarget {
 			.max(gradeDto.getMax())
 			.maxInclusive((gradeDto.getMaxInclusive()))
 			.build();
-	}
-
-	void setContract(Contract contract) {
-		this.contract = contract;
-		if (!contract.getTotalTargets().contains(this)) {
-			contract.getTotalTargets().add(this);
-		}
 	}
 }
