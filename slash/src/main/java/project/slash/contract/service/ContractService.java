@@ -12,7 +12,7 @@ import project.slash.common.exception.BusinessException;
 import project.slash.contract.dto.request.CreateContractDto;
 import project.slash.contract.dto.response.ContractDto;
 import project.slash.contract.dto.response.ContractInfoDto;
-import project.slash.contract.dto.response.EvaluationItemDto;
+import project.slash.contract.dto.response.PreviewEvaluationItemDto;
 import project.slash.contract.model.Contract;
 import project.slash.contract.model.TotalTarget;
 import project.slash.contract.repository.ContractRepository;
@@ -43,7 +43,7 @@ public class ContractService {
 		ContractDto contractDto = contractRepository.findContractById(contractId)
 			.orElseThrow(() -> new BusinessException(NOT_FOUND_CONTRACT));
 
-		List<EvaluationItemDto> evaluationItemInfos = evaluationItemRepository.findEvaluationItemInfos(contractId);
-		return ContractInfoDto.of(contractId, contractDto, evaluationItemInfos);
+		List<PreviewEvaluationItemDto> evaluationItems = evaluationItemRepository.findEvaluationItem(contractId);
+		return ContractInfoDto.of(contractId, contractDto, evaluationItems);
 	}
 }

@@ -26,16 +26,16 @@ public class ContractInfoDto {
 
 	private List<GradeDto> totalTargets;
 
-	private List<EvaluationItemDto> evaluationItemInfos;
+	private List<PreviewEvaluationItemDto> evaluationItems;
 
-	public static ContractInfoDto of(Long contractId, ContractDto contractDto, List<EvaluationItemDto> evaluationItemInfos) {
+	public static ContractInfoDto of(Long contractId, ContractDto contractDto, List<PreviewEvaluationItemDto> evaluationItems) {
 		return new ContractInfoDto(
 			contractId,
 			contractDto.getCompanyName(),
 			contractDto.getStartDate(),
 			contractDto.getEndDate(),
 			contractDto.getTotalTargets(),
-			evaluationItemInfos
+			evaluationItems
 		);
 	}
 }

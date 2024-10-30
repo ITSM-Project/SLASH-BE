@@ -45,8 +45,9 @@ public class EvaluationItem {
 	@JoinColumn(name = "contract_id")
 	private Contract contract;
 
-	public static EvaluationItem from(CreateEvaluationItemDto createEvaluationItemDto) {
+	public static EvaluationItem from(CreateEvaluationItemDto createEvaluationItemDto, Contract contract) {
 		return EvaluationItem.builder()
+			.contract(contract)
 			.category(createEvaluationItemDto.getCategory())
 			.weight(createEvaluationItemDto.getWeight())
 			.period(createEvaluationItemDto.getPeriod())

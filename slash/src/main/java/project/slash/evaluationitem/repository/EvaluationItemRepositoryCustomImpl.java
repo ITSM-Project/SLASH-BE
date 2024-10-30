@@ -6,12 +6,15 @@ import static project.slash.evaluationitem.model.QEvaluationItem.*;
 import static project.slash.evaluationitem.model.QServiceTarget.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import project.slash.contract.dto.GradeDto;
-import project.slash.contract.dto.response.EvaluationItemDto;
+import project.slash.contract.dto.response.PreviewEvaluationItemDto;
+import project.slash.evaluationitem.dto.ServiceTargetDto;
+import project.slash.evaluationitem.dto.response.EvaluationItemDto;
 
 public class EvaluationItemRepositoryCustomImpl implements EvaluationItemRepositoryCustom {
 	private final JPAQueryFactory queryFactory;
@@ -21,45 +24,44 @@ public class EvaluationItemRepositoryCustomImpl implements EvaluationItemReposit
 	}
 
 	@Override
-	public List<EvaluationItemDto> findEvaluationItemInfos(Long contractId) {
+	public List<PreviewEvaluationItemDto> findEvaluationItem(Long contractId) {
 		return queryFactory
 			.from(evaluationItem)
 			.leftJoin(serviceTarget).on(serviceTarget.evaluationItem.id.eq(evaluationItem.id))
 			.where(evaluationItem.contract.id.eq(contractId))
 			.transform(groupBy(evaluationItem.id)
-				.list(constructor(EvaluationItemDto.class,
-						evaluationItem.id.as("categoryId"),
-						evaluationItem.category.as("categoryName"),
-						list(constructGradeDto())
+				.list(constructor(PreviewEvaluationItemDto.class,
+						evaluationItem.id,
+						evaluationItem.category,
+						list(constructTargetDto(GradeDto.class))
 					)
 				)
 			);
 	}
 
-	// @Override
-	// public Optional<EvaluationItemDetailDto> findEvaluationItemDetail(Long categoryId) {
-	// 	return queryFactory
-	// 		.from(evaluationItem)
-	// 		.leftJoin(serviceTarget).on(serviceTarget.evaluationItem.id.eq(evaluationItem.id))
-	// 		.where(evaluationItem.id.eq(categoryId))
-	// 		.transform(groupBy(evaluationItem.id)
-	// 			.list(constructor(EvaluationItemDetailDto.class,
-	// 					evaluationItem.id.as("categoryId"),
-	// 					evaluationItem.category.as("categoryName"),
-	// 					serviceDetail.weight,
-	// 					serviceDetail.period,
-	// 					serviceDetail.purpose,
-	// 					serviceDetail.formula,
-	// 					serviceDetail.unit,
-	// 					list(constructGradeDto()
-	// 					),
-	// 					Expressions.constant(new ArrayList<>())
-	// 				)
-	// 			)).stream().findFirst();
-	// }
+	@Override
+	public Optional<EvaluationItemDto> findEvaluationItemDetail(Long evaluationItemId) {
+		return queryFactory
+			.from(evaluationItem)
+			.leftJoin(serviceTarget).on(serviceTarget.evaluationItem.id.eq(evaluationItem.id))
+			.where(evaluationItem.id.eq(evaluationItemId))
+			.transform(groupBy(evaluationItem.id)
+				.list(constructor(EvaluationItemDto.class,
+						evaluationItem.id,
+						evaluationItem.category,
+						evaluationItem.weight,
+						evaluationItem.period,
+						evaluationItem.purpose,
+						evaluationItem.formula,
+						evaluationItem.unit,
+						list(constructTargetDto(ServiceTargetDto.class)
+						)
+					)
+				)).stream().findFirst();
+	}
 
-	private static ConstructorExpression<GradeDto> constructGradeDto() {
-		return constructor(GradeDto.class,
+	private static <T> ConstructorExpression<T> constructTargetDto(Class<T> dtoClass) {
+		return constructor(dtoClass,
 			serviceTarget.grade,
 			serviceTarget.min,
 			serviceTarget.max,

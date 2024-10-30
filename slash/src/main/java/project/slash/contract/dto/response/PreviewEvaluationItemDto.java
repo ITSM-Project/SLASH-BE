@@ -11,12 +11,8 @@ import project.slash.contract.dto.GradeDto;
 @Getter
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class EvaluationItemDto {
-	private Long categoryId;
+public class PreviewEvaluationItemDto {
+	private Long evaluationItemId;
 	private String categoryName;
 	private List<GradeDto> serviceTargets;
-
-	// public static EvaluationItemDto of(Long categoryId, String categoryName, List<ServiceTarget> serviceTargets) {
-	// 	return new EvaluationItemDto(categoryId, categoryName, GradeDto.fromServiceTargets(serviceTargets));
-	// }
 }
