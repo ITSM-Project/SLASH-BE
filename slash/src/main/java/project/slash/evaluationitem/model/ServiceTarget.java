@@ -1,4 +1,4 @@
-package project.slash.contract.model;
+package project.slash.evaluationitem.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,6 +15,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.slash.contract.dto.GradeDto;
+import project.slash.evaluationitem.dto.ServiceTargetDto;
 
 @Entity
 @Table(name = "service_target")
@@ -46,7 +47,7 @@ public class ServiceTarget {
 	@JoinColumn(name = "evaluation_item_id")
 	private EvaluationItem evaluationItem;
 
-	public static ServiceTarget from(GradeDto serviceTarget, EvaluationItem evaluationItem) {
+	public static ServiceTarget from(ServiceTargetDto serviceTarget, EvaluationItem evaluationItem) {
 		return ServiceTarget.builder()
 			.grade(serviceTarget.getGrade())
 			.min(serviceTarget.getMin())

@@ -1,4 +1,4 @@
-package project.slash.contract.model;
+package project.slash.evaluationitem.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,12 +10,18 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import project.slash.evaluationitem.dto.request.CreateEvaluationItemDto;
+import project.slash.contract.model.Contract;
 
 @Entity
 @Table(name = "evaluation_item")
 @Getter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EvaluationItem {
 	@Id
@@ -38,4 +44,15 @@ public class EvaluationItem {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "contract_id")
 	private Contract contract;
+
+	public static EvaluationItem from(CreateEvaluationItemDto createEvaluationItemDto) {
+		return EvaluationItem.builder()
+			.category(createEvaluationItemDto.getCategory())
+			.weight(createEvaluationItemDto.getWeight())
+			.period(createEvaluationItemDto.getPeriod())
+			.purpose(createEvaluationItemDto.getPurpose())
+			.formula(createEvaluationItemDto.getFormula())
+			.unit(createEvaluationItemDto.getUnit())
+			.build();
+	}
 }
