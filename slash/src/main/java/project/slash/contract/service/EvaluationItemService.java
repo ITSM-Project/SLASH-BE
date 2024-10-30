@@ -14,10 +14,8 @@ import project.slash.contract.dto.TaskTypeDto;
 import project.slash.contract.dto.request.CreateDetailDto;
 import project.slash.contract.dto.response.EvaluationItemDetailDto;
 import project.slash.contract.model.EvaluationItem;
-import project.slash.contract.model.ServiceDetail;
 import project.slash.contract.model.ServiceTarget;
 import project.slash.contract.repository.evaluationItem.EvaluationItemRepository;
-import project.slash.contract.repository.ServiceDetailRepository;
 import project.slash.contract.repository.ServiceTargetRepository;
 import project.slash.taskrequest.model.TaskType;
 import project.slash.taskrequest.repository.TaskTypeRepository;
@@ -26,7 +24,6 @@ import project.slash.taskrequest.repository.TaskTypeRepository;
 @RequiredArgsConstructor
 public class EvaluationItemService {
 	private final EvaluationItemRepository evaluationItemRepository;
-	private final ServiceDetailRepository serviceDetailRepository;
 	private final ServiceTargetRepository serviceTargetRepository;
 	private final TaskTypeRepository taskTypeRepository;
 
@@ -35,14 +32,8 @@ public class EvaluationItemService {
 		EvaluationItem evaluationItem = evaluationItemRepository.findById(detailDto.getCategoryId())
 			.orElseThrow(() -> new BusinessException(NOT_FOUND_ITEMS));
 
-		saveServiceDetail(detailDto, evaluationItem);
 		saveServiceTargets(detailDto.getServiceTargets(), evaluationItem);
 		saveTaskTypes(detailDto.getTaskTypes(), evaluationItem);
-	}
-
-	private void saveServiceDetail(CreateDetailDto detailDto, EvaluationItem evaluationItem) {
-		ServiceDetail serviceDetail = ServiceDetail.from(detailDto, evaluationItem);
-		serviceDetailRepository.save(serviceDetail);
 	}
 
 	private void saveTaskTypes(List<TaskTypeDto> types, EvaluationItem evaluationItem) {

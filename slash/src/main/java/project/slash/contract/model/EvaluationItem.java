@@ -25,6 +25,16 @@ public class EvaluationItem {
 
 	private String category;    //서비스 항목
 
+	private int weight;
+
+	private String period;
+
+	private String purpose;
+
+	private String formula;
+
+	private String unit;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "contract_id")
 	private Contract contract;

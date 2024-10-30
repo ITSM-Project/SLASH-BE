@@ -29,7 +29,6 @@ public class EvaluationItemRepositoryCustomImpl implements EvaluationItemReposit
 	public List<EvaluationItemDto> findEvaluationItemInfos(Long contractId) {
 		return queryFactory
 			.from(evaluationItem)
-			.leftJoin(serviceDetail).on(serviceDetail.evaluationItem.id.eq(evaluationItem.id))
 			.leftJoin(serviceTarget).on(serviceTarget.evaluationItem.id.eq(evaluationItem.id))
 			.where(evaluationItem.contract.id.eq(contractId))
 			.transform(groupBy(evaluationItem.id)
@@ -50,7 +49,6 @@ public class EvaluationItemRepositoryCustomImpl implements EvaluationItemReposit
 	public Optional<EvaluationItemDetailDto> findEvaluationItemDetail(Long categoryId) {
 		return queryFactory
 			.from(evaluationItem)
-			.leftJoin(serviceDetail).on(serviceDetail.evaluationItem.id.eq(evaluationItem.id))
 			.leftJoin(serviceTarget).on(serviceTarget.evaluationItem.id.eq(evaluationItem.id))
 			.where(evaluationItem.id.eq(categoryId))
 			.transform(groupBy(evaluationItem.id)
