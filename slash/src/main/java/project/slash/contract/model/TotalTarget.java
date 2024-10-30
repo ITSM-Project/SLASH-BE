@@ -44,10 +44,6 @@ public class TotalTarget {
 	@JoinColumn(name = "contract_id")
 	private Contract contract;
 
-	void setContract(Contract contract) {
-		this.contract = contract;
-	}
-
 	public static TotalTarget from(GradeDto gradeDto) {
 		return TotalTarget.builder()
 			.grade(gradeDto.getGrade())
@@ -56,5 +52,12 @@ public class TotalTarget {
 			.max(gradeDto.getMax())
 			.maxInclusive((gradeDto.getMaxInclusive()))
 			.build();
+	}
+
+	void setContract(Contract contract) {
+		this.contract = contract;
+		if (!contract.getTotalTargets().contains(this)) {
+			contract.getTotalTargets().add(this);
+		}
 	}
 }

@@ -14,6 +14,7 @@ import project.slash.system.model.Equipment;
 import project.slash.system.repository.EquipmentRepository;
 import project.slash.taskrequest.dto.request.TaskRequestDto;
 import project.slash.taskrequest.dto.response.AllTaskTypeDto;
+import project.slash.taskrequest.dto.response.RequestDetailDto;
 import project.slash.taskrequest.model.TaskRequest;
 import project.slash.taskrequest.model.TaskType;
 import project.slash.taskrequest.repository.TaskRequestRepository;
@@ -51,5 +52,12 @@ public class TaskRequestService {
 		return taskTypeRepository.findTaskTypeByTaskRequestInfo(taskRequestDto.getType(),
 			taskRequestDto.getTaskDetail(),
 			taskRequestDto.isServiceRelevance()).orElseThrow(() -> new BusinessException(NOT_FOUND_TASK_TYPE));
+	}
+
+	public RequestDetailDto showRequestDetail(Long requestId) {
+		TaskRequest taskRequest = taskRequestRepository.findById(requestId)
+			.orElseThrow(() -> new BusinessException(NOT_FOUND_REQUEST));
+
+		return RequestDetailDto.from(taskRequest);
 	}
 }
