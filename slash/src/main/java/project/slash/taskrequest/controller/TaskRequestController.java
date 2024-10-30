@@ -1,5 +1,7 @@
 package project.slash.taskrequest.controller;
 
+import java.util.List;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -51,6 +53,7 @@ public class TaskRequestController {
 		String user) {
 		RequestManagerMainResponseDto requestManager = taskRequestService.getMonthlyRequestData(year, month, "1");
 		return BaseResponse.ok(requestManager);
+	}
 
 	/**
 	 * 요청 내용 상세보기 메서드입니다.

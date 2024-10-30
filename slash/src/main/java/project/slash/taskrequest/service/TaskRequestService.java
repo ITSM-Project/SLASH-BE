@@ -37,8 +37,8 @@ public class TaskRequestService {
 	private final TaskRequestRepository taskRequestRepository;
 	private final EquipmentRepository equipmentRepository;
 
-	public List<String> showTaskTypes(String taskType) {
-		return taskTypeRepository.findAllByTaskType(taskType);
+	public List<AllTaskTypeDto> allTaskTypes() {
+		return taskTypeRepository.findAllTaskTypes();
 	}
 
 	@Transactional
@@ -58,16 +58,11 @@ public class TaskRequestService {
 			.orElseThrow(() -> new BusinessException(NOT_FOUND_EQUIPMENT));
 	}
 
-	public List<AllTaskTypeDto> allTaskTypes() {
-		return taskTypeRepository.findAllTaskTypes();
-	}
-
 	private TaskType findTaskType(TaskRequestDto taskRequestDto) {
 		return taskTypeRepository.findTaskTypeByTaskRequestInfo(taskRequestDto.getType(),
 			taskRequestDto.getTaskDetail(),
 			taskRequestDto.isServiceRelevance()).orElseThrow(() -> new BusinessException(NOT_FOUND_TASK_TYPE));
 	}
-
 
 	public StatusCountResponseDto findCountByStatus(int year, int month, String user) {
 		List<StatusCountDto> result = taskRequestRepository.findCountByStatus(year, month, user);
@@ -104,12 +99,12 @@ public class TaskRequestService {
 		List<SystemCountDto> systemCounts = findCountBySystem(year, month, user);
 
 		return new RequestManagerMainResponseDto(statusCounts, taskTypeCounts, systemCounts);
+	}
 
 	public RequestDetailDto showRequestDetail(Long requestId) {
 		TaskRequest taskRequest = taskRequestRepository.findById(requestId)
 			.orElseThrow(() -> new BusinessException(NOT_FOUND_REQUEST));
 
 		return RequestDetailDto.from(taskRequest);
-
 	}
 }
