@@ -36,7 +36,7 @@ public class TaskTypeRepositoryCustomImpl implements TaskTypeRepositoryCustom {
 			.transform(GroupBy.groupBy(taskType.type).list(
 				constructor(AllTaskTypeDto.class,
 					taskType.type,
-					GroupBy.list(taskType.taskDetail))
+					GroupBy.set(taskType.taskDetail))
 			));
 	}
 }
