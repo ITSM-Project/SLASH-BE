@@ -1,6 +1,4 @@
-package project.slash.contract.service;
-
-import static project.slash.contract.exception.ContractErrorCode.*;
+package project.slash.evaluationitem.service;
 
 import java.util.List;
 
@@ -8,15 +6,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import project.slash.common.exception.BusinessException;
 import project.slash.contract.dto.GradeDto;
-import project.slash.contract.dto.TaskTypeDto;
-import project.slash.contract.dto.request.CreateDetailDto;
-import project.slash.contract.dto.response.EvaluationItemDetailDto;
-import project.slash.contract.model.EvaluationItem;
-import project.slash.contract.model.ServiceTarget;
-import project.slash.contract.repository.evaluationItem.EvaluationItemRepository;
-import project.slash.contract.repository.ServiceTargetRepository;
+import project.slash.evaluationitem.dto.ServiceTargetDto;
+import project.slash.evaluationitem.dto.TaskTypeDto;
+import project.slash.evaluationitem.dto.request.CreateEvaluationItemDto;
+import project.slash.evaluationitem.model.EvaluationItem;
+import project.slash.evaluationitem.model.ServiceTarget;
+import project.slash.evaluationitem.repository.EvaluationItemRepository;
+import project.slash.evaluationitem.repository.ServiceTargetRepository;
 import project.slash.taskrequest.model.TaskType;
 import project.slash.taskrequest.repository.TaskTypeRepository;
 
@@ -28,12 +25,12 @@ public class EvaluationItemService {
 	private final TaskTypeRepository taskTypeRepository;
 
 	@Transactional
-	public void createDetail(CreateDetailDto detailDto) {
-		EvaluationItem evaluationItem = evaluationItemRepository.findById(detailDto.getCategoryId())
-			.orElseThrow(() -> new BusinessException(NOT_FOUND_ITEMS));
+	public void createEvaluationItem(CreateEvaluationItemDto createEvaluationItemDto) {
+		EvaluationItem evaluationItem = EvaluationItem.from(createEvaluationItemDto);
+		evaluationItemRepository.save(evaluationItem); //서비스 평가 항목 저장
 
-		saveServiceTargets(detailDto.getServiceTargets(), evaluationItem);
-		saveTaskTypes(detailDto.getTaskTypes(), evaluationItem);
+		saveServiceTargets(createEvaluationItemDto.getServiceTargets(), evaluationItem);	//서비스 목표 저장
+		saveTaskTypes(createEvaluationItemDto.getTaskTypes(), evaluationItem);	//업무 유형 저장
 	}
 
 	private void saveTaskTypes(List<TaskTypeDto> types, EvaluationItem evaluationItem) {
@@ -43,7 +40,7 @@ public class EvaluationItemService {
 		taskTypeRepository.saveAll(taskTypes);
 	}
 
-	private void saveServiceTargets(List<GradeDto> targets, EvaluationItem evaluationItem) {
+	private void saveServiceTargets(List<ServiceTargetDto> targets, EvaluationItem evaluationItem) {
 		List<ServiceTarget> serviceTargets = targets.stream()
 			.map(target -> ServiceTarget.from(target, evaluationItem))
 			.toList();

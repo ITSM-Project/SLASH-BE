@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import project.slash.contract.dto.GradeDto;
-import project.slash.contract.model.ServiceTarget;
 
 @Getter
 @AllArgsConstructor

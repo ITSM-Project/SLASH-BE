@@ -1,4 +1,4 @@
-package project.slash.contract.repository.contract;
+package project.slash.contract.repository;
 
 import static project.slash.contract.model.QContract.*;
 import static project.slash.contract.model.QTotalTarget.*;
@@ -10,8 +10,9 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import project.slash.contract.dto.GradeDto;
 import project.slash.contract.dto.response.ContractDto;
+import project.slash.contract.repository.ContractRepositoryCustom;
 
-public class ContractRepositoryCustomImpl implements ContractRepositoryCustom{
+public class ContractRepositoryCustomImpl implements ContractRepositoryCustom {
 	private final JPAQueryFactory queryFactory;
 
 	public ContractRepositoryCustomImpl(JPAQueryFactory queryFactory) {

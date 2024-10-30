@@ -1,9 +1,9 @@
-package project.slash.contract.repository.evaluationItem;
+package project.slash.evaluationitem.repository;
 
 import static com.querydsl.core.group.GroupBy.*;
 import static com.querydsl.core.types.Projections.*;
-import static project.slash.contract.model.QEvaluationItem.*;
-import static project.slash.contract.model.QServiceTarget.*;
+import static project.slash.evaluationitem.model.QEvaluationItem.*;
+import static project.slash.evaluationitem.model.QServiceTarget.*;
 
 import java.util.List;
 

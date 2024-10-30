@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.slash.contract.dto.GradeDto;
-import project.slash.contract.dto.TaskTypeDto;
+import project.slash.evaluationitem.dto.TaskTypeDto;
 
 @Getter
 @AllArgsConstructor

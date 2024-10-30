@@ -1,4 +1,4 @@
-package project.slash.contract.repository.contract;
+package project.slash.contract.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

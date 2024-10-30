@@ -15,9 +15,9 @@ import project.slash.contract.dto.response.ContractInfoDto;
 import project.slash.contract.dto.response.EvaluationItemDto;
 import project.slash.contract.model.Contract;
 import project.slash.contract.model.TotalTarget;
-import project.slash.contract.repository.contract.ContractRepository;
+import project.slash.contract.repository.ContractRepository;
 import project.slash.contract.repository.TotalTargetRepository;
-import project.slash.contract.repository.evaluationItem.EvaluationItemRepository;
+import project.slash.evaluationitem.repository.EvaluationItemRepository;
 
 @Service
 @RequiredArgsConstructor
