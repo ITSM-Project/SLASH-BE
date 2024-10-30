@@ -44,8 +44,9 @@ public class TotalTarget {
 	@JoinColumn(name = "contract_id")
 	private Contract contract;
 
-	public static TotalTarget from(GradeDto gradeDto) {
+	public static TotalTarget from(GradeDto gradeDto, Contract contract) {
 		return TotalTarget.builder()
+			.contract(contract)
 			.grade(gradeDto.getGrade())
 			.min(gradeDto.getMin())
 			.minInclusive(gradeDto.getMinInclusive())

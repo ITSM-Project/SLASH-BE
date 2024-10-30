@@ -42,8 +42,4 @@ public class EvaluationItem {
 	private EvaluationItem(String category) {
 		this.category = category;
 	}
-
-	public static EvaluationItem from(String category) {
-		return new EvaluationItem(category);
-	}
 }
