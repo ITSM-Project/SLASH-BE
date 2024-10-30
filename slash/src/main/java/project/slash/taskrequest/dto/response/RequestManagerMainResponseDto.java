@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class RequestManagerMainResponseDto {
-	StatusCountResponseDto statusCountRequest;
+	List<StatusCountDto> statusCountList;
 	List<TaskTypeCountDto> taskTypeCountList;
 	List<SystemCountDto> systemCountList;
 }

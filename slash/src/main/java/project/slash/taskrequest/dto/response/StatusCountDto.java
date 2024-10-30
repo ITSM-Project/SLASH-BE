@@ -7,6 +7,6 @@ import project.slash.taskrequest.model.constant.RequestStatus;
 @Getter
 @AllArgsConstructor
 public class StatusCountDto {
-	private RequestStatus status;
+	private RequestStatus name;
 	private long count;
 }
