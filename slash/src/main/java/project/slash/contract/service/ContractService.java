@@ -2,6 +2,7 @@ package project.slash.contract.service;
 
 import static project.slash.contract.exception.ContractErrorCode.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -47,12 +48,15 @@ public class ContractService {
 		return ContractInfoDto.of(contractId, contractDto, evaluationItems);
 	}
 
+	@Transactional
 	public void deleteContract(Long contractId) {
 		Contract contract = contractRepository.findById(contractId)
 			.orElseThrow(() -> new BusinessException(NOT_FOUND_CONTRACT));
 
-		if(!contract.isTerminate()){
+		if(LocalDate.now().isAfter(contract.getEndDate())){
 			throw new BusinessException(NOT_TERMINATE_CONTRACT);
 		}
+
+		contract.updateTerminateStatus();
 	}
 }

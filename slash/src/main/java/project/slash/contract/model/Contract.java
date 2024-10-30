@@ -48,4 +48,8 @@ public class Contract {
 			.endDate(dto.getEndDate())
 			.build();
 	}
+
+	public void updateTerminateStatus() {
+		this.isTerminate = true;
+	}
 }
