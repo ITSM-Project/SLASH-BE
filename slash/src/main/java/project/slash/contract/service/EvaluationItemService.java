@@ -50,13 +50,13 @@ public class EvaluationItemService {
 		serviceTargetRepository.saveAll(serviceTargets);
 	}
 
-	public EvaluationItemDetailDto findDetailByCategoryId(Long categoryId) {
-		EvaluationItemDetailDto evaluationItemDetail = evaluationItemRepository.findEvaluationItemDetail(categoryId)
-			.orElseThrow(() -> new BusinessException(NOT_FOUND_ITEMS));
-
-		List<TaskTypeDto> taskTypes = taskTypeRepository.findTaskTypesByEvaluationItemId(categoryId).stream()
-			.map(TaskTypeDto::from).toList();
-
-		return evaluationItemDetail.withTaskTypes(taskTypes);
-	}
+	// public EvaluationItemDetailDto findDetailByCategoryId(Long categoryId) {
+	// 	// EvaluationItemDetailDto evaluationItemDetail = evaluationItemRepository.findEvaluationItemDetail(categoryId)
+	// 	// 	.orElseThrow(() -> new BusinessException(NOT_FOUND_ITEMS));
+	//
+	// 	List<TaskTypeDto> taskTypes = taskTypeRepository.findTaskTypesByEvaluationItemId(categoryId).stream()
+	// 		.map(TaskTypeDto::from).toList();
+	//
+	// 	return evaluationItemDetail.withTaskTypes(taskTypes);
+	// }
 }

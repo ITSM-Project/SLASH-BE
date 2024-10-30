@@ -38,8 +38,4 @@ public class EvaluationItem {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "contract_id")
 	private Contract contract;
-
-	private EvaluationItem(String category) {
-		this.category = category;
-	}
 }
