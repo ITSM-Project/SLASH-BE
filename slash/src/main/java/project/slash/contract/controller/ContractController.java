@@ -58,4 +58,6 @@ public class ContractController {
 
 		return BaseResponse.ok();
 	}
+
+	//TODO: 지금 존재한 모든 계약 정보 내려주는 API
 }

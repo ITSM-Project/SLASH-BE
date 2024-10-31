@@ -9,9 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TaskRequestDto {
-	@NotEmpty(message = "업무 유형은 필수입니다.")
-	private String type;
-
 	@NotEmpty(message = "장비 이름은 필수입니다.")
 	private String equipmentName;
 
