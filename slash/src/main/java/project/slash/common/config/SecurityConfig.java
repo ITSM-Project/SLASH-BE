@@ -16,7 +16,6 @@ import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -25,7 +24,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 import project.slash.security.auth.CustomUserDetailService;
-import project.slash.security.auth.JsonAuthenticationFilter;
 import project.slash.security.auth.UserAuthFailureHandler;
 import project.slash.security.auth.UserAuthSuccessHandler;
 
@@ -41,12 +39,6 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http,
 		AuthenticationManager authenticationManager) throws Exception {
-		JsonAuthenticationFilter jsonFilter =
-			new JsonAuthenticationFilter("/login", objectMapper, customUserDetailsService, passwordEncoder());
-
-		jsonFilter.setAuthenticationManager(authenticationManager);
-		jsonFilter.setAuthenticationSuccessHandler(successHandler);
-		jsonFilter.setAuthenticationFailureHandler(failureHandler);
 		http
 			.csrf(AbstractHttpConfigurer::disable)
 			.authorizeHttpRequests(requests -> requests
@@ -73,8 +65,7 @@ public class SecurityConfig {
 				.maxSessionsPreventsLogin(true)  // 기존 세션이 있으면 새로운 로그인 차단
 				.sessionRegistry(sessionRegistry())  // 세션 레지스트리 등록
 			)
-			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
-			.addFilterAt(jsonFilter, UsernamePasswordAuthenticationFilter.class);
+			.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 		return http.build();
 	}
 
