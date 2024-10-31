@@ -54,7 +54,7 @@ public class ContractController {
 	 *
 	 * @return 모든 계약 정보
 	 */
-	@GetMapping("/contract")
+	@GetMapping("/all-contract")
 	public BaseResponse<List<AllContractDto>> showAllContract() {
 		List<AllContractDto> allContracts = contractService.showAllContract();
 
