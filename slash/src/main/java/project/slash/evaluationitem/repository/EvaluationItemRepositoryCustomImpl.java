@@ -47,6 +47,7 @@ public class EvaluationItemRepositoryCustomImpl implements EvaluationItemReposit
 			.where(evaluationItem.id.eq(evaluationItemId))
 			.transform(groupBy(evaluationItem.id)
 				.list(constructor(EvaluationItemDto.class,
+						evaluationItem.contract.id,
 						evaluationItem.id,
 						evaluationItem.category,
 						evaluationItem.weight,

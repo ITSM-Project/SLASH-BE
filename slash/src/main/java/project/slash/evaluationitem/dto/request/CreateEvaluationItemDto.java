@@ -1,5 +1,6 @@
 package project.slash.evaluationitem.dto.request;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.validation.Valid;
@@ -33,7 +34,7 @@ public class CreateEvaluationItemDto {
 	private String unit;
 
 	@Valid
-	private List<TaskTypeDto> taskTypes;
+	private List<TaskTypeDto> taskTypes = new ArrayList<>();
 
 	@Valid
 	@NotNull(message = "서비스 목표는 필수입니다.")
