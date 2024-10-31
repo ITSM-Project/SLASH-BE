@@ -49,9 +49,9 @@ public class TaskRequestController {
 	}
 
 	@GetMapping("/monthly-data")
-	public BaseResponse<?> getMonthlyRequestData(@RequestParam("year") int year, @RequestParam("month") int month,
-		String user) {
+	public BaseResponse<?> getMonthlyRequestData(@RequestParam("year") int year, @RequestParam("month") int month, String user) {
 		RequestManagerMainResponseDto requestManager = taskRequestService.getMonthlyRequestData(year, month, "1");
+
 		return BaseResponse.ok(requestManager);
 	}
 
