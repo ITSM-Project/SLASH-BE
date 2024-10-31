@@ -1,6 +1,7 @@
 package project.slash.contract.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,23 +23,24 @@ public class ContractController {
 	 * 계약 생성 메서드입니다.
 	 *
 	 * @param createContractDto 계약 생성 정보
-	 * @return 성공 여부
+	 * @return 저장된 계약 ID
 	 */
 	@PostMapping("/contract")
-	public BaseResponse<Void> createContract(@RequestBody @Valid CreateContractDto createContractDto) {
-		contractService.createContract(createContractDto);
+	public BaseResponse<Long> createContract(@RequestBody @Valid CreateContractDto createContractDto) {
+		Long contractId = contractService.createContract(createContractDto);
 
-		return BaseResponse.ok();
+		return BaseResponse.ok(contractId);
 	}
 
 	/**
 	 * 계약 내용 조회 메서드입니다.
 	 *
-	 * @return 계약 내용
+	 * @param contractId 조회 할 계약 아이디
+	 * @return 게약 내용
 	 */
-	@GetMapping("/contract")
-	public BaseResponse<ContractInfoDto> showContractInfo() {
-		ContractInfoDto contractInfoDto = contractService.showContractInfo();
+	@GetMapping("/contract/{contractId}")
+	public BaseResponse<ContractInfoDto> showContractInfo(@PathVariable("contractId") Long contractId) {
+		ContractInfoDto contractInfoDto = contractService.showContractInfo(contractId);
 
 		return BaseResponse.ok(contractInfoDto);
 	}

@@ -48,6 +48,13 @@ public class TaskRequestController {
 		return BaseResponse.ok();
 	}
 
+	@GetMapping("/monthly-data")
+	public BaseResponse<?> getMonthlyRequestData(@RequestParam("year") int year, @RequestParam("month") int month, String user) {
+		RequestManagerMainResponseDto requestManager = taskRequestService.getMonthlyRequestData(year, month, "1");
+
+		return BaseResponse.ok(requestManager);
+	}
+
 	/**
 	 * 요청 내용 상세보기 메서드입니다.
 	 *
@@ -60,12 +67,5 @@ public class TaskRequestController {
 
 		return BaseResponse.ok(requestDetailDto);
 
-	}
-
-	@GetMapping("/monthly-data")
-	public BaseResponse<?> getMonthlyRequestData(@RequestParam("year") int year, @RequestParam("month") int month,
-		String user) {
-		RequestManagerMainResponseDto requestManager = taskRequestService.getMonthlyRequestData(year, month, "1");
-		return BaseResponse.ok(requestManager);
 	}
 }

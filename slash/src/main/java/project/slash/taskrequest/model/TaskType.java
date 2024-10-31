@@ -14,8 +14,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.slash.contract.dto.TaskTypeDto;
-import project.slash.contract.model.EvaluationItem;
+import project.slash.evaluationitem.dto.TaskTypeDto;
+import project.slash.evaluationitem.model.EvaluationItem;
 
 @Entity
 @Table(name = "task_type")

@@ -1,4 +1,4 @@
-package project.slash.contract.dto;
+package project.slash.evaluationitem.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class GradeDto {
+public class ServiceTargetDto {
 	@NotBlank(message = "등급은 필수입니다.")
 	private String grade;
 
@@ -22,6 +22,7 @@ public class GradeDto {
 	@NotNull(message = "최대값은 필수입니다.")
 	private Double max;
 
+	@NotNull(message = "점수는 필수입니다.")
 	private Double score;
 
 	@NotNull(message = "최소단위 포함여부는 필수입니다.")

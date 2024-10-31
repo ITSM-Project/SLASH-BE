@@ -22,7 +22,5 @@ public class ContractDto {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private LocalDate endDate;
 
-	private List<String> categories;
-
 	private List<GradeDto> totalTargets;
 }

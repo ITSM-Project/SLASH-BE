@@ -32,6 +32,10 @@ public class TaskRequestService {
 	private final TaskRequestRepository taskRequestRepository;
 	private final EquipmentRepository equipmentRepository;
 
+	public List<AllTaskTypeDto> allTaskTypes() {
+		return taskTypeRepository.findAllTaskTypes();
+	}
+
 	@Transactional
 	public void createRequest(TaskRequestDto taskRequestDto) {
 		TaskType taskType = findTaskType(taskRequestDto);
@@ -47,10 +51,6 @@ public class TaskRequestService {
 	private Equipment findEquipment(TaskRequestDto taskRequestDto) {
 		return equipmentRepository.findByName(taskRequestDto.getEquipmentName())
 			.orElseThrow(() -> new BusinessException(NOT_FOUND_EQUIPMENT));
-	}
-
-	public List<AllTaskTypeDto> allTaskTypes() {
-		return taskTypeRepository.findAllTaskTypes();
 	}
 
 	private TaskType findTaskType(TaskRequestDto taskRequestDto) {
@@ -86,6 +86,5 @@ public class TaskRequestService {
 			.orElseThrow(() -> new BusinessException(NOT_FOUND_REQUEST));
 
 		return RequestDetailDto.from(taskRequest);
-
 	}
 }
