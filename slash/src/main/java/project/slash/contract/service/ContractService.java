@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import project.slash.common.exception.BusinessException;
 import project.slash.contract.dto.request.CreateContractDto;
+import project.slash.contract.dto.response.AllContractDto;
 import project.slash.contract.dto.response.ContractDto;
 import project.slash.contract.dto.response.ContractInfoDto;
 import project.slash.contract.dto.response.PreviewEvaluationItemDto;
@@ -58,5 +59,12 @@ public class ContractService {
 		}
 
 		contract.updateTerminateStatus();
+	}
+
+	public List<AllContractDto> showAllContract() {
+		List<Contract> allContracts = contractRepository.findAllByOrderByStartDateDesc();
+
+		return allContracts.stream()
+			.map(AllContractDto::from).toList();
 	}
 }

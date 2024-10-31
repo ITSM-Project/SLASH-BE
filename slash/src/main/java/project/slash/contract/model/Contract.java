@@ -35,10 +35,11 @@ public class Contract {
 	private String companyName;
 
 	@Builder
-	private Contract(String companyName, LocalDate startDate, LocalDate endDate) {
+	private Contract(String companyName, LocalDate startDate, LocalDate endDate, boolean isTerminate) {
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.companyName = companyName;
+		this.isTerminate = isTerminate;
 	}
 
 	public static Contract from(CreateContractDto dto) {
