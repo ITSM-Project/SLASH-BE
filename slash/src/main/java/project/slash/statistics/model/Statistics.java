@@ -31,6 +31,15 @@ public class Statistics {
 	@Column(name = "approval_status")
 	private boolean approvalStatus;
 
+	@Column(name = "total_downtime")
+	private long totalDowntime;
+
+	@Column(name = "request_count")
+	private long requestCount;
+
+	@Column( name = "due_on_time_count")
+	private long dueOnTimeCount;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "evaluation_item_id")
 	private EvaluationItem evaluationItems;
