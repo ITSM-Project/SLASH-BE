@@ -1,13 +1,13 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ENC(N6G22iNIGwVJsc1B+dPUcKyr00EdPnbEHUNn85QtbCxyLitR6FcTDnr3QApRUOXwFP7RoZBF1R+ReKeEwllWPnz83Fim7Qwq4aEIz7y8ZXJjrfGNuLMZ4o4CF0gFL6iPf3nGRbZ+evU=)
-    username: ENC(rbAYXvnEtHLKTZhqKbLtHA==)
-    password: ENC(WhT4M4/oia1FZqQ/BES/jw==)
+    url: ENC(b2Zfk+X9IsbZjCKC7GA4hL2lIJC5UZDiIsEvHEsBgtd5RMkP0VepQj+ZsNNxbaC239Dm29WcDl968J8gaTh8u9QgFSgbW3V1EGZNXua4B7f0Z32gp1p9z+KfqotfxCz3l4lSnMqZJJdkUfUvA0liBxflKczpnx9HcRoyB5P49NaUuPV9/JwpNw==)
+    username: ENC(PhyaRJCJP89U3bl2A9njuA==)
+    password: ENC(RqQ+m97Mi+ianfhwxg0JI4EOZk3cPdzh)
   jpa:
     open-in-view: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate.format_sql: true
       hibernate.show_sql: true

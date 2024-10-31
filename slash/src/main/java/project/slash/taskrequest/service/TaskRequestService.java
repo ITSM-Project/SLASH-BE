@@ -37,10 +37,10 @@ public class TaskRequestService {
 	}
 
 	@Transactional
-	public void createRequest(TaskRequestDto taskRequestDto) {
-		TaskType taskType = findTaskType(taskRequestDto);
+	public void createRequest(TaskRequestDto taskRequestDto) {    //요청 생성
+		TaskType taskType = findTaskType(taskRequestDto.getTaskDetail(), taskRequestDto.isServiceRelevance());
 
-		Equipment equipment = findEquipment(taskRequestDto);
+		Equipment equipment = findEquipment(taskRequestDto.getEquipmentName());
 
 		TaskRequest taskRequest = TaskRequest.from(taskRequestDto, taskType, null,
 			equipment); //TODO: 유저는 로그인 기능 완료 후 넣기
@@ -48,15 +48,69 @@ public class TaskRequestService {
 		taskRequestRepository.save(taskRequest);
 	}
 
-	private Equipment findEquipment(TaskRequestDto taskRequestDto) {
-		return equipmentRepository.findByName(taskRequestDto.getEquipmentName())
+	private TaskType findTaskType(String taskDetail, boolean isServiceRelevance) {
+		return taskTypeRepository.findTaskTypeByTaskRequestInfo(taskDetail, isServiceRelevance)
+			.orElseThrow(() -> new BusinessException(NOT_FOUND_TASK_TYPE));
+	}
+
+	private Equipment findEquipment(String equipmentName) {
+		return equipmentRepository.findByName(equipmentName)
 			.orElseThrow(() -> new BusinessException(NOT_FOUND_EQUIPMENT));
 	}
 
-	private TaskType findTaskType(TaskRequestDto taskRequestDto) {
-		return taskTypeRepository.findTaskTypeByTaskRequestInfo(taskRequestDto.getType(),
-			taskRequestDto.getTaskDetail(),
-			taskRequestDto.isServiceRelevance()).orElseThrow(() -> new BusinessException(NOT_FOUND_TASK_TYPE));
+	public RequestDetailDto showRequestDetail(Long requestId) {	//요청 조회
+		TaskRequest taskRequest = findRequest(requestId);
+
+		return RequestDetailDto.from(taskRequest);
+	}
+
+	@Transactional
+	public void deleteRequest(Long requestId, String userId) {	//요청 삭제
+		TaskRequest request = findRequest(requestId);
+
+		validRequest(userId, request);
+
+		taskRequestRepository.deleteById(requestId);
+	}
+
+	@Transactional
+	public void editRequest(Long requestId, String userId, TaskRequestDto taskRequestDto) {	//요청 수정
+		TaskRequest request = findRequest(requestId);
+		validRequest(userId, request);
+
+		TaskType taskType = getEditTaskType(taskRequestDto);
+		Equipment equipment = getEditEquipment(taskRequestDto);
+
+		request.edit(taskRequestDto, taskType, equipment);
+	}
+
+	private Equipment getEditEquipment(TaskRequestDto taskRequestDto) {
+		if(taskRequestDto.getEquipmentName() != null) {
+			return findEquipment(taskRequestDto.getEquipmentName());
+		}
+		return null;
+	}
+
+	private TaskType getEditTaskType(TaskRequestDto taskRequestDto) {
+		if(taskRequestDto.getTaskDetail() != null) {
+			return findTaskType(taskRequestDto.getTaskDetail(), taskRequestDto.isServiceRelevance());
+		}
+		return null;
+	}
+
+	private void validRequest(String userId, TaskRequest request) {
+		if(!request.isRequester(userId)){
+			throw new BusinessException(NOT_REQUEST_OWNER);
+		}
+
+		if (!request.isDeletable()) {
+			throw new BusinessException(CANNOT_DELETE_OR_EDIT_REQUEST);
+		}
+	}
+
+	private TaskRequest findRequest(Long requestId) {
+		return taskRequestRepository.findById(requestId)
+			.orElseThrow(() -> new BusinessException(NOT_FOUND_REQUEST));
 	}
 
 	public List<StatusCountDto> findCountByStatus(int year, int month, String user){
@@ -79,12 +133,5 @@ public class TaskRequestService {
 		List<SystemCountDto> systemCounts = findCountBySystem(year, month, user);
 
 		return new RequestManagerMainResponseDto(statusCounts, taskTypeCounts, systemCounts);
-	}
-
-	public RequestDetailDto showRequestDetail(Long requestId) {
-		TaskRequest taskRequest = taskRequestRepository.findById(requestId)
-			.orElseThrow(() -> new BusinessException(NOT_FOUND_REQUEST));
-
-		return RequestDetailDto.from(taskRequest);
 	}
 }

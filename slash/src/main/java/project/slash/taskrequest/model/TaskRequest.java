@@ -72,4 +72,27 @@ public class TaskRequest extends BaseTimeEntity {
 			.equipment(equipment)
 			.build();
 	}
+
+	public boolean isDeletable() {
+		return status == RequestStatus.REGISTERED;
+	}
+
+	public boolean isRequester(String userId) {
+		return requester.getId().equals(userId);
+	}
+
+	public void edit(TaskRequestDto taskRequestDto, TaskType taskType, Equipment equipment) {
+		if(taskRequestDto.getTitle() != null){
+			this.title = taskRequestDto.getTitle();
+		}
+		if(taskRequestDto.getContent() != null) {
+			this.content = taskRequestDto.getContent();
+		}
+		if(taskType != null){
+			this.taskType = taskType;
+		}
+		if(equipment != null) {
+			this.equipment = equipment;
+		}
+	}
 }

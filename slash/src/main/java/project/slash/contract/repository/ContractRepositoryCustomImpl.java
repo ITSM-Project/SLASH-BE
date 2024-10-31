@@ -31,6 +31,7 @@ public class ContractRepositoryCustomImpl implements ContractRepositoryCustom {
 					contract.companyName,
 					contract.startDate,
 					contract.endDate,
+					contract.isTerminate,
 					GroupBy.list(Projections.fields(GradeDto.class,
 						totalTarget.grade,
 						totalTarget.min,
