@@ -10,7 +10,6 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import project.slash.contract.dto.GradeDto;
 import project.slash.contract.dto.response.ContractDto;
-import project.slash.contract.repository.ContractRepositoryCustom;
 
 public class ContractRepositoryCustomImpl implements ContractRepositoryCustom {
 	private final JPAQueryFactory queryFactory;
