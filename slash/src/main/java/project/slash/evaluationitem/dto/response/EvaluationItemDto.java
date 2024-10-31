@@ -14,6 +14,8 @@ import project.slash.evaluationitem.dto.ServiceTargetDto;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class EvaluationItemDto {
+	private Long contractId;
+
 	private Long evaluationItemId;
 
 	private String category;    //서비스 항목
