@@ -1,6 +1,10 @@
 package project.slash.contract.controller;
 
+import java.util.List;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
 import project.slash.contract.dto.request.CreateContractDto;
+import project.slash.contract.dto.response.AllContractDto;
 import project.slash.contract.dto.response.ContractInfoDto;
 import project.slash.contract.service.ContractService;
 
@@ -22,24 +27,50 @@ public class ContractController {
 	 * 계약 생성 메서드입니다.
 	 *
 	 * @param createContractDto 계약 생성 정보
-	 * @return 성공 여부
+	 * @return 저장된 계약 ID
 	 */
 	@PostMapping("/contract")
-	public BaseResponse<Void> createContract(@RequestBody @Valid CreateContractDto createContractDto) {
-		contractService.createContract(createContractDto);
+	public BaseResponse<Long> createContract(@RequestBody @Valid CreateContractDto createContractDto) {
+		Long contractId = contractService.createContract(createContractDto);
 
-		return BaseResponse.ok();
+		return BaseResponse.ok(contractId);
 	}
 
 	/**
-	 * 계약 내용 조회 메서드입니다.
+	 * 특정 계약 내용 조회 메서드입니다.
 	 *
-	 * @return 계약 내용
+	 * @param contractId 조회 할 계약 ID
+	 * @return 게약 내용
 	 */
-	@GetMapping("/contract")
-	public BaseResponse<ContractInfoDto> showContractInfo() {
-		ContractInfoDto contractInfoDto = contractService.showContractInfo();
+	@GetMapping("/contract/{contractId}")
+	public BaseResponse<ContractInfoDto> showContractInfo(@PathVariable("contractId") Long contractId) {
+		ContractInfoDto contractInfoDto = contractService.showContractInfo(contractId);
 
 		return BaseResponse.ok(contractInfoDto);
+	}
+
+	/**
+	 * 모든 계약 조회 메서드입니다.
+	 *
+	 * @return 모든 계약 정보
+	 */
+	@GetMapping("/all-contract")
+	public BaseResponse<List<AllContractDto>> showAllContract() {
+		List<AllContractDto> allContracts = contractService.showAllContract();
+
+		return BaseResponse.ok(allContracts);
+	}
+
+	/**
+	 * 계약 삭제 메서드입니다.
+	 *
+	 * @param contractId 삭제할 계약 ID
+	 * @return 성공 여부
+	 */
+	@DeleteMapping("/contract/{contractId}")
+	public BaseResponse<Void> deleteContract(@PathVariable("contractId") Long contractId) {
+		contractService.deleteContract(contractId);
+
+		return BaseResponse.ok();
 	}
 }

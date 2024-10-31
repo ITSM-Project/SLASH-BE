@@ -17,11 +17,11 @@ import lombok.NoArgsConstructor;
 import project.slash.contract.dto.GradeDto;
 
 @Entity
+@Getter
 @Table(name = "total_target")
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
-@Getter
 public class TotalTarget {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,12 +44,9 @@ public class TotalTarget {
 	@JoinColumn(name = "contract_id")
 	private Contract contract;
 
-	void setContract(Contract contract) {
-		this.contract = contract;
-	}
-
-	public static TotalTarget from(GradeDto gradeDto) {
+	public static TotalTarget from(GradeDto gradeDto, Contract contract) {
 		return TotalTarget.builder()
+			.contract(contract)
 			.grade(gradeDto.getGrade())
 			.min(gradeDto.getMin())
 			.minInclusive(gradeDto.getMinInclusive())
