@@ -9,7 +9,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.slash.contract.dto.request.CreateContractDto;
+import project.slash.contract.dto.request.ContractRequestDto;
 
 import java.time.LocalDate;
 
@@ -42,7 +42,7 @@ public class Contract {
 		this.isTerminate = isTerminate;
 	}
 
-	public static Contract from(CreateContractDto dto) {
+	public static Contract from(ContractRequestDto dto) {
 		return Contract.builder()
 			.companyName(dto.getCompanyName())
 			.startDate(dto.getStartDate())
@@ -52,5 +52,11 @@ public class Contract {
 
 	public void updateTerminateStatus() {
 		this.isTerminate = true;
+	}
+
+	public void update(String companyName, LocalDate startDate, LocalDate endDate) {
+		this.companyName = companyName;
+		this.startDate = startDate;
+		this.endDate = endDate;
 	}
 }
