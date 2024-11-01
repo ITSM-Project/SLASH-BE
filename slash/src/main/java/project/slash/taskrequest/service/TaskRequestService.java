@@ -35,7 +35,6 @@ public class TaskRequestService {
 
 	@Transactional
 	public void createRequest(TaskRequestDto taskRequestDto) {    //요청 생성
-		//TODO: 요청 타입, 장비 타입 ID 넘겨 받는 걸로 리팩토링 하기
 		TaskType taskType = findTaskType(taskRequestDto.getTaskDetail(), taskRequestDto.isServiceRelevance());
 
 		Equipment equipment = findEquipment(taskRequestDto.getEquipmentName());
@@ -73,7 +72,6 @@ public class TaskRequestService {
 
 	@Transactional
 	public void editRequest(Long requestId, String userId, TaskRequestDto taskRequestDto) {	//요청 수정
-		//TODO: 프론트에서 typeId, equipmentId 넘겨주는 방식으로 리팩토링 하기
 		TaskRequest request = findRequest(requestId);
 		validRequest(userId, request);
 

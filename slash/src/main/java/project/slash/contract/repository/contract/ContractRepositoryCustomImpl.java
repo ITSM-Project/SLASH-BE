@@ -1,4 +1,4 @@
-package project.slash.contract.repository;
+package project.slash.contract.repository.contract;
 
 import static project.slash.contract.model.QContract.*;
 import static project.slash.contract.model.QTotalTarget.*;

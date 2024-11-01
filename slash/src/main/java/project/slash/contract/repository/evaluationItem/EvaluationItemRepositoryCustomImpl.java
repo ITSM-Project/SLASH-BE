@@ -1,4 +1,4 @@
-package project.slash.contract.repository;
+package project.slash.contract.repository.evaluationItem;
 
 import static com.querydsl.core.group.GroupBy.*;
 import static com.querydsl.core.types.Projections.*;

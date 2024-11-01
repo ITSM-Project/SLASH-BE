@@ -1,6 +1,4 @@
-package project.slash.contract.repository;
-
-import java.util.List;
+package project.slash.contract.repository.evaluationItem;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -18,9 +18,9 @@ import project.slash.contract.dto.response.ContractDetailDto;
 import project.slash.contract.dto.response.EvaluationItemDetailDto;
 import project.slash.contract.model.Contract;
 import project.slash.contract.model.TotalTarget;
-import project.slash.contract.repository.ContractRepository;
+import project.slash.contract.repository.contract.ContractRepository;
 import project.slash.contract.repository.TotalTargetRepository;
-import project.slash.contract.repository.EvaluationItemRepository;
+import project.slash.contract.repository.evaluationItem.EvaluationItemRepository;
 import project.slash.taskrequest.repository.TaskTypeRepository;
 
 @Service
@@ -34,8 +34,9 @@ public class ContractService {
 
 	@Transactional
 	public Long createContract(ContractRequestDto contractRequestDto) {
-		//TODO: 만료되지 않은 계약에 대해서 2개 이상 생성 불가능 하도록 해야함
-		//TODO: 기존 계약이 있으면 종료 후
+		//기존 계약이 존재하는 경우 생성 시 기존 계약 만료 처리
+		contractRepository.findByIsTerminateFalse().ifPresent(Contract::updateTerminateStatus);
+
 		Contract contract = contractRepository.save(Contract.from(contractRequestDto));    //계약 저장
 
 		List<TotalTarget> totalTargets = contractRequestDto.getTotalTargets().stream()

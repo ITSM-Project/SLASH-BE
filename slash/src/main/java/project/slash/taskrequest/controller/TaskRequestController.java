@@ -45,7 +45,7 @@ public class TaskRequestController {
 	/**
 	 * 요청 내용 상세보기 메서드입니다.
 	 *
-	 * @param requestId 상세보기 할 요청ID
+	 * @param requestId 상세보기 할 요청 ID
 	 * @return 상세 내용
 	 */
 	@GetMapping("/request/{requestId}")

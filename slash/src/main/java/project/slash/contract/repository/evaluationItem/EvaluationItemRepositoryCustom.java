@@ -1,4 +1,4 @@
-package project.slash.contract.repository;
+package project.slash.contract.repository.evaluationItem;
 
 import java.util.List;
 import java.util.Optional;

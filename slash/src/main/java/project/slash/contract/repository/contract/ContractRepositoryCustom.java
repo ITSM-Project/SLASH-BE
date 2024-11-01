@@ -1,4 +1,4 @@
-package project.slash.contract.repository;
+package project.slash.contract.repository.contract;
 
 import java.util.Optional;
 
