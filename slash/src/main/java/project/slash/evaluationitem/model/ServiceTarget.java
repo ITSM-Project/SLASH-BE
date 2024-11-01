@@ -14,7 +14,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.slash.contract.dto.GradeDto;
 import project.slash.evaluationitem.dto.ServiceTargetDto;
 
 @Entity

@@ -34,7 +34,7 @@ public class EvaluationItemController {
 	/**
 	 * 서비스 항목 별 세부 내용 조회 메서드
 	 *
-	 * @param evaluationItemId 서비스 항목 아이디
+	 * @param evaluationItemId 서비스 항목 ID
 	 * @return 서비스 항목 세부 내용(서비스 목표, 업무 유형, 서비스 항목 설명)
 	 */
 	@GetMapping("/detail/{evaluationItemId}")
