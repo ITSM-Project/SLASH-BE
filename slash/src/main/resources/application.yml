@@ -22,6 +22,4 @@ logging:
     org.springframework.security: TRACE
     org.mapstruct: DEBUG
 jwt:
-  token-type: "Bearer"
   secret: ENC(7EcTP9qkkVTr42yxPyHfKOOy6A/zDElhrnJk0bai0WGvGH+h7tu925YOJ+bafJ+6ey9VxQ5uq0gWYU8gfvXr8g9F9pIHp8tiTdty/qGinSU=)
-  expiration: 86400000          # 토큰 만료 시간 (ms)
