@@ -1,4 +1,4 @@
-package project.slash.security.auth;
+package project.slash.security.auth.handler;
 
 import java.io.IOException;
 import java.util.Collection;

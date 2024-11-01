@@ -1,4 +1,4 @@
-package project.slash.security.auth;
+package project.slash.security.auth.handler;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
