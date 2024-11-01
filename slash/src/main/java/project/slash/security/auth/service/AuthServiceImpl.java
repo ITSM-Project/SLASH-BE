@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import project.slash.security.auth.DTO.JwtTokenDTO;
+import project.slash.security.auth.dto.JwtTokenDTO;
 import project.slash.security.auth.provider.JwtTokenProvider;
 
 @Service
