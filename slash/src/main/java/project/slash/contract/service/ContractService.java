@@ -67,27 +67,6 @@ public class ContractService {
 			.map(AllContractDto::from).toList();
 	}
 
-	@Transactional
-	public void editContract(Long contractId, ContractRequestDto contractRequestDto) {
-		Contract contract = findContract(contractId);
-		contract.update(contractRequestDto.getCompanyName(), contract.getStartDate(), contract.getEndDate());
-
-		if(!contractRequestDto.getTotalTargets().isEmpty()) {
-			updateTotalTargets(contractRequestDto, contract);
-		}
-	}
-
-	private void updateTotalTargets(ContractRequestDto contractRequestDto, Contract contract) {
-		//기존 데이터 삭제
-		List<TotalTarget> totalTargets = totalTargetRepository.findByContractId(contract.getId());
-		totalTargetRepository.deleteAll(totalTargets);
-
-		//새로은 데이터 추가
-		List<TotalTarget> newTotalTargets = contractRequestDto.getTotalTargets().stream()
-			.map(target -> TotalTarget.from(target, contract)).toList();
-		totalTargetRepository.saveAll(newTotalTargets);
-	}
-
 	private Contract findContract(Long contractId) {
 		return contractRepository.findById(contractId)
 			.orElseThrow(() -> new BusinessException(NOT_FOUND_CONTRACT));

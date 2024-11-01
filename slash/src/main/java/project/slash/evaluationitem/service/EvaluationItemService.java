@@ -15,8 +15,8 @@ import project.slash.contract.repository.ContractRepository;
 import project.slash.evaluationitem.dto.ServiceTargetDto;
 import project.slash.evaluationitem.dto.TaskTypeDto;
 import project.slash.evaluationitem.dto.request.CreateEvaluationItemDto;
-import project.slash.evaluationitem.dto.response.EvaluationItemDto;
 import project.slash.evaluationitem.dto.response.EvaluationItemDetailDto;
+import project.slash.evaluationitem.dto.response.EvaluationItemDto;
 import project.slash.evaluationitem.model.EvaluationItem;
 import project.slash.evaluationitem.model.ServiceTarget;
 import project.slash.evaluationitem.repository.EvaluationItemRepository;
@@ -34,6 +34,7 @@ public class EvaluationItemService {
 
 	@Transactional
 	public void createEvaluationItem(CreateEvaluationItemDto createEvaluationItemDto) {
+		//TODO: 기존 계약이 있으면 종료 후
 		Contract contract = contractRepository.findById(createEvaluationItemDto.getContractId())
 			.orElseThrow(() -> new BusinessException(NOT_FOUND_CONTRACT));
 

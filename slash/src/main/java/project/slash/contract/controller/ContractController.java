@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -71,20 +70,6 @@ public class ContractController {
 	@DeleteMapping("/contract/{contractId}")
 	public BaseResponse<Void> deleteContract(@PathVariable("contractId") Long contractId) {
 		contractService.deleteContract(contractId);
-
-		return BaseResponse.ok();
-	}
-
-	/**
-	 * 계약 수정 메서드입니다.
-	 *
-	 * @param contractId 수정할 계약 아이디
-	 * @param contractRequestDto 수정 내용
-	 * @return 성공 여부
-	 */
-	@PatchMapping("/contract/{contractId}")
-	public BaseResponse<Void> editContract(@PathVariable("contractId") Long contractId, @RequestBody ContractRequestDto contractRequestDto) {
-		contractService.editContract(contractId, contractRequestDto);
 
 		return BaseResponse.ok();
 	}

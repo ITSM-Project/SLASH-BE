@@ -53,10 +53,4 @@ public class Contract {
 	public void updateTerminateStatus() {
 		this.isTerminate = true;
 	}
-
-	public void update(String companyName, LocalDate startDate, LocalDate endDate) {
-		this.companyName = companyName;
-		this.startDate = startDate;
-		this.endDate = endDate;
-	}
 }
