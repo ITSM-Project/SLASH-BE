@@ -4,5 +4,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import project.slash.statistics.model.Statistics;
 
-public interface StatisticsRepository extends JpaRepository<Statistics, Long> {
+public interface StatisticsRepository extends JpaRepository<Statistics, Long>, StatisticsRepositoryCustom {
 }
