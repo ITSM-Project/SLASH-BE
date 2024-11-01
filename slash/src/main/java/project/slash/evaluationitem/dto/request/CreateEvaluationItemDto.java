@@ -6,11 +6,13 @@ import java.util.List;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Getter;
 import project.slash.evaluationitem.dto.TaskTypeDto;
 import project.slash.evaluationitem.dto.ServiceTargetDto;
 
 @Getter
+@Builder
 public class CreateEvaluationItemDto {
 	@NotNull(message = "계약 아이디는 필수입니다.")
 	private Long contractId;
