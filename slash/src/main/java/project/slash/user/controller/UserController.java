@@ -30,9 +30,9 @@ public class UserController {
 		return "contractManager/dashboard";
 	}
 
-	@GetMapping("/serviceManager/dashboard")
-	public String serviceManagerDashboard() {
-		return "serviceManager/dashboard";
+	@GetMapping("/requestManager/dashboard")
+	public String requestManagerDashboard() {
+		return "requestManager/dashboard";
 	}
 
 	@GetMapping("/user/dashboard")
