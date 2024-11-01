@@ -13,7 +13,7 @@ import project.slash.contract.dto.GradeDto;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ContractInfoDto {
+public class ContractDetailDto {
 	private Long contractId;
 
 	private String companyName;
@@ -28,10 +28,10 @@ public class ContractInfoDto {
 
 	private List<GradeDto> totalTargets;
 
-	private List<PreviewEvaluationItemDto> evaluationItems;
+	private List<EvaluationItemDetailDto> evaluationItems;
 
-	public static ContractInfoDto of(Long contractId, ContractDto contractDto, List<PreviewEvaluationItemDto> evaluationItems) {
-		return new ContractInfoDto(
+	public static ContractDetailDto of(Long contractId, ContractDto contractDto, List<EvaluationItemDetailDto> evaluationItems) {
+		return new ContractDetailDto(
 			contractId,
 			contractDto.getCompanyName(),
 			contractDto.getStartDate(),

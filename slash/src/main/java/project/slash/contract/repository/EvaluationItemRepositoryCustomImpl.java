@@ -1,9 +1,9 @@
-package project.slash.evaluationitem.repository;
+package project.slash.contract.repository;
 
 import static com.querydsl.core.group.GroupBy.*;
 import static com.querydsl.core.types.Projections.*;
-import static project.slash.evaluationitem.model.QEvaluationItem.*;
-import static project.slash.evaluationitem.model.QServiceTarget.*;
+import static project.slash.contract.model.QEvaluationItem.*;
+import static project.slash.contract.model.QServiceTarget.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,10 +11,8 @@ import java.util.Optional;
 import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
-import project.slash.contract.dto.GradeDto;
-import project.slash.contract.dto.response.PreviewEvaluationItemDto;
-import project.slash.evaluationitem.dto.ServiceTargetDto;
-import project.slash.evaluationitem.dto.response.EvaluationItemDto;
+import project.slash.contract.dto.ServiceTargetDto;
+import project.slash.contract.dto.response.EvaluationItemDto;
 
 public class EvaluationItemRepositoryCustomImpl implements EvaluationItemRepositoryCustom {
 	private final JPAQueryFactory queryFactory;
@@ -23,20 +21,42 @@ public class EvaluationItemRepositoryCustomImpl implements EvaluationItemReposit
 		this.queryFactory = queryFactory;
 	}
 
+	// @Override
+	// public List<PreviewEvaluationItemDto> findEvaluationItem(Long contractId) {
+	// 	return queryFactory
+	// 		.from(evaluationItem)
+	// 		.leftJoin(serviceTarget).on(serviceTarget.evaluationItem.id.eq(evaluationItem.id))
+	// 		.where(evaluationItem.contract.id.eq(contractId))
+	// 		.transform(groupBy(evaluationItem.id)
+	// 			.list(constructor(PreviewEvaluationItemDto.class,
+	// 					evaluationItem.id,
+	// 					evaluationItem.category,
+	// 					list(constructTargetDto(GradeDto.class))
+	// 				)
+	// 			)
+	// 		);
+	// }
+
 	@Override
-	public List<PreviewEvaluationItemDto> findEvaluationItem(Long contractId) {
+	public List<EvaluationItemDto> findAllEvaluationItems(Long contractId) {
 		return queryFactory
 			.from(evaluationItem)
 			.leftJoin(serviceTarget).on(serviceTarget.evaluationItem.id.eq(evaluationItem.id))
 			.where(evaluationItem.contract.id.eq(contractId))
 			.transform(groupBy(evaluationItem.id)
-				.list(constructor(PreviewEvaluationItemDto.class,
+				.list(constructor(EvaluationItemDto.class,
+						evaluationItem.contract.id,
 						evaluationItem.id,
 						evaluationItem.category,
-						list(constructTargetDto(GradeDto.class))
+						evaluationItem.weight,
+						evaluationItem.period,
+						evaluationItem.purpose,
+						evaluationItem.formula,
+						evaluationItem.unit,
+						list(constructTargetDto(ServiceTargetDto.class)
+						)
 					)
-				)
-			);
+				));
 	}
 
 	@Override

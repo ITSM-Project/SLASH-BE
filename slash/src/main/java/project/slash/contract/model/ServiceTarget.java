@@ -1,4 +1,4 @@
-package project.slash.evaluationitem.model;
+package project.slash.contract.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,7 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.slash.evaluationitem.dto.ServiceTargetDto;
+import project.slash.contract.dto.ServiceTargetDto;
 
 @Entity
 @Table(name = "service_target")

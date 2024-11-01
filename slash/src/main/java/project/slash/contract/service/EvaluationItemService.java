@@ -1,7 +1,7 @@
-package project.slash.evaluationitem.service;
+package project.slash.contract.service;
 
 import static project.slash.contract.exception.ContractErrorCode.*;
-import static project.slash.evaluationitem.exception.EvaluationItemErrorCode.*;
+import static project.slash.contract.exception.EvaluationItemErrorCode.*;
 
 import java.util.List;
 
@@ -11,16 +11,16 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import project.slash.common.exception.BusinessException;
 import project.slash.contract.model.Contract;
+import project.slash.contract.model.EvaluationItem;
+import project.slash.contract.model.ServiceTarget;
 import project.slash.contract.repository.ContractRepository;
-import project.slash.evaluationitem.dto.ServiceTargetDto;
-import project.slash.evaluationitem.dto.TaskTypeDto;
-import project.slash.evaluationitem.dto.request.CreateEvaluationItemDto;
-import project.slash.evaluationitem.dto.response.EvaluationItemDetailDto;
-import project.slash.evaluationitem.dto.response.EvaluationItemDto;
-import project.slash.evaluationitem.model.EvaluationItem;
-import project.slash.evaluationitem.model.ServiceTarget;
-import project.slash.evaluationitem.repository.EvaluationItemRepository;
-import project.slash.evaluationitem.repository.ServiceTargetRepository;
+import project.slash.contract.dto.ServiceTargetDto;
+import project.slash.contract.dto.TaskTypeDto;
+import project.slash.contract.dto.request.CreateEvaluationItemDto;
+import project.slash.contract.dto.response.EvaluationItemDetailDto;
+import project.slash.contract.dto.response.EvaluationItemDto;
+import project.slash.contract.repository.EvaluationItemRepository;
+import project.slash.contract.repository.ServiceTargetRepository;
 import project.slash.taskrequest.model.TaskType;
 import project.slash.taskrequest.repository.TaskTypeRepository;
 
@@ -34,7 +34,6 @@ public class EvaluationItemService {
 
 	@Transactional
 	public void createEvaluationItem(CreateEvaluationItemDto createEvaluationItemDto) {
-		//TODO: 기존 계약이 있으면 종료 후
 		Contract contract = contractRepository.findById(createEvaluationItemDto.getContractId())
 			.orElseThrow(() -> new BusinessException(NOT_FOUND_CONTRACT));
 
@@ -45,8 +44,7 @@ public class EvaluationItemService {
 
 	private EvaluationItem saveEvaluationItem(CreateEvaluationItemDto createEvaluationItemDto, Contract contract) {
 		EvaluationItem evaluationItem = EvaluationItem.from(createEvaluationItemDto, contract);
-		evaluationItemRepository.save(evaluationItem);
-		return evaluationItem;
+		return evaluationItemRepository.save(evaluationItem);
 	}
 
 	private void saveTaskTypes(List<TaskTypeDto> types, EvaluationItem evaluationItem) {
@@ -63,13 +61,13 @@ public class EvaluationItemService {
 		serviceTargetRepository.saveAll(serviceTargets);
 	}
 
-	public EvaluationItemDetailDto findDetailByItemId(Long evaluationItemId) {
-		EvaluationItemDto evaluationItemDto = evaluationItemRepository.findEvaluationItemDetail(evaluationItemId)
-			.orElseThrow(() -> new BusinessException(NOT_FOUND_ITEMS));
-
-		List<TaskTypeDto> taskTypes = taskTypeRepository.findTaskTypesByEvaluationItemId(evaluationItemId).stream()
-			.map(TaskTypeDto::from).toList();
-
-		return new EvaluationItemDetailDto(evaluationItemDto, taskTypes);
-	}
+	// public EvaluationItemDetailDto findDetailByItemId(Long evaluationItemId) {
+	// 	EvaluationItemDto evaluationItemDto = evaluationItemRepository.findEvaluationItemDetail(evaluationItemId)
+	// 		.orElseThrow(() -> new BusinessException(NOT_FOUND_ITEMS));
+	//
+	// 	List<TaskTypeDto> taskTypes = taskTypeRepository.findTaskTypesByEvaluationItemId(evaluationItemId).stream()
+	// 		.map(TaskTypeDto::from).toList();
+	//
+	// 	return new EvaluationItemDetailDto(evaluationItemDto, taskTypes);
+	// }
 }

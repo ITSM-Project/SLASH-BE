@@ -10,16 +10,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import project.slash.common.exception.BusinessException;
+import project.slash.contract.dto.TaskTypeDto;
 import project.slash.contract.dto.request.ContractRequestDto;
 import project.slash.contract.dto.response.AllContractDto;
 import project.slash.contract.dto.response.ContractDto;
-import project.slash.contract.dto.response.ContractInfoDto;
-import project.slash.contract.dto.response.PreviewEvaluationItemDto;
+import project.slash.contract.dto.response.ContractDetailDto;
+import project.slash.contract.dto.response.EvaluationItemDetailDto;
 import project.slash.contract.model.Contract;
 import project.slash.contract.model.TotalTarget;
 import project.slash.contract.repository.ContractRepository;
 import project.slash.contract.repository.TotalTargetRepository;
-import project.slash.evaluationitem.repository.EvaluationItemRepository;
+import project.slash.contract.repository.EvaluationItemRepository;
+import project.slash.taskrequest.repository.TaskTypeRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -28,10 +30,12 @@ public class ContractService {
 	private final TotalTargetRepository totalTargetRepository;
 	private final ContractRepository contractRepository;
 	private final EvaluationItemRepository evaluationItemRepository;
+	private final TaskTypeRepository taskTypeRepository;
 
 	@Transactional
 	public Long createContract(ContractRequestDto contractRequestDto) {
 		//TODO: 만료되지 않은 계약에 대해서 2개 이상 생성 불가능 하도록 해야함
+		//TODO: 기존 계약이 있으면 종료 후
 		Contract contract = contractRepository.save(Contract.from(contractRequestDto));    //계약 저장
 
 		List<TotalTarget> totalTargets = contractRequestDto.getTotalTargets().stream()
@@ -41,12 +45,26 @@ public class ContractService {
 		return contract.getId();
 	}
 
-	public ContractInfoDto showContractInfo(Long contractId) {
+	public ContractDetailDto showContractInfo(Long contractId) {
 		ContractDto contractDto = contractRepository.findContractById(contractId)
-			.orElseThrow(() -> new BusinessException(NOT_FOUND_CONTRACT));
+			.orElseThrow(() -> new BusinessException(NOT_FOUND_CONTRACT));	//회사, 종합 등급 정보
 
-		List<PreviewEvaluationItemDto> evaluationItems = evaluationItemRepository.findEvaluationItem(contractId);
-		return ContractInfoDto.of(contractId, contractDto, evaluationItems);
+		List<EvaluationItemDetailDto> evaluationItemDetails = findEvaluationItemDetails(contractId);
+
+		return ContractDetailDto.of(contractId, contractDto, evaluationItemDetails);
+	}
+
+	private List<EvaluationItemDetailDto> findEvaluationItemDetails(Long contractId) {
+		return evaluationItemRepository.findAllEvaluationItems(contractId)
+			.stream()
+			.map(evaluationItem -> {
+				List<TaskTypeDto> taskTypes = taskTypeRepository.findTaskTypesByEvaluationItemId(evaluationItem.getEvaluationItemId())
+					.stream()
+					.map(TaskTypeDto::from)
+					.toList();
+				return EvaluationItemDetailDto.from(evaluationItem, taskTypes);
+			})
+			.toList();
 	}
 
 	@Transactional

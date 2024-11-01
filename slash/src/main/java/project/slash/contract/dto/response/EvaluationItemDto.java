@@ -1,4 +1,4 @@
-package project.slash.evaluationitem.dto.response;
+package project.slash.contract.dto.response;
 
 import java.util.List;
 
@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.slash.evaluationitem.dto.ServiceTargetDto;
+import project.slash.contract.dto.ServiceTargetDto;
 
 @Getter
 @AllArgsConstructor

@@ -1,4 +1,4 @@
-package project.slash.evaluationitem.dto.request;
+package project.slash.contract.dto.request;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,8 +8,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
-import project.slash.evaluationitem.dto.TaskTypeDto;
-import project.slash.evaluationitem.dto.ServiceTargetDto;
+import project.slash.contract.dto.TaskTypeDto;
+import project.slash.contract.dto.ServiceTargetDto;
 
 @Getter
 @Builder

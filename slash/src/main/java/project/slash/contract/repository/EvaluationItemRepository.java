@@ -1,8 +1,11 @@
-package project.slash.evaluationitem.repository;
+package project.slash.contract.repository;
+
+import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import project.slash.evaluationitem.model.EvaluationItem;
+import project.slash.contract.model.EvaluationItem;
 
 public interface EvaluationItemRepository extends JpaRepository<EvaluationItem, Long>, EvaluationItemRepositoryCustom {
+	List<EvaluationItem> findByContractId(Long contractId);
 }

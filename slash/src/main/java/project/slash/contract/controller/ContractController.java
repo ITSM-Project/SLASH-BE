@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
 import project.slash.contract.dto.request.ContractRequestDto;
 import project.slash.contract.dto.response.AllContractDto;
-import project.slash.contract.dto.response.ContractInfoDto;
+import project.slash.contract.dto.response.ContractDetailDto;
 import project.slash.contract.service.ContractService;
 
 @RestController
@@ -43,10 +43,10 @@ public class ContractController {
 	 * @return 게약 내용
 	 */
 	@GetMapping("/contract/{contractId}")
-	public BaseResponse<ContractInfoDto> showContractInfo(@PathVariable("contractId") Long contractId) {
-		ContractInfoDto contractInfoDto = contractService.showContractInfo(contractId);
+	public BaseResponse<ContractDetailDto> showContractInfo(@PathVariable("contractId") Long contractId) {
+		ContractDetailDto contractDetailDto = contractService.showContractInfo(contractId);
 
-		return BaseResponse.ok(contractInfoDto);
+		return BaseResponse.ok(contractDetailDto);
 	}
 
 	/**
