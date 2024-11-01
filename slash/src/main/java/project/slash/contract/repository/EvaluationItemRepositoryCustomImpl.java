@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.querydsl.core.types.ConstructorExpression;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import project.slash.contract.dto.ServiceTargetDto;
@@ -21,68 +22,39 @@ public class EvaluationItemRepositoryCustomImpl implements EvaluationItemReposit
 		this.queryFactory = queryFactory;
 	}
 
-	// @Override
-	// public List<PreviewEvaluationItemDto> findEvaluationItem(Long contractId) {
-	// 	return queryFactory
-	// 		.from(evaluationItem)
-	// 		.leftJoin(serviceTarget).on(serviceTarget.evaluationItem.id.eq(evaluationItem.id))
-	// 		.where(evaluationItem.contract.id.eq(contractId))
-	// 		.transform(groupBy(evaluationItem.id)
-	// 			.list(constructor(PreviewEvaluationItemDto.class,
-	// 					evaluationItem.id,
-	// 					evaluationItem.category,
-	// 					list(constructTargetDto(GradeDto.class))
-	// 				)
-	// 			)
-	// 		);
-	// }
-
 	@Override
 	public List<EvaluationItemDto> findAllEvaluationItems(Long contractId) {
-		return queryFactory
-			.from(evaluationItem)
-			.leftJoin(serviceTarget).on(serviceTarget.evaluationItem.id.eq(evaluationItem.id))
-			.where(evaluationItem.contract.id.eq(contractId))
-			.transform(groupBy(evaluationItem.id)
-				.list(constructor(EvaluationItemDto.class,
-						evaluationItem.contract.id,
-						evaluationItem.id,
-						evaluationItem.category,
-						evaluationItem.weight,
-						evaluationItem.period,
-						evaluationItem.purpose,
-						evaluationItem.formula,
-						evaluationItem.unit,
-						list(constructTargetDto(ServiceTargetDto.class)
-						)
-					)
-				));
+		return findEvaluationItems(evaluationItem.contract.id.eq(contractId));
 	}
 
 	@Override
-	public Optional<EvaluationItemDto> findEvaluationItemDetail(Long evaluationItemId) {
+	public Optional<EvaluationItemDto> findEvaluationItem(Long evaluationItemId) {
+		return findEvaluationItems(evaluationItem.id.eq(evaluationItemId))
+			.stream()
+			.findFirst();
+	}
+
+	private List<EvaluationItemDto> findEvaluationItems(BooleanExpression condition) {
 		return queryFactory
 			.from(evaluationItem)
 			.leftJoin(serviceTarget).on(serviceTarget.evaluationItem.id.eq(evaluationItem.id))
-			.where(evaluationItem.id.eq(evaluationItemId))
+			.where(condition)
 			.transform(groupBy(evaluationItem.id)
 				.list(constructor(EvaluationItemDto.class,
-						evaluationItem.contract.id,
-						evaluationItem.id,
-						evaluationItem.category,
-						evaluationItem.weight,
-						evaluationItem.period,
-						evaluationItem.purpose,
-						evaluationItem.formula,
-						evaluationItem.unit,
-						list(constructTargetDto(ServiceTargetDto.class)
-						)
-					)
-				)).stream().findFirst();
+					evaluationItem.contract.id,
+					evaluationItem.id,
+					evaluationItem.category,
+					evaluationItem.weight,
+					evaluationItem.period,
+					evaluationItem.purpose,
+					evaluationItem.formula,
+					evaluationItem.unit,
+					list(createServiceTargetDto())
+				)));
 	}
 
-	private static <T> ConstructorExpression<T> constructTargetDto(Class<T> dtoClass) {
-		return constructor(dtoClass,
+	private ConstructorExpression<ServiceTargetDto> createServiceTargetDto() {
+		return constructor(ServiceTargetDto.class,
 			serviceTarget.grade,
 			serviceTarget.min,
 			serviceTarget.max,

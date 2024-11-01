@@ -8,5 +8,5 @@ import project.slash.contract.dto.response.EvaluationItemDto;
 public interface EvaluationItemRepositoryCustom {
 	List<EvaluationItemDto> findAllEvaluationItems(Long contractId);
 
-	Optional<EvaluationItemDto> findEvaluationItemDetail(Long evaluationItemId);
+	Optional<EvaluationItemDto> findEvaluationItem(Long evaluationItemId);
 }
