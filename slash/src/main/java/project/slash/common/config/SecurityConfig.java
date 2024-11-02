@@ -49,8 +49,6 @@ public class SecurityConfig {
 			.logout(logout -> logout
 				.logoutUrl("/logout")
 				.logoutSuccessUrl("/")
-				.invalidateHttpSession(true)  // 세션 무효화
-				.deleteCookies("JSESSIONID")  // 쿠키 삭제
 				.permitAll()
 			)
 			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
