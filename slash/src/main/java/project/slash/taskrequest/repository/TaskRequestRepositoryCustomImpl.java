@@ -97,8 +97,9 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 	}
 
 	@Override
-	public Page<TaskResponseRequestDto> findFilteredRequests(String equipmentName, String type, String taskDetail,
-		RequestStatus status, Pageable pageable) {
+	public Page<TaskResponseRequestDto> findFilteredRequests(String equipmentName, String type,
+		String taskDetail, RequestStatus status, String keyword, Pageable pageable) {
+
 		QTaskRequest taskRequestEntity = QTaskRequest.taskRequest;
 		QTaskType taskTypeEntity = QTaskType.taskType;
 		QSystems systemsEntity = systems;
@@ -119,6 +120,14 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 
 		if (status != null) {
 			builder.and(taskRequestEntity.status.eq(status));
+		}
+
+		//검색어 필터 추가 (title이나 content에 검색어가 포함된 경우)
+		if (keyword != null && !keyword.isEmpty()) {
+			builder.and(
+				taskRequestEntity.title.containsIgnoreCase(keyword)
+					.or(taskRequestEntity.content.containsIgnoreCase(keyword))
+			);
 		}
 
 		// QueryResults를 통해 결과와 총 개수를 한 번에 조회

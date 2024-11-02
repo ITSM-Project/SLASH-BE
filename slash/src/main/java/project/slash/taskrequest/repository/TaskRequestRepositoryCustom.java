@@ -17,5 +17,6 @@ public interface TaskRequestRepositoryCustom {
 	List<TaskTypeCountDto> findCountByTaskType(int year, int month, String user);
 
 	List<SystemCountDto> findCountBySystem(int year, int month, String user);
-	Page<TaskResponseRequestDto> findFilteredRequests(String equipmentName, String type, String taskDetail, RequestStatus status,Pageable pageable);
+	Page<TaskResponseRequestDto> findFilteredRequests(String equipmentName, String type,
+		String taskDetail, RequestStatus status, String keyword, Pageable pageable);
 }

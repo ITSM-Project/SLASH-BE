@@ -89,21 +89,35 @@ public class TaskRequestController {
 		return BaseResponse.ok();
 	}
 
+	/**
+	 * 필터링된 요청 목록을 조회하는 메서드입니다.
+	 *
+	 * @param equipmentName 필터링할 장비 이름 (옵션)
+	 * @param type 필터링할 업무 유형 (옵션)
+	 * @param taskDetail 필터링할 업무 세부 사항 (옵션)
+	 * @param status 필터링할 요청 상태 (옵션)
+	 * @param keyword 제목이나 내용에서 검색할 키워드 (옵션)
+	 * @param page 조회할 페이지 번호 (기본값: 1)
+	 * @param size 페이지당 항목 수 (기본값: 5)
+	 * @return 요청 목록과 페이지네이션 정보를 포함한 응답 객체
+	 */
 	@GetMapping("/requests")
 	public BaseResponse<?> readRequest(
 		@RequestParam(required = false) String equipmentName,
 		@RequestParam(required = false) String type,
 		@RequestParam(required = false) String taskDetail,
 		@RequestParam(required = false) RequestStatus status,
+		@RequestParam(required = false) String keyword,
 		@RequestParam(defaultValue = "1") int page,
-		@RequestParam(defaultValue = "4") int size
+		@RequestParam(defaultValue = "5") int size
 	) {
 		// Pageable 객체 생성
 		Pageable pageable = PageRequest.of(page - 1, size);
 
 		// Page 객체 반환
 		Page<TaskResponseRequestDto> taskResponseRequestDTOS =
-			taskRequestService.findFilteredRequests(equipmentName, type, taskDetail, status, pageable);
+			taskRequestService.findFilteredRequests(equipmentName, type, taskDetail, status,
+				keyword, pageable);
 
 		// 응답 데이터로 페이지네이션 정보를 포함하여 반환
 		Map<String, Object> responseData = Map.of(

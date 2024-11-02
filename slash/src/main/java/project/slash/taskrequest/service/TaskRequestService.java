@@ -136,9 +136,9 @@ public class TaskRequestService {
 	}
 
 
-	public Page<TaskResponseRequestDto> findFilteredRequests(String equipmentName, String type, String taskDetail, RequestStatus status
-		, Pageable pageable
+	public Page<TaskResponseRequestDto> findFilteredRequests(String equipmentName, String type,
+		String taskDetail, RequestStatus status, String keyword, Pageable pageable
 		) {
-		return taskRequestRepository.findFilteredRequests(equipmentName, type, taskDetail, status, pageable);
+		return taskRequestRepository.findFilteredRequests(equipmentName, type, taskDetail, status, keyword, pageable);
 	}
 }
