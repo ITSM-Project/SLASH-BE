@@ -35,7 +35,7 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 			.from(taskRequest)
 			.where(taskRequest.createTime.year().eq(year)
 				.and(taskRequest.createTime.month().eq(month))
-				.and(taskRequest.manager.id.eq(user)))
+				.and(taskRequest.requester.id.eq(user)))
 			.groupBy(taskRequest.status)
 			.fetch();
 
@@ -56,7 +56,7 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 			.join(taskRequest).on(taskType.id.eq(taskRequest.taskType.id))
 			.where(taskRequest.createTime.year().eq(year)
 				.and(taskRequest.createTime.month().eq(month))
-				.and(taskRequest.manager.id.eq(user)))
+				.and(taskRequest.requester.id.eq(user)))
 			.groupBy(taskType.type)
 			.fetch();
 
@@ -78,7 +78,7 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 			.join(taskRequest).on(equipment.id.eq(taskRequest.equipment.id))
 			.where(taskRequest.createTime.year().eq(year)
 				.and(taskRequest.createTime.month().eq(month))
-				.and(taskRequest.manager.id.eq(user)))
+				.and(taskRequest.requester.id.eq(user)))
 			.groupBy(systems.id)
 			.fetch();
 
