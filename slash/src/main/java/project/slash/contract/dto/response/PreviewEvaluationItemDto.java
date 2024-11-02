@@ -13,6 +13,6 @@ import project.slash.contract.dto.GradeDto;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class PreviewEvaluationItemDto {
 	private Long evaluationItemId;
-	private String categoryName;
+	private String category;
 	private List<GradeDto> serviceTargets;
 }
