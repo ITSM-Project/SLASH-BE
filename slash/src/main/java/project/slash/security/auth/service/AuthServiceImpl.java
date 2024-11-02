@@ -7,18 +7,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import project.slash.security.auth.dto.JwtTokenDTO;
+import project.slash.security.auth.dto.JwtTokenDto;
 import project.slash.security.auth.provider.JwtTokenProvider;
 
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 	private final AuthenticationManagerBuilder authenticationManagerBuilder;
 	private final JwtTokenProvider jwtTokenProvider;
 
 	@Transactional
-	public JwtTokenDTO login(String userId, String password) {
+	public JwtTokenDto login(String userId, String password) {
 		// 1. Login Id/PW 를 기반으로 Authentication 객체 생성
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userId,
 			password);
