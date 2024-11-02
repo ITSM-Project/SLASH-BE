@@ -37,6 +37,7 @@ public class SecurityConfig {
 				.requestMatchers("/contract-admin/**").hasRole("CONTRACT_ADMIN")
 				.requestMatchers("/service-admin/**").hasRole("SERVICE_ADMIN")
 				.requestMatchers("/monthly-data").permitAll()
+				.requestMatchers("/statistics").permitAll()
 				.requestMatchers("/user/**").hasRole("USER")
 				.anyRequest().authenticated()
 			)
