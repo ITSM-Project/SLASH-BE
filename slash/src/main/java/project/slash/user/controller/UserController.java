@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import project.slash.security.auth.dto.JwtTokenDTO;
+import project.slash.security.auth.dto.JwtTokenDto;
 import project.slash.security.auth.service.AuthService;
-import project.slash.security.auth.dto.LoginRequestDTO;
+import project.slash.security.auth.dto.LoginRequestDto;
 
 @RequiredArgsConstructor
 @RestController
@@ -18,10 +18,10 @@ public class UserController {
 	private final AuthService authService;
 
 	@PostMapping("/login")
-	public ResponseEntity<JwtTokenDTO> login(@RequestBody LoginRequestDTO userLoginRequestDto) {
+	public ResponseEntity<JwtTokenDto> login(@RequestBody LoginRequestDto userLoginRequestDto) {
 		String userId = userLoginRequestDto.getId();
 		String password = userLoginRequestDto.getPassword();
-		JwtTokenDTO tokenInfo = authService.login(userId, password);
+		JwtTokenDto tokenInfo = authService.login(userId, password);
 		return ResponseEntity.status(HttpStatus.OK).body(tokenInfo);
 	}
 

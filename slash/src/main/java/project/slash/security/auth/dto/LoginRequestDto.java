@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
-public class LoginRequestDTO {
+public class LoginRequestDto {
 	private String id;
 	private String password;
 }

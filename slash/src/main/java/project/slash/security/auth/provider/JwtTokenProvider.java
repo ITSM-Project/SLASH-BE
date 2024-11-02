@@ -23,7 +23,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import project.slash.security.auth.dto.JwtTokenDTO;
+import project.slash.security.auth.dto.JwtTokenDto;
 import project.slash.security.auth.custom.CustomJWTUserDetails;
 import project.slash.security.auth.custom.CustomUserDetails;
 
@@ -38,7 +38,7 @@ public class JwtTokenProvider {
 		this.key = Keys.hmacShaKeyFor(keyBytes);
 	}
 
-	public JwtTokenDTO generateToken(Authentication authentication) {
+	public JwtTokenDto generateToken(Authentication authentication) {
 
 		CustomUserDetails userDetails = (CustomUserDetails)authentication.getPrincipal();
 		String userId = userDetails.getUsername();
@@ -56,7 +56,7 @@ public class JwtTokenProvider {
 			.signWith(key, SignatureAlgorithm.HS256)
 			.compact();
 
-		return JwtTokenDTO.builder()
+		return JwtTokenDto.builder()
 			.grantType("Bearer")
 			.accessToken(accessToken)
 			.build();

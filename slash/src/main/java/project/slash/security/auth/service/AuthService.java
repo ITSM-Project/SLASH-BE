@@ -1,7 +1,7 @@
 package project.slash.security.auth.service;
 
-import project.slash.security.auth.dto.JwtTokenDTO;
+import project.slash.security.auth.dto.JwtTokenDto;
 
 public interface AuthService {
-	JwtTokenDTO login(String userId, String password);
+	JwtTokenDto login(String userId, String password);
 }
