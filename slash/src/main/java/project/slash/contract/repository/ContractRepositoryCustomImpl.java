@@ -48,7 +48,7 @@ public class ContractRepositoryCustomImpl implements ContractRepositoryCustom {
 			.findFirst();
 	}
 
-	// 카테고리별 지표 찾가
+	// 카테고리별 지표 찾기
 	@Override
 	public List<ContractDataDto> findIndicatorByCategory(String category) {
 
@@ -66,7 +66,8 @@ public class ContractRepositoryCustomImpl implements ContractRepositoryCustom {
 						.from(evaluationItem)
 						.where(evaluationItem.contract.id.eq(contract.id)),
 					"weightTotal"
-				)))
+				), evaluationItem.id,
+				evaluationItem.category))
 			.from(contract)
 			.leftJoin(evaluationItem)
 			.on(evaluationItem.contract.id.eq(contract.id))

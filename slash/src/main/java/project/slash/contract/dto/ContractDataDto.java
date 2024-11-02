@@ -14,18 +14,6 @@ public class ContractDataDto {
 	private double score;
 	private int weight;
 	private int weightTotal;
-
-	@Override
-	public String toString() {
-		return "ContractDataDto{" +
-			"grade='" + grade + '\'' +
-			", max=" + max +
-			", maxInclusive=" + maxInclusive +
-			", min=" + min +
-			", minInclusive=" + minInclusive +
-			", score=" + score +
-			", weight=" + weight +
-			", weightTotal=" + weightTotal +
-			'}';
-	}
+	private long evaluationItemId;
+	private String category;
 }
