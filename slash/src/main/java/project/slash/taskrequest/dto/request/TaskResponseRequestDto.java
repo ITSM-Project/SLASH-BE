@@ -10,7 +10,7 @@ import project.slash.taskrequest.model.constant.RequestStatus;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TaskResponseRequestDTO {
+public class TaskResponseRequestDto {
 	private String title;
 	private String content;
 	private Boolean dueOnTime;

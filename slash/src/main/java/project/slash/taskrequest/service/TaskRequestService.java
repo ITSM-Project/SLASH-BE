@@ -19,8 +19,7 @@ import project.slash.taskrequest.dto.response.SystemCountDto;
 import project.slash.taskrequest.dto.request.TaskRequestDto;
 import project.slash.taskrequest.dto.response.TaskTypeCountDto;
 import project.slash.taskrequest.dto.response.RequestManagerMainResponseDto;
-import project.slash.taskrequest.dto.request.TaskResponseRequestDTO;
-import project.slash.taskrequest.dto.response.AllTaskTypeDto;
+import project.slash.taskrequest.dto.request.TaskResponseRequestDto;
 import project.slash.taskrequest.dto.response.RequestDetailDto;
 import project.slash.taskrequest.model.TaskRequest;
 import project.slash.taskrequest.model.TaskType;
@@ -137,7 +136,7 @@ public class TaskRequestService {
 	}
 
 
-	public Page<TaskResponseRequestDTO> findFilteredRequests(String equipmentName, String type, String taskDetail, RequestStatus status
+	public Page<TaskResponseRequestDto> findFilteredRequests(String equipmentName, String type, String taskDetail, RequestStatus status
 		, Pageable pageable
 		) {
 		return taskRequestRepository.findFilteredRequests(equipmentName, type, taskDetail, status, pageable);

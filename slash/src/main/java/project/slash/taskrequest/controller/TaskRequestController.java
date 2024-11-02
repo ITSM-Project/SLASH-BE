@@ -20,8 +20,7 @@ import project.slash.common.response.BaseResponse;
 import project.slash.taskrequest.dto.request.TaskRequestDto;
 import project.slash.taskrequest.dto.response.RequestManagerMainResponseDto;
 import project.slash.taskrequest.dto.response.RequestDetailDto;
-import project.slash.taskrequest.dto.request.TaskResponseRequestDTO;
-import project.slash.taskrequest.dto.response.AllTaskTypeDto;
+import project.slash.taskrequest.dto.request.TaskResponseRequestDto;
 import project.slash.taskrequest.model.constant.RequestStatus;
 import project.slash.taskrequest.service.TaskRequestService;
 
@@ -103,7 +102,7 @@ public class TaskRequestController {
 		Pageable pageable = PageRequest.of(page - 1, size);
 
 		// Page 객체 반환
-		Page<TaskResponseRequestDTO> taskResponseRequestDTOS =
+		Page<TaskResponseRequestDto> taskResponseRequestDTOS =
 			taskRequestService.findFilteredRequests(equipmentName, type, taskDetail, status, pageable);
 
 		// 응답 데이터로 페이지네이션 정보를 포함하여 반환
