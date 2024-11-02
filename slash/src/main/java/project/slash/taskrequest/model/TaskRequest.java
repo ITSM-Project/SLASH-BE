@@ -14,6 +14,7 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.slash.system.model.Equipment;
 import project.slash.taskrequest.dto.request.TaskRequestDto;
@@ -25,6 +26,7 @@ import project.slash.user.model.User;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
+@Getter
 public class TaskRequest extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -69,5 +71,25 @@ public class TaskRequest extends BaseTimeEntity {
 			.requester(requester)
 			.equipment(equipment)
 			.build();
+	}
+
+	public boolean isDeletable() {
+		return status == RequestStatus.REGISTERED;
+	}
+
+	public boolean isRequester(String userId) {
+		return requester.getId().equals(userId);
+	}
+
+	public void update(TaskRequestDto taskRequestDto, TaskType taskType, Equipment equipment) {
+		this.title = taskRequestDto.getTitle();
+		this.content = taskRequestDto.getContent();
+
+		if (taskType != null) {
+			this.taskType = taskType;
+		}
+		if (equipment != null) {
+			this.equipment = equipment;
+		}
 	}
 }

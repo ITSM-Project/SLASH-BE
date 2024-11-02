@@ -1,4 +1,4 @@
-package project.slash.contract.dto;
+package project.slash.evaluationitem.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -20,6 +20,7 @@ public class TaskTypeDto {
 	private int deadline;
 
 	private boolean serviceRelevance;
+
 	private boolean inclusionStatus;
 
 	public static TaskTypeDto from(TaskType taskType) {

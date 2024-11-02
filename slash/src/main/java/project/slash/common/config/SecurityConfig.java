@@ -36,6 +36,7 @@ public class SecurityConfig {
 				.requestMatchers("/login", "/error").permitAll()
 				.requestMatchers("/contract-admin/**").hasRole("CONTRACT_ADMIN")
 				.requestMatchers("/service-admin/**").hasRole("SERVICE_ADMIN")
+				.requestMatchers("/monthly-data").permitAll()
 				.requestMatchers("/user/**").hasRole("USER")
 				.anyRequest().authenticated()
 			)

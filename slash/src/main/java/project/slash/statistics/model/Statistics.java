@@ -8,7 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import project.slash.contract.model.EvaluationItem;
+import project.slash.evaluationitem.model.EvaluationItem;
 
 import java.time.LocalDate;
 
@@ -30,6 +30,15 @@ public class Statistics {
 
 	@Column(name = "approval_status")
 	private boolean approvalStatus;
+
+	@Column(name = "total_downtime")
+	private long totalDowntime;
+
+	@Column(name = "request_count")
+	private long requestCount;
+
+	@Column( name = "due_on_time_count")
+	private long dueOnTimeCount;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "evaluation_item_id")

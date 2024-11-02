@@ -14,9 +14,14 @@ import lombok.RequiredArgsConstructor;
 import project.slash.common.exception.BusinessException;
 import project.slash.system.model.Equipment;
 import project.slash.system.repository.EquipmentRepository;
+import project.slash.taskrequest.dto.response.StatusCountDto;
+import project.slash.taskrequest.dto.response.SystemCountDto;
 import project.slash.taskrequest.dto.request.TaskRequestDto;
+import project.slash.taskrequest.dto.response.TaskTypeCountDto;
+import project.slash.taskrequest.dto.response.RequestManagerMainResponseDto;
 import project.slash.taskrequest.dto.request.TaskResponseRequestDTO;
 import project.slash.taskrequest.dto.response.AllTaskTypeDto;
+import project.slash.taskrequest.dto.response.RequestDetailDto;
 import project.slash.taskrequest.model.TaskRequest;
 import project.slash.taskrequest.model.TaskType;
 import project.slash.taskrequest.model.constant.RequestStatus;
@@ -31,11 +36,13 @@ public class TaskRequestService {
 	private final TaskRequestRepository taskRequestRepository;
 	private final EquipmentRepository equipmentRepository;
 
-	@Transactional
-	public void createRequest(TaskRequestDto taskRequestDto) {
-		TaskType taskType = findTaskType(taskRequestDto);
 
-		Equipment equipment = findEquipment(taskRequestDto);
+	@Transactional
+	public void createRequest(TaskRequestDto taskRequestDto) {    //요청 생성
+		//TODO: 요청 타입, 장비 타입 ID 넘겨 받는 걸로 리팩토링 하기
+		TaskType taskType = findTaskType(taskRequestDto.getTaskDetail(), taskRequestDto.isServiceRelevance());
+
+		Equipment equipment = findEquipment(taskRequestDto.getEquipmentName());
 
 		TaskRequest taskRequest = TaskRequest.from(taskRequestDto, taskType, null,
 			equipment); //TODO: 유저는 로그인 기능 완료 후 넣기
@@ -43,24 +50,95 @@ public class TaskRequestService {
 		taskRequestRepository.save(taskRequest);
 	}
 
-	private Equipment findEquipment(TaskRequestDto taskRequestDto) {
-		return equipmentRepository.findByName(taskRequestDto.getEquipmentName())
+	private TaskType findTaskType(String taskDetail, boolean isServiceRelevance) {
+		return taskTypeRepository.findTaskTypeByTaskRequestInfo(taskDetail, isServiceRelevance)
+			.orElseThrow(() -> new BusinessException(NOT_FOUND_TASK_TYPE));
+	}
+
+	private Equipment findEquipment(String equipmentName) {
+		return equipmentRepository.findByName(equipmentName)
 			.orElseThrow(() -> new BusinessException(NOT_FOUND_EQUIPMENT));
 	}
 
-	public List<AllTaskTypeDto> allTaskTypes() {
-		return taskTypeRepository.findAllTaskTypes();
+	public RequestDetailDto showRequestDetail(Long requestId) {	//요청 조회
+		TaskRequest taskRequest = findRequest(requestId);
+
+		return RequestDetailDto.from(taskRequest);
 	}
 
-	private TaskType findTaskType(TaskRequestDto taskRequestDto) {
-		return taskTypeRepository.findTaskTypeByTaskRequestInfo(taskRequestDto.getType(),
-			taskRequestDto.getTaskDetail(),
-			taskRequestDto.isServiceRelevance()).orElseThrow(() -> new BusinessException(NOT_FOUND_TASK_TYPE));
+	@Transactional
+	public void deleteRequest(Long requestId, String userId) {	//요청 삭제
+		TaskRequest request = findRequest(requestId);
+
+		validRequest(userId, request);
+
+		taskRequestRepository.deleteById(requestId);
+	}
+
+	@Transactional
+	public void editRequest(Long requestId, String userId, TaskRequestDto taskRequestDto) {	//요청 수정
+		//TODO: 프론트에서 typeId, equipmentId 넘겨주는 방식으로 리팩토링 하기
+		TaskRequest request = findRequest(requestId);
+		validRequest(userId, request);
+
+		TaskType taskType = getEditTaskType(taskRequestDto);
+		Equipment equipment = getEditEquipment(taskRequestDto);
+
+		request.update(taskRequestDto, taskType, equipment);
+	}
+
+	private Equipment getEditEquipment(TaskRequestDto taskRequestDto) {
+		if(taskRequestDto.getEquipmentName() != null) {
+			return findEquipment(taskRequestDto.getEquipmentName());
+		}
+		return null;
+	}
+
+	private TaskType getEditTaskType(TaskRequestDto taskRequestDto) {
+		if(taskRequestDto.getTaskDetail() != null) {
+			return findTaskType(taskRequestDto.getTaskDetail(), taskRequestDto.isServiceRelevance());
+		}
+		return null;
+	}
+
+	private void validRequest(String userId, TaskRequest request) {
+		if(!request.isRequester(userId)){
+			throw new BusinessException(NOT_REQUEST_OWNER);
+		}
+
+		if (!request.isDeletable()) {
+			throw new BusinessException(CANNOT_DELETE_OR_EDIT_REQUEST);
+		}
+	}
+
+	private TaskRequest findRequest(Long requestId) {
+		return taskRequestRepository.findById(requestId)
+			.orElseThrow(() -> new BusinessException(NOT_FOUND_REQUEST));
+	}
+
+	public List<StatusCountDto> findCountByStatus(int year, int month, String user){
+		return taskRequestRepository.findCountByStatus(year, month, user);
+	}
+
+	public List<TaskTypeCountDto> findCountByTaskType(int year, int month, String user) {
+		return taskRequestRepository.findCountByTaskType(year, month, user);
+	}
+
+	public List<SystemCountDto> findCountBySystem(int year, int month, String user) {
+		return taskRequestRepository.findCountBySystem(year, month, user);
+	}
+
+	public RequestManagerMainResponseDto getMonthlyRequestData(int year, int month, String user) {
+		List<StatusCountDto> statusCounts = findCountByStatus(year, month, user);
+		List<TaskTypeCountDto> taskTypeCounts = findCountByTaskType(year, month, user);
+		List<SystemCountDto> systemCounts = findCountBySystem(year, month, user);
+
+		return new RequestManagerMainResponseDto(statusCounts, taskTypeCounts, systemCounts);
 	}
 
 
 	public Page<TaskResponseRequestDTO> findFilteredRequests(String equipmentName, String type, String taskDetail, RequestStatus status
-		,Pageable pageable
+		, Pageable pageable
 		) {
 		return taskRequestRepository.findFilteredRequests(equipmentName, type, taskDetail, status, pageable);
 	}

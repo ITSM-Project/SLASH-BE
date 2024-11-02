@@ -1,19 +1,18 @@
 package project.slash.contract.dto.response;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import project.slash.contract.dto.GradeDto;
+import project.slash.contract.model.Contract;
 
-@Getter 
+@Getter
 @AllArgsConstructor
-@NoArgsConstructor
-public class ContractDto {
+public class AllContractDto {
+	private Long contractId;
+
 	private String companyName;
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
@@ -24,5 +23,8 @@ public class ContractDto {
 
 	private boolean isTerminate;
 
-	private List<GradeDto> totalTargets;
+	public static AllContractDto from(Contract contract) {
+		return new AllContractDto(contract.getId(), contract.getCompanyName(), contract.getStartDate(),
+			contract.getEndDate(), contract.isTerminate());
+	}
 }
