@@ -12,7 +12,7 @@ import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
-import project.slash.contract.dto.ServiceTargetDto;
+import project.slash.contract.dto.GradeDto;
 import project.slash.contract.dto.response.EvaluationItemDto;
 
 public class EvaluationItemRepositoryCustomImpl implements EvaluationItemRepositoryCustom {
@@ -53,8 +53,8 @@ public class EvaluationItemRepositoryCustomImpl implements EvaluationItemReposit
 				)));
 	}
 
-	private ConstructorExpression<ServiceTargetDto> createServiceTargetDto() {
-		return constructor(ServiceTargetDto.class,
+	private ConstructorExpression<GradeDto> createServiceTargetDto() {
+		return constructor(GradeDto.class,
 			serviceTarget.grade,
 			serviceTarget.min,
 			serviceTarget.max,

@@ -14,7 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.slash.contract.dto.ServiceTargetDto;
+import project.slash.contract.dto.GradeDto;
 
 @Entity
 @Table(name = "service_target")
@@ -46,11 +46,12 @@ public class ServiceTarget {
 	@JoinColumn(name = "evaluation_item_id")
 	private EvaluationItem evaluationItem;
 
-	public static ServiceTarget from(ServiceTargetDto serviceTarget, EvaluationItem evaluationItem) {
+	public static ServiceTarget from(GradeDto serviceTarget, EvaluationItem evaluationItem) {
 		return ServiceTarget.builder()
 			.grade(serviceTarget.getGrade())
 			.min(serviceTarget.getMin())
 			.minInclusive(serviceTarget.getMinInclusive())
+			.score(serviceTarget.getScore())
 			.max(serviceTarget.getMax())
 			.maxInclusive(serviceTarget.getMaxInclusive())
 			.evaluationItem(evaluationItem)

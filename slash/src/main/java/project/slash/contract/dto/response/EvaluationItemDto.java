@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.slash.contract.dto.ServiceTargetDto;
+import project.slash.contract.dto.GradeDto;
 
 @Getter
 @AllArgsConstructor
@@ -30,5 +30,5 @@ public class EvaluationItemDto {
 
 	private String unit;
 
-	private List<ServiceTargetDto> serviceTargets;
+	private List<GradeDto> serviceTargets;
 }

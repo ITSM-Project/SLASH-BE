@@ -8,8 +8,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
+import project.slash.contract.dto.GradeDto;
 import project.slash.contract.dto.TaskTypeDto;
-import project.slash.contract.dto.ServiceTargetDto;
 
 @Getter
 @Builder
@@ -40,5 +40,5 @@ public class CreateEvaluationItemDto {
 
 	@Valid
 	@NotNull(message = "서비스 목표는 필수입니다.")
-	private List<ServiceTargetDto> serviceTargets;
+	private List<GradeDto> serviceTargets;
 }

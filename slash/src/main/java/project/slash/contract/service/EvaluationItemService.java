@@ -10,11 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import project.slash.common.exception.BusinessException;
+import project.slash.contract.dto.GradeDto;
 import project.slash.contract.model.Contract;
 import project.slash.contract.model.EvaluationItem;
 import project.slash.contract.model.ServiceTarget;
 import project.slash.contract.repository.contract.ContractRepository;
-import project.slash.contract.dto.ServiceTargetDto;
 import project.slash.contract.dto.TaskTypeDto;
 import project.slash.contract.dto.request.CreateEvaluationItemDto;
 import project.slash.contract.dto.response.EvaluationItemDetailDto;
@@ -54,7 +54,7 @@ public class EvaluationItemService {
 		taskTypeRepository.saveAll(taskTypes);
 	}
 
-	private void saveServiceTargets(List<ServiceTargetDto> targets, EvaluationItem evaluationItem) {
+	private void saveServiceTargets(List<GradeDto> targets, EvaluationItem evaluationItem) {
 		List<ServiceTarget> serviceTargets = targets.stream()
 			.map(target -> ServiceTarget.from(target, evaluationItem))
 			.toList();
