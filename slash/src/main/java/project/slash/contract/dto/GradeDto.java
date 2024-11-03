@@ -25,7 +25,7 @@ public class GradeDto {
 	@NotNull(message = "최대값은 필수입니다.")
 	private Double max;
 
-	private Double score;
+	private double score;
 
 	@NotNull(message = "최소단위 포함여부는 필수입니다.")
 	private Boolean minInclusive;
