@@ -105,7 +105,7 @@ public class TaskRequestController {
 	 * @return 요청 목록과 페이지네이션 정보를 포함한 응답 객체
 	 */
 	@GetMapping("/requests")
-	public BaseResponse<?> readRequest(
+	public BaseResponse<?> getRequests(
 		@RequestParam(required = false) String equipmentName,
 		@RequestParam(required = false) String type,
 		@RequestParam(required = false) String taskDetail,
@@ -116,15 +116,11 @@ public class TaskRequestController {
 	) {
 		Pageable pageable = PageRequest.of(page - 1, size);
 
-		Page<RequestManagementDto> taskResponseRequestDtos = taskRequestService.findFilteredRequests(
-			equipmentName, type, taskDetail, status, keyword, pageable);
-
-		RequestManagementResponseDto responseData = new RequestManagementResponseDto(
-			taskResponseRequestDtos.getContent(),
-			taskResponseRequestDtos.getTotalPages(),
-			taskResponseRequestDtos.getNumber() + 1,
-			taskResponseRequestDtos.getTotalElements()
+		// 서비스 메서드를 호출하여 RequestManagementResponseDto 객체를 받음
+		RequestManagementResponseDto responseData = taskRequestService.findFilteredRequests(
+			equipmentName, type, taskDetail, status, keyword, pageable
 		);
+
 
 		return BaseResponse.ok(responseData);
 	}
