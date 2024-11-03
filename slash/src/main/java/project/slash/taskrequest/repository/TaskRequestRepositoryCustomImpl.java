@@ -18,7 +18,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import project.slash.system.model.QEquipment;
 import project.slash.system.model.QSystems;
-import project.slash.taskrequest.dto.request.TaskResponseRequestDto;
+import project.slash.taskrequest.dto.request.RequestManagementDto;
 import project.slash.taskrequest.dto.response.StatusCountDto;
 import project.slash.taskrequest.dto.response.SystemCountDto;
 import project.slash.taskrequest.dto.response.TaskTypeCountDto;
@@ -97,7 +97,7 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 	}
 
 	@Override
-	public Page<TaskResponseRequestDto> findFilteredRequests(String equipmentName, String type,
+	public Page<RequestManagementDto> findFilteredRequests(String equipmentName, String type,
 		String taskDetail, RequestStatus status, String keyword, Pageable pageable) {
 
 		QTaskRequest taskRequestEntity = QTaskRequest.taskRequest;
@@ -131,8 +131,8 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 		}
 
 		// QueryResults를 통해 결과와 총 개수를 한 번에 조회
-		QueryResults<TaskResponseRequestDto> results = queryFactory
-			.select(Projections.constructor(TaskResponseRequestDto.class,
+		QueryResults<RequestManagementDto> results = queryFactory
+			.select(Projections.constructor(RequestManagementDto.class,
 				taskRequestEntity.title,
 				taskRequestEntity.content,
 				taskRequestEntity.dueOnTime,
