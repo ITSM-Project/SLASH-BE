@@ -24,7 +24,6 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import project.slash.security.auth.dto.JwtTokenDto;
-import project.slash.security.auth.custom.CustomJWTUserDetails;
 import project.slash.security.auth.custom.CustomUserDetails;
 
 @Slf4j
@@ -75,13 +74,7 @@ public class JwtTokenProvider {
 				.map(SimpleGrantedAuthority::new)
 				.toList();
 
-		// 인증을 위한 정보.
-		CustomJWTUserDetails userDetails = new CustomJWTUserDetails(
-			claims.getSubject(),
-			"",
-			authorities
-		);
-		return new UsernamePasswordAuthenticationToken(userDetails, "", authorities);
+		return new UsernamePasswordAuthenticationToken(claims.get("id"), "", authorities);
 	}
 
 	public boolean validateToken(String token) {
