@@ -117,16 +117,16 @@ public class TaskRequestController {
 		Pageable pageable = PageRequest.of(page - 1, size);
 
 		// Page 객체 반환
-		Page<RequestManagementDto> taskResponseRequestDTOS =
+		Page<RequestManagementDto> taskResponseRequestDtos =
 			taskRequestService.findFilteredRequests(equipmentName, type, taskDetail, status,
 				keyword, pageable);
 
 		// 응답 데이터로 페이지네이션 정보를 포함하여 반환
 		Map<String, Object> responseData = Map.of(
-			"results", taskResponseRequestDTOS.getContent(),
-			"totalPages", taskResponseRequestDTOS.getTotalPages(),
-			"currentPage", taskResponseRequestDTOS.getNumber() + 1, // 현재 페이지
-			"totalItems", taskResponseRequestDTOS.getTotalElements() // 총 항목 수
+			"results", taskResponseRequestDtos.getContent(),
+			"totalPages", taskResponseRequestDtos.getTotalPages(),
+			"currentPage", taskResponseRequestDtos.getNumber() + 1, // 현재 페이지
+			"totalItems", taskResponseRequestDtos.getTotalElements() // 총 항목 수
 		);
 
 		return BaseResponse.ok(responseData);
