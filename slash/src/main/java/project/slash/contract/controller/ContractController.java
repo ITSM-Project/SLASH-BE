@@ -20,7 +20,7 @@ import project.slash.contract.service.ContractService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/contractManager")
+@RequestMapping("/contract-manager")
 public class ContractController {
 
 	private final ContractService contractService;

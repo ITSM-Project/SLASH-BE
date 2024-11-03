@@ -25,14 +25,14 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.OK).body(tokenInfo);
 	}
 
-	@GetMapping("contractManager/dashboard")
+	@GetMapping("contract-manager/dashboard")
 	public String contractManagerDashboard() {
-		return "contractManager/dashboard";
+		return "contract-manager/dashboard";
 	}
 
-	@GetMapping("/requestManager/dashboard")
+	@GetMapping("/request-manager/dashboard")
 	public String requestManagerDashboard() {
-		return "requestManager/dashboard";
+		return "request-manager/dashboard";
 	}
 
 	@GetMapping("/user/dashboard")

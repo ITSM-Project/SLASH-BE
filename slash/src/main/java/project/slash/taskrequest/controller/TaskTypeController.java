@@ -13,7 +13,7 @@ import project.slash.taskrequest.service.TaskTypeService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/requestManager")
+@RequestMapping("/request-manager")
 public class TaskTypeController {
 	private final TaskTypeService taskTypeService;
 

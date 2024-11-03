@@ -20,7 +20,7 @@ import project.slash.taskrequest.service.TaskRequestService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/requestManager")
+@RequestMapping("/request-manager")
 public class TaskRequestController {
 	private final TaskRequestService taskRequestService;
 

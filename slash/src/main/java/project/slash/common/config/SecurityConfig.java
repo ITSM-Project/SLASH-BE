@@ -41,8 +41,8 @@ public class SecurityConfig {
 			)
 			.authorizeHttpRequests(requests -> requests
 				.requestMatchers("/", "/login", "/logout", "/error").permitAll()
-				.requestMatchers("/requestManager/**").hasRole("REQUEST_MANAGER")
-				.requestMatchers("/contractManager/**").hasRole("CONTRACT_MANAGER")
+				.requestMatchers("/request-manager/**").hasRole("REQUEST_MANAGER")
+				.requestMatchers("/contract-manager/**").hasRole("CONTRACT_MANAGER")
 				.requestMatchers("/user/**").hasRole("USER")
 				.anyRequest().authenticated()
 			)
