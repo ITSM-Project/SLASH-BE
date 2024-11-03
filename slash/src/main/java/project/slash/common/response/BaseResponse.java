@@ -25,11 +25,4 @@ public record BaseResponse<T>(Boolean success, T data, String message) {
 		return new BaseResponse<>(true, responseData, null);
 	}
 
-	public static BaseResponse<Map<String, Object>> ok(Object data, int totalPages) {
-		Map<String, Object> responseData = Map.of(
-			"results", data,
-			"totalPages", totalPages
-		);
-		return new BaseResponse<>(true, responseData, null);
-	}
 }
