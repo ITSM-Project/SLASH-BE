@@ -42,13 +42,13 @@ public class Contract {
 		this.isTerminate = isTerminate;
 	}
 
-	public static Contract from(ContractRequestDto dto) {
-		return Contract.builder()
-			.companyName(dto.getCompanyName())
-			.startDate(dto.getStartDate())
-			.endDate(dto.getEndDate())
-			.build();
-	}
+	// public static Contract from(ContractRequestDto dto) {
+	// 	return Contract.builder()
+	// 		.companyName(dto.getCompanyName())
+	// 		.startDate(dto.getStartDate())
+	// 		.endDate(dto.getEndDate())
+	// 		.build();
+	// }
 
 	public void updateTerminateStatus() {
 		this.isTerminate = true;

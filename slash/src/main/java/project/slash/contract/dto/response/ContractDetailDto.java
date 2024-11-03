@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.slash.contract.dto.GradeDto;
+import project.slash.contract.model.Contract;
 
 @Getter
 @AllArgsConstructor
@@ -30,14 +31,14 @@ public class ContractDetailDto {
 
 	private List<EvaluationItemDetailDto> evaluationItems;
 
-	public static ContractDetailDto of(Long contractId, ContractDto contractDto, List<EvaluationItemDetailDto> evaluationItems) {
+	public static ContractDetailDto of(Contract contract, List<GradeDto> totalTargets, List<EvaluationItemDetailDto> evaluationItems) {
 		return new ContractDetailDto(
-			contractId,
-			contractDto.getCompanyName(),
-			contractDto.getStartDate(),
-			contractDto.getEndDate(),
-			contractDto.isTerminate(),
-			contractDto.getTotalTargets(),
+			contract.getId(),
+			contract.getCompanyName(),
+			contract.getStartDate(),
+			contract.getEndDate(),
+			contract.isTerminate(),
+			totalTargets,
 			evaluationItems
 		);
 	}
