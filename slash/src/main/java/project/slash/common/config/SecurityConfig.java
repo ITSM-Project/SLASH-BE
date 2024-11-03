@@ -38,6 +38,7 @@ public class SecurityConfig {
 				.requestMatchers("/service-admin/**").hasRole("SERVICE_ADMIN")
 				.requestMatchers("/monthly-data").permitAll()
 				.requestMatchers("/statistics").permitAll()
+				.requestMatchers("/manager/status").permitAll()
 				.requestMatchers("/user/**").hasRole("USER")
 				.anyRequest().authenticated()
 			)
@@ -84,5 +85,4 @@ public class SecurityConfig {
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-
 }

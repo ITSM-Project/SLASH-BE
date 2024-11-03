@@ -1,10 +1,15 @@
 package project.slash.taskrequest.repository;
 
+import static project.slash.taskrequest.model.QTaskRequest.*;
+import static project.slash.taskrequest.model.constant.RequestStatus.*;
+import static project.slash.user.model.QUser.*;
+
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -12,6 +17,7 @@ import project.slash.system.model.QEquipment;
 import project.slash.system.model.QSystems;
 import project.slash.taskrequest.dto.response.StatusCountDto;
 import project.slash.taskrequest.dto.response.SystemCountDto;
+import project.slash.taskrequest.dto.response.TaskRequestOfManagerDto;
 import project.slash.taskrequest.dto.response.TaskTypeCountDto;
 import project.slash.taskrequest.model.QTaskRequest;
 import project.slash.taskrequest.model.QTaskType;
@@ -86,4 +92,18 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 
 	}
 
+	@Override
+	public List<TaskRequestOfManagerDto> findTaskRequestOfManager() {
+		return queryFactory
+			.select(Projections.constructor(TaskRequestOfManagerDto.class, taskRequest.manager.id, user.name,
+				taskRequest.count().as("total_count"), Expressions.numberTemplate(Long.class,
+					"SUM(CASE WHEN {0} THEN 1 ELSE 0 END)",
+					taskRequest.status.eq(IN_PROGRESS)).as("in_progress_count")))
+			.from(taskRequest)
+			.leftJoin(user)
+			.on(taskRequest.manager.id.eq(user.id))
+			.groupBy(taskRequest.manager.id)
+			.orderBy(user.name.asc())
+			.fetch();
+	}
 }

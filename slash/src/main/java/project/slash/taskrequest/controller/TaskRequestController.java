@@ -1,5 +1,7 @@
 package project.slash.taskrequest.controller;
 
+import java.util.List;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -15,6 +17,7 @@ import project.slash.common.response.BaseResponse;
 import project.slash.taskrequest.dto.request.TaskRequestDto;
 import project.slash.taskrequest.dto.response.RequestManagerMainResponseDto;
 import project.slash.taskrequest.dto.response.RequestDetailDto;
+import project.slash.taskrequest.dto.response.TaskRequestOfManagerDto;
 import project.slash.taskrequest.service.TaskRequestService;
 
 @RestController
@@ -88,5 +91,11 @@ public class TaskRequestController {
 		taskRequestService.editRequest(requestId, "1", taskRequestDto);
 
 		return BaseResponse.ok();
+	}
+
+	@GetMapping("/manager/status")
+	public BaseResponse<?> getManagerStatus() {
+		List<TaskRequestOfManagerDto> taskRequestOfManager = taskRequestService.getTaskRequestOfManager();
+		return BaseResponse.ok(taskRequestOfManager);
 	}
 }

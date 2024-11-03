@@ -15,9 +15,9 @@ import project.slash.system.repository.EquipmentRepository;
 import project.slash.taskrequest.dto.response.StatusCountDto;
 import project.slash.taskrequest.dto.response.SystemCountDto;
 import project.slash.taskrequest.dto.request.TaskRequestDto;
+import project.slash.taskrequest.dto.response.TaskRequestOfManagerDto;
 import project.slash.taskrequest.dto.response.TaskTypeCountDto;
 import project.slash.taskrequest.dto.response.RequestManagerMainResponseDto;
-import project.slash.taskrequest.dto.response.AllTaskTypeDto;
 import project.slash.taskrequest.dto.response.RequestDetailDto;
 import project.slash.taskrequest.model.TaskRequest;
 import project.slash.taskrequest.model.TaskType;
@@ -130,5 +130,9 @@ public class TaskRequestService {
 		List<SystemCountDto> systemCounts = findCountBySystem(year, month, user);
 
 		return new RequestManagerMainResponseDto(statusCounts, taskTypeCounts, systemCounts);
+	}
+
+	public List<TaskRequestOfManagerDto> getTaskRequestOfManager() {
+		return taskRequestRepository.findTaskRequestOfManager();
 	}
 }

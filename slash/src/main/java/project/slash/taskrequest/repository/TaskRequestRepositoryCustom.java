@@ -4,6 +4,7 @@ import java.util.List;
 
 import project.slash.taskrequest.dto.response.StatusCountDto;
 import project.slash.taskrequest.dto.response.SystemCountDto;
+import project.slash.taskrequest.dto.response.TaskRequestOfManagerDto;
 import project.slash.taskrequest.dto.response.TaskTypeCountDto;
 
 public interface TaskRequestRepositoryCustom {
@@ -12,4 +13,6 @@ public interface TaskRequestRepositoryCustom {
 	List<TaskTypeCountDto> findCountByTaskType(int year, int month, String user);
 
 	List<SystemCountDto> findCountBySystem(int year, int month, String user);
+
+	List<TaskRequestOfManagerDto> findTaskRequestOfManager();
 }
