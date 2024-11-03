@@ -151,6 +151,7 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 			.leftJoin(systems)
 			.on(equipment.systems.name.eq(systemsEntity.name))
 			.where(builder)
+			.orderBy(taskRequestEntity.createTime.desc())
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetchResults();
