@@ -18,6 +18,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
 import project.slash.taskrequest.dto.request.TaskRequestDto;
+import project.slash.taskrequest.dto.response.RequestManagementResponseDto;
 import project.slash.taskrequest.dto.response.RequestManagerMainResponseDto;
 import project.slash.taskrequest.dto.response.RequestDetailDto;
 import project.slash.taskrequest.dto.request.RequestManagementDto;
@@ -118,11 +119,11 @@ public class TaskRequestController {
 		Page<RequestManagementDto> taskResponseRequestDtos = taskRequestService.findFilteredRequests(
 			equipmentName, type, taskDetail, status, keyword, pageable);
 
-		Map<String, Object> responseData = Map.of(
-			"results", taskResponseRequestDtos.getContent(),
-			"totalPages", taskResponseRequestDtos.getTotalPages(),
-			"currentPage", taskResponseRequestDtos.getNumber() + 1,
-			"totalItems", taskResponseRequestDtos.getTotalElements()
+		RequestManagementResponseDto responseData = new RequestManagementResponseDto(
+			taskResponseRequestDtos.getContent(),
+			taskResponseRequestDtos.getTotalPages(),
+			taskResponseRequestDtos.getNumber() + 1,
+			taskResponseRequestDtos.getTotalElements()
 		);
 
 		return BaseResponse.ok(responseData);
