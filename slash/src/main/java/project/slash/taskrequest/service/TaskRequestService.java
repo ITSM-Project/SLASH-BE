@@ -16,6 +16,7 @@ import project.slash.system.model.Equipment;
 import project.slash.system.repository.EquipmentRepository;
 import project.slash.taskrequest.dto.request.RequestManagementDto;
 import project.slash.taskrequest.dto.request.TaskRequestDto;
+import project.slash.taskrequest.dto.request.UpdateTaskRequestManagerDto;
 import project.slash.taskrequest.dto.response.RequestDetailDto;
 import project.slash.taskrequest.dto.response.RequestManagementResponseDto;
 import project.slash.taskrequest.dto.response.RequestManagerMainResponseDto;
@@ -158,4 +159,9 @@ public class TaskRequestService {
 		);
 	}
 
+	@Transactional
+	public void allocateRequest(UpdateTaskRequestManagerDto updateTaskRequestManagerDto) {
+		taskRequestRepository.updateManagerByRequestId(updateTaskRequestManagerDto.getRequestId(),
+			updateTaskRequestManagerDto.getManagerId());// 저장
+	}
 }

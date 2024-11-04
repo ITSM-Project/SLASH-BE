@@ -17,6 +17,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
 import project.slash.taskrequest.dto.request.TaskRequestDto;
+import project.slash.taskrequest.dto.request.UpdateTaskRequestManagerDto;
 import project.slash.taskrequest.dto.response.RequestManagementResponseDto;
 import project.slash.taskrequest.dto.response.RequestManagerMainResponseDto;
 import project.slash.taskrequest.dto.response.RequestDetailDto;
@@ -138,5 +139,9 @@ public class TaskRequestController {
 		return BaseResponse.ok(responseData);
 	}
 
-
+	@PatchMapping("/request/allocate")
+	public BaseResponse<Void> allocateRequest(@RequestBody UpdateTaskRequestManagerDto updateTaskRequestManagerDto) {
+		taskRequestService.allocateRequest(updateTaskRequestManagerDto);
+		return BaseResponse.ok();
+	}
 }

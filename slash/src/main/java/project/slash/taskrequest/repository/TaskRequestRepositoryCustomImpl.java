@@ -7,6 +7,7 @@ import static project.slash.taskrequest.model.QTaskRequest.*;
 import static project.slash.taskrequest.model.constant.RequestStatus.*;
 import static project.slash.user.model.QUser.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -164,6 +165,17 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 
 		// Page로 반환
 		return new PageImpl<>(results.getResults(), pageable, results.getTotal());
+	}
+
+	@Override
+	public void updateManagerByRequestId(Long requestId, String managerId) {
+		queryFactory
+			.update(taskRequest)
+			.set(taskRequest.manager.id, managerId)
+			.set(taskRequest.status, IN_PROGRESS)
+			.set(taskRequest.updateTime, LocalDateTime.now())
+			.where(taskRequest.id.eq(requestId))
+			.execute();
 	}
 
 	@Override

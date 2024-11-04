@@ -23,4 +23,6 @@ public interface TaskRequestRepositoryCustom {
 
 	Page<RequestManagementDto> findFilteredRequests(String equipmentName, String type,
 		String taskDetail, RequestStatus status, String keyword, Pageable pageable);
+
+	void updateManagerByRequestId(Long requestId, String managerId);
 }
