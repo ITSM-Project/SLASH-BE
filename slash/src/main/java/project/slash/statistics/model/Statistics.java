@@ -8,7 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import project.slash.evaluationitem.model.EvaluationItem;
+import project.slash.contract.model.EvaluationItem;
 
 import java.time.LocalDate;
 

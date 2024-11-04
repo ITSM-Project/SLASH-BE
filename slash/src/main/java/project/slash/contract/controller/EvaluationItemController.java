@@ -1,4 +1,4 @@
-package project.slash.evaluationitem.controller;
+package project.slash.contract.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
-import project.slash.evaluationitem.dto.request.CreateEvaluationItemDto;
-import project.slash.evaluationitem.dto.response.EvaluationItemDetailDto;
-import project.slash.evaluationitem.service.EvaluationItemService;
+import project.slash.contract.dto.request.CreateEvaluationItemDto;
+import project.slash.contract.dto.response.EvaluationItemDetailDto;
+import project.slash.contract.service.EvaluationItemService;
 
 @RequiredArgsConstructor
 @RestController

@@ -9,11 +9,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.slash.contract.dto.GradeDto;
+import project.slash.contract.model.Contract;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ContractInfoDto {
+public class ContractDetailDto {
 	private Long contractId;
 
 	private String companyName;
@@ -28,16 +29,16 @@ public class ContractInfoDto {
 
 	private List<GradeDto> totalTargets;
 
-	private List<PreviewEvaluationItemDto> evaluationItems;
+	private List<EvaluationItemDetailDto> evaluationItems;
 
-	public static ContractInfoDto of(Long contractId, ContractDto contractDto, List<PreviewEvaluationItemDto> evaluationItems) {
-		return new ContractInfoDto(
-			contractId,
-			contractDto.getCompanyName(),
-			contractDto.getStartDate(),
-			contractDto.getEndDate(),
-			contractDto.isTerminate(),
-			contractDto.getTotalTargets(),
+	public static ContractDetailDto of(Contract contract, List<GradeDto> totalTargets, List<EvaluationItemDetailDto> evaluationItems) {
+		return new ContractDetailDto(
+			contract.getId(),
+			contract.getCompanyName(),
+			contract.getStartDate(),
+			contract.getEndDate(),
+			contract.isTerminate(),
+			totalTargets,
 			evaluationItems
 		);
 	}

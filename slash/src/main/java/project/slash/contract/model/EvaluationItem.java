@@ -1,4 +1,5 @@
-package project.slash.evaluationitem.model;
+package project.slash.contract.model;
+
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,8 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.slash.evaluationitem.dto.request.CreateEvaluationItemDto;
-import project.slash.contract.model.Contract;
+import project.slash.contract.dto.request.CreateEvaluationItemDto;
 
 @Entity
 @Table(name = "evaluation_item")
