@@ -22,7 +22,7 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 
 	private final JPAQueryFactory queryFactory;
 
-	// 처리 상태 별 카운트수
+	// 처리 상태 별 카운트 수
 	@Override
 	public List<StatusCountDto> findCountByStatus(int year, int month, String user) {
 		QTaskRequest taskRequest = QTaskRequest.taskRequest;

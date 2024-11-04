@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import project.slash.common.exception.BusinessException;
-import project.slash.contract.dto.request.CreateContractDto;
+import project.slash.contract.dto.request.ContractRequestDto;
 import project.slash.contract.dto.response.AllContractDto;
 import project.slash.contract.dto.response.ContractDto;
 import project.slash.contract.dto.response.ContractInfoDto;
@@ -30,11 +30,11 @@ public class ContractService {
 	private final EvaluationItemRepository evaluationItemRepository;
 
 	@Transactional
-	public Long createContract(CreateContractDto createContractDto) {
+	public Long createContract(ContractRequestDto contractRequestDto) {
 		//TODO: 만료되지 않은 계약에 대해서 2개 이상 생성 불가능 하도록 해야함
-		Contract contract = contractRepository.save(Contract.from(createContractDto));    //계약 저장
+		Contract contract = contractRepository.save(Contract.from(contractRequestDto));    //계약 저장
 
-		List<TotalTarget> totalTargets = createContractDto.getTotalTargets().stream()
+		List<TotalTarget> totalTargets = contractRequestDto.getTotalTargets().stream()
 			.map(target -> TotalTarget.from(target, contract)).toList();    //종합 평가 등급 저장
 
 		totalTargetRepository.saveAll(totalTargets);
@@ -51,8 +51,7 @@ public class ContractService {
 
 	@Transactional
 	public void deleteContract(Long contractId) {
-		Contract contract = contractRepository.findById(contractId)
-			.orElseThrow(() -> new BusinessException(NOT_FOUND_CONTRACT));
+		Contract contract = findContract(contractId);
 
 		if(LocalDate.now().isAfter(contract.getEndDate())){
 			throw new BusinessException(NOT_TERMINATE_CONTRACT);
@@ -66,5 +65,10 @@ public class ContractService {
 
 		return allContracts.stream()
 			.map(AllContractDto::from).toList();
+	}
+
+	private Contract findContract(Long contractId) {
+		return contractRepository.findById(contractId)
+			.orElseThrow(() -> new BusinessException(NOT_FOUND_CONTRACT));
 	}
 }

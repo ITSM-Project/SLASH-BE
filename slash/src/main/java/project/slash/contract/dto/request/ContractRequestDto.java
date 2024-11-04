@@ -10,7 +10,7 @@ import lombok.Getter;
 import project.slash.contract.dto.GradeDto;
 
 @Getter
-public class CreateContractDto {
+public class ContractRequestDto {
 	@NotBlank(message = "회사 이름은 필수입니다.")
 	String companyName;
 

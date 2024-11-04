@@ -7,18 +7,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
-import project.slash.contract.dto.request.CreateContractDto;
+import project.slash.contract.dto.request.ContractRequestDto;
 import project.slash.contract.dto.response.AllContractDto;
 import project.slash.contract.dto.response.ContractInfoDto;
 import project.slash.contract.service.ContractService;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/contract-manager")
 public class ContractController {
 
 	private final ContractService contractService;
@@ -26,12 +28,12 @@ public class ContractController {
 	/**
 	 * 계약 생성 메서드입니다.
 	 *
-	 * @param createContractDto 계약 생성 정보
+	 * @param contractRequestDto 계약 생성 정보
 	 * @return 저장된 계약 ID
 	 */
 	@PostMapping("/contract")
-	public BaseResponse<Long> createContract(@RequestBody @Valid CreateContractDto createContractDto) {
-		Long contractId = contractService.createContract(createContractDto);
+	public BaseResponse<Long> createContract(@RequestBody @Valid ContractRequestDto contractRequestDto) {
+		Long contractId = contractService.createContract(contractRequestDto);
 
 		return BaseResponse.ok(contractId);
 	}

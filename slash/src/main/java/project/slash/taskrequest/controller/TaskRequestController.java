@@ -1,13 +1,12 @@
 package project.slash.taskrequest.controller;
 
-import java.util.List;
-
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,26 +15,14 @@ import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
 import project.slash.taskrequest.dto.request.TaskRequestDto;
 import project.slash.taskrequest.dto.response.RequestManagerMainResponseDto;
-import project.slash.taskrequest.dto.response.AllTaskTypeDto;
 import project.slash.taskrequest.dto.response.RequestDetailDto;
 import project.slash.taskrequest.service.TaskRequestService;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/request-manager")
 public class TaskRequestController {
 	private final TaskRequestService taskRequestService;
-
-	/**
-	 * 현재 계약의 업무 유형 조회 메서드 입니다.
-	 *
-	 * @return 업무 유형
-	 */
-	@GetMapping("/all-task-types")
-	public BaseResponse<List<AllTaskTypeDto>> allTaskTypes() {
-		List<AllTaskTypeDto> allTaskTypes = taskRequestService.allTaskTypes();
-
-		return BaseResponse.ok(allTaskTypes);
-	}
 
 	/**
 	 * 요청 생성 메서드입니다.
@@ -87,7 +74,7 @@ public class TaskRequestController {
 	 */
 	@DeleteMapping("/request/{requestId}")
 	public BaseResponse<Void> deleteRequest(@PathVariable("requestId") Long requestId) {
-		taskRequestService.deleteRequest(requestId, "1");	//TODO: 로그인 된 사용자로 변경해야함
+		taskRequestService.deleteRequest(requestId, "1");    //TODO: 로그인 된 사용자로 변경해야함
 
 		return BaseResponse.ok();
 	}
@@ -99,7 +86,8 @@ public class TaskRequestController {
 	 * @return 성공 여부
 	 */
 	@PatchMapping("/request/{requestId}")
-	public BaseResponse<Void> editRequest(@PathVariable("requestId") Long requestId, @RequestBody TaskRequestDto taskRequestDto) {
+	public BaseResponse<Void> editRequest(@PathVariable("requestId") Long requestId,
+		@RequestBody TaskRequestDto taskRequestDto) {
 		taskRequestService.editRequest(requestId, "1", taskRequestDto);
 
 		return BaseResponse.ok();
