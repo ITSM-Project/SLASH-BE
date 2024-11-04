@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.querydsl.core.Tuple;
+
 import lombok.RequiredArgsConstructor;
 import project.slash.contract.dto.ContractDataDto;
 import project.slash.contract.repository.ContractRepository;
@@ -30,7 +32,6 @@ public class StatisticsService {
 	public List<MonthlyServiceStatsDto> calculateMonthlyStats(String serviceType) {
 		List<MonthlyDataDto> monthlyData = statisticsRepository.getMonthlyData();
 		List<ContractDataDto> contractData = contractRepository.findIndicatorByCategory(serviceType);
-
 		List<MonthlyServiceStatsDto> result = new ArrayList<>();
 
 		for (MonthlyDataDto monthlyDataDto : monthlyData) {
@@ -38,6 +39,8 @@ public class StatisticsService {
 			//이부분은 서비스타입별로 다륾
 			if (serviceType.equals("서비스 가동률")) {
 				score = getServiceUptimeScore(monthlyDataDto.getLastDay(), monthlyDataDto.getTotalDownTime());
+			} else if (serviceType.equals("장애 적기처리율")) {
+				score = getIncidentTaskDueOnTimeCount(statisticsRepository.getIncidentsCount());
 			}
 
 			String grade = null;
@@ -67,7 +70,14 @@ public class StatisticsService {
 			if (serviceType.equals("서비스 가동률")) {
 				result.add(new MonthlyServiceStatsDto(date, serviceType, grade, score, "월별", weightedScore, true,
 					monthlyDataDto.getTotalDownTime(), monthlyDataDto.getRequestCount(), EvaluationItemId,
-					monthlyDataDto.getSystemName(), score, monthlyDataDto.getSystemIncidentCount(), 0L));
+					monthlyDataDto.getSystemName(), score, monthlyDataDto.getValidIncidentCount(), 0L));
+			} else if (serviceType.equals("장애 적기처리율")) {
+				result.add(new MonthlyServiceStatsDto(date, serviceType, grade, score, "월별", weightedScore, true,
+					monthlyDataDto.getTotalDownTime(), monthlyDataDto.getRequestCount(), EvaluationItemId,
+					monthlyDataDto.getSystemName(), score, monthlyDataDto.getValidIncidentCount(),
+					monthlyDataDto.getValidIncidentCount() -
+						monthlyDataDto.getValidDelayedIncidentCount()));
+
 			}
 
 		}
@@ -95,6 +105,14 @@ public class StatisticsService {
 
 		// 소수 둘째 자리까지 반올림
 		return Math.round(uptimePercentage * 100.0) / 100.0;
+	}
+
+	private long getIncidentTaskDueOnTimeCount(Tuple delayedIncidents) {
+		Long OverTimeDouble = delayedIncidents.get(0, Long.class);
+		Long overTime = delayedIncidents.get(1, Long.class);
+		Long dueOnTime = delayedIncidents.get(2, Long.class);
+		Long invalid = delayedIncidents.get(3, Long.class);
+		return dueOnTime;
 	}
 
 	public List<StatsDto> getStatistics(String serviceType, String period, String targetSystem) {
