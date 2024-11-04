@@ -13,7 +13,7 @@ import project.slash.taskrequest.service.TaskTypeService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/request-manager")
+// @RequestMapping("/request-manager")
 public class TaskTypeController {
 	private final TaskTypeService taskTypeService;
 
@@ -35,7 +35,7 @@ public class TaskTypeController {
 	 * @return 업무 유형 목록
 	 */
 
-	@GetMapping("/task-type")
+	@GetMapping("options/task-type")
 	public BaseResponse<List<String>> getDistinctTaskType() {
 		List<String> allTaskTypes = taskTypeService.getDistinctTaskTypes();
 		return BaseResponse.ok(allTaskTypes);
@@ -46,7 +46,7 @@ public class TaskTypeController {
 	 *
 	 * @return 업무 세부 사항 목록
 	 */
-	@GetMapping("/task-detail")
+	@GetMapping("options/task-detail")
 	public BaseResponse<List<String>> getDistinctTaskDetails() {
 		List<String> allTaskDetails = taskTypeService.getDistinctTaskDetails();
 		return BaseResponse.ok(allTaskDetails);

@@ -24,7 +24,7 @@ import project.slash.taskrequest.service.TaskRequestService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/request-manager")
+// @RequestMapping("/request-manager")
 public class TaskRequestController {
 	private final TaskRequestService taskRequestService;
 
