@@ -10,16 +10,21 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import project.slash.common.exception.BusinessException;
+import project.slash.contract.dto.GradeDto;
+import project.slash.contract.dto.TaskTypeDto;
 import project.slash.contract.dto.request.ContractRequestDto;
 import project.slash.contract.dto.response.AllContractDto;
-import project.slash.contract.dto.response.ContractDto;
-import project.slash.contract.dto.response.ContractInfoDto;
-import project.slash.contract.dto.response.PreviewEvaluationItemDto;
+import project.slash.contract.dto.response.ContractDetailDto;
+import project.slash.contract.dto.response.EvaluationItemDetailDto;
+import project.slash.contract.mapper.ContractMapper;
+import project.slash.contract.mapper.TotalTargetMapper;
 import project.slash.contract.model.Contract;
 import project.slash.contract.model.TotalTarget;
 import project.slash.contract.repository.ContractRepository;
 import project.slash.contract.repository.TotalTargetRepository;
-import project.slash.evaluationitem.repository.EvaluationItemRepository;
+import project.slash.contract.repository.evaluationItem.EvaluationItemRepository;
+import project.slash.taskrequest.mapper.TaskTypeMapper;
+import project.slash.taskrequest.repository.TaskTypeRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -28,25 +33,47 @@ public class ContractService {
 	private final TotalTargetRepository totalTargetRepository;
 	private final ContractRepository contractRepository;
 	private final EvaluationItemRepository evaluationItemRepository;
+	private final TaskTypeRepository taskTypeRepository;
+
+	private final ContractMapper contractMapper;
+	private final TotalTargetMapper totalTargetMapper;
+	private final TaskTypeMapper taskTypeMapper;
 
 	@Transactional
 	public Long createContract(ContractRequestDto contractRequestDto) {
-		//TODO: 만료되지 않은 계약에 대해서 2개 이상 생성 불가능 하도록 해야함
-		Contract contract = contractRepository.save(Contract.from(contractRequestDto));    //계약 저장
+		//기존 계약이 존재하는 경우 생성 시 기존 계약 만료 처리
+		contractRepository.findByIsTerminateFalse().ifPresent(Contract::updateTerminateStatus);
 
-		List<TotalTarget> totalTargets = contractRequestDto.getTotalTargets().stream()
-			.map(target -> TotalTarget.from(target, contract)).toList();    //종합 평가 등급 저장
+		Contract contract = contractRepository.save(contractMapper.toEntity(contractRequestDto));
+
+		List<TotalTarget> totalTargets = totalTargetMapper.toTotalTargetList(contractRequestDto.getTotalTargets(), contract);
 
 		totalTargetRepository.saveAll(totalTargets);
 		return contract.getId();
 	}
 
-	public ContractInfoDto showContractInfo(Long contractId) {
-		ContractDto contractDto = contractRepository.findContractById(contractId)
+	public ContractDetailDto showContractInfo(Long contractId) {
+		Contract contract = contractRepository.findById(contractId)
 			.orElseThrow(() -> new BusinessException(NOT_FOUND_CONTRACT));
 
-		List<PreviewEvaluationItemDto> evaluationItems = evaluationItemRepository.findEvaluationItem(contractId);
-		return ContractInfoDto.of(contractId, contractDto, evaluationItems);
+		List<GradeDto> totalTargets = totalTargetMapper.toGradeDtoList(
+			totalTargetRepository.findByContractId(contract.getId()));
+
+		List<EvaluationItemDetailDto> evaluationItemDetails = findEvaluationItemDetails(contractId);
+
+		return ContractDetailDto.of(contract, totalTargets, evaluationItemDetails);
+	}
+
+	private List<EvaluationItemDetailDto> findEvaluationItemDetails(Long contractId) {
+		return evaluationItemRepository.findAllEvaluationItems(contractId)
+			.stream()
+			.map(evaluationItem -> {
+				List<TaskTypeDto> taskTypes = taskTypeMapper.toTaskTypeDtoList(
+					taskTypeRepository.findTaskTypesByEvaluationItemId(evaluationItem.getEvaluationItemId()));
+
+				return EvaluationItemDetailDto.from(evaluationItem, taskTypes);
+			})
+			.toList();
 	}
 
 	@Transactional
@@ -63,8 +90,7 @@ public class ContractService {
 	public List<AllContractDto> showAllContract() {
 		List<Contract> allContracts = contractRepository.findAllByOrderByStartDateDesc();
 
-		return allContracts.stream()
-			.map(AllContractDto::from).toList();
+		return contractMapper.toAllContractDtoList(allContracts);
 	}
 
 	private Contract findContract(Long contractId) {

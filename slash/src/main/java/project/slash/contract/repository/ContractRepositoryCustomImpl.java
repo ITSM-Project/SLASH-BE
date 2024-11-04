@@ -1,9 +1,9 @@
 package project.slash.contract.repository;
 
 import static project.slash.contract.model.QContract.*;
+import static project.slash.contract.model.QEvaluationItem.*;
+import static project.slash.contract.model.QServiceTarget.*;
 import static project.slash.contract.model.QTotalTarget.*;
-import static project.slash.evaluationitem.model.QEvaluationItem.*;
-import static project.slash.evaluationitem.model.QServiceTarget.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +24,6 @@ public class ContractRepositoryCustomImpl implements ContractRepositoryCustom {
 	public ContractRepositoryCustomImpl(JPAQueryFactory queryFactory) {
 		this.queryFactory = queryFactory;
 	}
-
 	@Override
 	public Optional<ContractDto> findContractById(Long contractId) {
 		return queryFactory

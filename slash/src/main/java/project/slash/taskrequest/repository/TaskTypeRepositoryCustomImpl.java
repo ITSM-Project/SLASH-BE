@@ -2,7 +2,7 @@ package project.slash.taskrequest.repository;
 
 import static com.querydsl.core.types.Projections.*;
 import static project.slash.contract.model.QContract.*;
-import static project.slash.evaluationitem.model.QEvaluationItem.*;
+import static project.slash.contract.model.QEvaluationItem.*;
 import static project.slash.taskrequest.model.QTaskType.*;
 
 import java.util.List;
