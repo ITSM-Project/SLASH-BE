@@ -2,6 +2,7 @@ package project.slash.taskrequest.service;
 
 import static project.slash.system.exception.SystemsErrorCode.*;
 import static project.slash.taskrequest.exception.TaskRequestErrorCode.*;
+import static project.slash.taskrequest.model.constant.RequestStatus.*;
 
 import java.util.List;
 
@@ -163,5 +164,10 @@ public class TaskRequestService {
 	public void allocateRequest(UpdateTaskRequestManagerDto updateTaskRequestManagerDto) {
 		taskRequestRepository.updateManagerByRequestId(updateTaskRequestManagerDto.getRequestId(),
 			updateTaskRequestManagerDto.getManagerId());// 저장
+	}
+
+	@Transactional
+	public void completeRequest(UpdateTaskRequestManagerDto updateTaskRequestManagerDto) {
+		taskRequestRepository.updateDueOnTime(updateTaskRequestManagerDto.getRequestId(),updateTaskRequestManagerDto.getManagerId(),COMPLETED);
 	}
 }

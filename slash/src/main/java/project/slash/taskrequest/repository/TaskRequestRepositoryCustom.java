@@ -25,4 +25,6 @@ public interface TaskRequestRepositoryCustom {
 		String taskDetail, RequestStatus status, String keyword, Pageable pageable);
 
 	void updateManagerByRequestId(Long requestId, String managerId);
+
+	void updateDueOnTime(Long requestId,String managerId,RequestStatus requestStatus);
 }

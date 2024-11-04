@@ -144,4 +144,10 @@ public class TaskRequestController {
 		taskRequestService.allocateRequest(updateTaskRequestManagerDto);
 		return BaseResponse.ok();
 	}
+
+	@PatchMapping("/request/complete")
+	public BaseResponse<Void> completeRequest(@RequestBody UpdateTaskRequestManagerDto updateTaskRequestManagerDto) {
+		taskRequestService.completeRequest(updateTaskRequestManagerDto);
+		return BaseResponse.ok();
+	}
 }

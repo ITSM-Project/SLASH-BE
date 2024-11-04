@@ -4,6 +4,7 @@ import static project.slash.system.model.QEquipment.*;
 import static project.slash.system.model.QSystems.*;
 
 import static project.slash.taskrequest.model.QTaskRequest.*;
+import static project.slash.taskrequest.model.QTaskType.*;
 import static project.slash.taskrequest.model.constant.RequestStatus.*;
 import static project.slash.user.model.QUser.*;
 
@@ -13,12 +14,15 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -108,7 +112,7 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 		String taskDetail, RequestStatus status, String keyword, Pageable pageable) {
 
 		QTaskRequest taskRequestEntity = QTaskRequest.taskRequest;
-		QTaskType taskTypeEntity = QTaskType.taskType;
+		QTaskType taskTypeEntity = taskType;
 		QSystems systemsEntity = systems;
 
 		BooleanBuilder builder = new BooleanBuilder();
@@ -175,6 +179,37 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 			.set(taskRequest.status, IN_PROGRESS)
 			.set(taskRequest.updateTime, LocalDateTime.now())
 			.where(taskRequest.id.eq(requestId))
+			.execute();
+	}
+
+	@Override
+	public void updateDueOnTime(Long requestId,String managerId,RequestStatus status) {
+		LocalDateTime currentTime = LocalDateTime.now();
+
+		Integer deadline = queryFactory
+			.select(taskType.deadline)
+			.from(taskType)
+			.where(taskType.id.eq(
+				JPAExpressions.select(taskRequest.taskType.id)
+					.from(taskRequest)
+					.where(taskRequest.id.eq(requestId))))
+			.fetchOne();
+
+		queryFactory
+			.update(taskRequest)
+			.set(taskRequest.dueOnTime,
+				Expressions.cases()
+					.when(Expressions.dateTimeTemplate(LocalDateTime.class,
+							"TIMESTAMPADD(HOUR, {0}, {1})",
+							Expressions.constant(deadline),
+							taskRequest.createTime)
+						.gt(currentTime))
+					.then(true)
+					.otherwise(false))
+			.set(taskRequest.updateTime, currentTime)
+			.set(taskRequest.status,status)
+			.where(taskRequest.id.eq(requestId)
+				.and(taskRequest.manager.id.eq(managerId)))
 			.execute();
 	}
 
