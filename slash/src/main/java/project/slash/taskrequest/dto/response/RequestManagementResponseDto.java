@@ -15,5 +15,5 @@ public class RequestManagementResponseDto {
 	private int totalPages;                     // 총 페이지 수
 	private int currentPage;                    // 현재 페이지
 	private long totalItems;                    // 총 항목 수
-
 }
+
