@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
@@ -14,11 +15,12 @@ import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
 import project.slash.contract.dto.request.ContractRequestDto;
 import project.slash.contract.dto.response.AllContractDto;
-import project.slash.contract.dto.response.ContractInfoDto;
+import project.slash.contract.dto.response.ContractDetailDto;
 import project.slash.contract.service.ContractService;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/contract-manager")
 public class ContractController {
 
 	private final ContractService contractService;
@@ -43,10 +45,10 @@ public class ContractController {
 	 * @return 게약 내용
 	 */
 	@GetMapping("/contract/{contractId}")
-	public BaseResponse<ContractInfoDto> showContractInfo(@PathVariable("contractId") Long contractId) {
-		ContractInfoDto contractInfoDto = contractService.showContractInfo(contractId);
+	public BaseResponse<ContractDetailDto> showContractInfo(@PathVariable("contractId") Long contractId) {
+		ContractDetailDto contractDetailDto = contractService.showContractInfo(contractId);
 
-		return BaseResponse.ok(contractInfoDto);
+		return BaseResponse.ok(contractDetailDto);
 	}
 
 	/**

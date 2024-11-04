@@ -1,19 +1,38 @@
 package project.slash.user.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.RequiredArgsConstructor;
+import project.slash.security.auth.dto.JwtTokenDto;
+import project.slash.security.auth.service.AuthService;
+import project.slash.security.auth.dto.LoginRequestDto;
+
+@RequiredArgsConstructor
 @RestController
 public class UserController {
+	private final AuthService authService;
 
-	@GetMapping("/contract-admin/dashboard")
-	public String contractAdminDashboard() {
-		return "contract-admin/dashboard";
+	@PostMapping("/login")
+	public ResponseEntity<JwtTokenDto> login(@RequestBody LoginRequestDto userLoginRequestDto) {
+		String userId = userLoginRequestDto.getId();
+		String password = userLoginRequestDto.getPassword();
+		JwtTokenDto tokenInfo = authService.login(userId, password);
+		return ResponseEntity.status(HttpStatus.OK).body(tokenInfo);
 	}
 
-	@GetMapping("/service-admin/dashboard")
-	public String serviceAdminDashboard() {
-		return "service-admin/dashboard";
+	@GetMapping("contract-manager/dashboard")
+	public String contractManagerDashboard() {
+		return "contract-manager/dashboard";
+	}
+
+	@GetMapping("/request-manager/dashboard")
+	public String requestManagerDashboard() {
+		return "request-manager/dashboard";
 	}
 
 	@GetMapping("/user/dashboard")

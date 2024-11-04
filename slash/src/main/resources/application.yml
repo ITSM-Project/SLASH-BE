@@ -17,8 +17,9 @@ server:
   servlet:
     session:
       timeout: 24h
-
 logging:
   level:
-    org.springframework.security: DEBUG
+    org.springframework.security: TRACE
     org.mapstruct: DEBUG
+jwt:
+  secret: ENC(7EcTP9qkkVTr42yxPyHfKOOy6A/zDElhrnJk0bai0WGvGH+h7tu925YOJ+bafJ+6ey9VxQ5uq0gWYU8gfvXr8g9F9pIHp8tiTdty/qGinSU=)
