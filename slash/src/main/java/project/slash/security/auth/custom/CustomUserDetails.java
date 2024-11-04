@@ -1,4 +1,4 @@
-package project.slash.security.auth;
+package project.slash.security.auth.custom;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,6 +14,10 @@ import java.util.Collections;
 public class CustomUserDetails implements UserDetails {
 
 	private final User user;
+
+	public String getRole() {
+		return user.getRole();
+	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

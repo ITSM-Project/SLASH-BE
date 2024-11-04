@@ -2,12 +2,19 @@ package project.slash.contract.repository;
 
 import static project.slash.contract.model.QContract.*;
 import static project.slash.contract.model.QTotalTarget.*;
+import static project.slash.evaluationitem.model.QEvaluationItem.*;
+import static project.slash.evaluationitem.model.QServiceTarget.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.querydsl.core.group.GroupBy;
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+
+import project.slash.contract.dto.ContractDataDto;
 import project.slash.contract.dto.GradeDto;
 import project.slash.contract.dto.response.ContractDto;
 
@@ -39,5 +46,34 @@ public class ContractRepositoryCustomImpl implements ContractRepositoryCustom {
 						totalTarget.maxInclusive)))))
 			.stream()
 			.findFirst();
+	}
+
+	// 카테고리별 지표 찾기
+	@Override
+	public List<ContractDataDto> findIndicatorByCategory(String category) {
+
+		return queryFactory
+			.select(Projections.constructor(ContractDataDto.class,
+				serviceTarget.grade,
+				serviceTarget.max,
+				serviceTarget.maxInclusive,
+				serviceTarget.min,
+				serviceTarget.minInclusive,
+				serviceTarget.score,
+				evaluationItem.weight,
+				ExpressionUtils.as(
+					JPAExpressions.select(evaluationItem.weight.sum())
+						.from(evaluationItem)
+						.where(evaluationItem.contract.id.eq(contract.id)),
+					"weightTotal"
+				), evaluationItem.id,
+				evaluationItem.category))
+			.from(contract)
+			.leftJoin(evaluationItem)
+			.on(evaluationItem.contract.id.eq(contract.id))
+			.leftJoin(serviceTarget)
+			.on(serviceTarget.evaluationItem.id.eq(evaluationItem.id))
+			.where(contract.isTerminate.isFalse().and(evaluationItem.category.eq(category)))
+			.fetch();
 	}
 }
