@@ -2,13 +2,14 @@ package project.slash.taskrequest.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,9 +17,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
 import project.slash.taskrequest.dto.request.TaskRequestDto;
+import project.slash.taskrequest.dto.response.RequestManagementResponseDto;
 import project.slash.taskrequest.dto.response.RequestManagerMainResponseDto;
 import project.slash.taskrequest.dto.response.RequestDetailDto;
 import project.slash.taskrequest.dto.response.TaskRequestOfManagerDto;
+import project.slash.taskrequest.model.constant.RequestStatus;
 import project.slash.taskrequest.service.TaskRequestService;
 
 @RestController
@@ -101,4 +104,39 @@ public class TaskRequestController {
 		List<TaskRequestOfManagerDto> taskRequestOfManager = taskRequestService.getTaskRequestOfManager();
 		return BaseResponse.ok(taskRequestOfManager);
 	}
+
+	/**
+	 * 필터링된 요청 목록을 조회하는 메서드입니다.
+	 *
+	 * @param equipmentName 필터링할 장비 이름 (옵션)
+	 * @param type 필터링할 업무 유형 (옵션)
+	 * @param taskDetail 필터링할 업무 세부 사항 (옵션)
+	 * @param status 필터링할 요청 상태 (옵션)
+	 * @param keyword 제목이나 내용에서 검색할 키워드 (옵션)
+	 * @param page 조회할 페이지 번호 (기본값: 1)
+	 * @param size 페이지당 항목 수 (기본값: 5)
+	 * @return 요청 목록과 페이지네이션 정보를 포함한 응답 객체
+	 */
+	@GetMapping("/common/requests")
+	public BaseResponse<?> getRequests(
+		@RequestParam(required = false) String equipmentName,
+		@RequestParam(required = false) String type,
+		@RequestParam(required = false) String taskDetail,
+		@RequestParam(required = false) RequestStatus status,
+		@RequestParam(required = false) String keyword,
+		@RequestParam(defaultValue = "1") int page,
+		@RequestParam(defaultValue = "5") int size
+	) {
+		Pageable pageable = PageRequest.of(page - 1, size);
+
+		// 서비스 메서드를 호출하여 RequestManagementResponseDto 객체를 받음
+		RequestManagementResponseDto responseData = taskRequestService.findFilteredRequests(
+			equipmentName, type, taskDetail, status, keyword, pageable
+		);
+
+
+		return BaseResponse.ok(responseData);
+	}
+
+
 }

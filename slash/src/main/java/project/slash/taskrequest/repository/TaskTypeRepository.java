@@ -14,4 +14,8 @@ public interface TaskTypeRepository extends JpaRepository<TaskType, Long>, TaskT
 	Optional<TaskType> findTaskTypeByTaskRequestInfo(@Param("taskDetail") String taskDetail, @Param("serviceRelevance") boolean serviceRelevance);
 
 	List<TaskType> findTaskTypesByEvaluationItemId(Long categoryId);
+
+	List<TaskType> findDistinctByTypeNotNull();
+
+	List<TaskType> findDistinctByTaskDetailNotNull();
 }

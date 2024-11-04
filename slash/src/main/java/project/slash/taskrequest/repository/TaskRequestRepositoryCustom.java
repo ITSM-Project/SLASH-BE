@@ -2,10 +2,15 @@ package project.slash.taskrequest.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+import project.slash.taskrequest.dto.request.RequestManagementDto;
 import project.slash.taskrequest.dto.response.StatusCountDto;
 import project.slash.taskrequest.dto.response.SystemCountDto;
 import project.slash.taskrequest.dto.response.TaskRequestOfManagerDto;
 import project.slash.taskrequest.dto.response.TaskTypeCountDto;
+import project.slash.taskrequest.model.constant.RequestStatus;
 
 public interface TaskRequestRepositoryCustom {
 	List<StatusCountDto> findCountByStatus(int year, int month, String user);
@@ -15,4 +20,7 @@ public interface TaskRequestRepositoryCustom {
 	List<SystemCountDto> findCountBySystem(int year, int month, String user);
 
 	List<TaskRequestOfManagerDto> findTaskRequestOfManager();
+
+	Page<RequestManagementDto> findFilteredRequests(String equipmentName, String type,
+		String taskDetail, RequestStatus status, String keyword, Pageable pageable);
 }
