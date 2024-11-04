@@ -20,6 +20,7 @@ public class RequestDetailDto {
 	private String taskType;
 	private String status;
 	private boolean dueOnTime;
+	private String system;
 	private String equipmentName;
 	private String taskDetail;
 	private String title;
@@ -37,6 +38,7 @@ public class RequestDetailDto {
 			.taskType(taskRequest.getTaskType().getType())
 			.status(taskRequest.getStatus().getStatus())
 			.dueOnTime(taskRequest.isDueOnTime())
+			.system(taskRequest.getEquipment().getSystems().getName())
 			.equipmentName(taskRequest.getEquipment().getName())
 			.taskDetail(taskRequest.getTaskType().getTaskDetail())
 			.title(taskRequest.getTitle())

@@ -1,4 +1,4 @@
-package project.slash.evaluationitem.dto;
+package project.slash.contract.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
