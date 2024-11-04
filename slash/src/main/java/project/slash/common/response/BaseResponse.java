@@ -1,5 +1,7 @@
 package project.slash.common.response;
 
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
@@ -18,4 +20,9 @@ public record BaseResponse<T>(Boolean success, T data, String message) {
 	public static BaseResponse<Void> error(String message) {
 		return new BaseResponse<>(false, null, message);
 	}
+
+	public static <T> BaseResponse<Map<String, Object>> ok(Map<String, Object> responseData) {
+		return new BaseResponse<>(true, responseData, null);
+	}
+
 }
