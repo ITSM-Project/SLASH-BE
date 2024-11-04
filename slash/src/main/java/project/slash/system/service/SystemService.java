@@ -48,12 +48,12 @@ public class SystemService {
 
 	public List<String> getDistinctSystemNames() {
 		return Stream.concat(
-				Stream.of("전체"),
-				systemsRepository.findDistinctByNameNotNull()
-					.stream()
-					.map(Systems::getName)
-					.distinct()
-			)
-			.collect(Collectors.toList());
+			Stream.of("전체"),
+			systemsRepository.findDistinctByNameNotNull().stream()
+				.map(Systems::getName)
+				.distinct()
+		).toList();
 	}
+
 }
+

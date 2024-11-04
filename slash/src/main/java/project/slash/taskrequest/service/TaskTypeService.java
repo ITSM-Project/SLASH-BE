@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import project.slash.system.model.Systems;
 import project.slash.taskrequest.dto.response.AllTaskTypeDto;
 import project.slash.taskrequest.model.TaskType;
 import project.slash.taskrequest.repository.TaskTypeRepository;
@@ -22,24 +23,20 @@ public class TaskTypeService {
 
 	public List<String> getDistinctTaskTypes() {
 		return Stream.concat(
-				Stream.of("전체"),
-				taskTypeRepository.findDistinctByTypeNotNull()
-					.stream()
-					.map(TaskType::getType)
-					.distinct()
-			)
-			.collect(Collectors.toList());
+			Stream.of("전체"),
+			taskTypeRepository.findDistinctByTypeNotNull().stream()
+				.map(TaskType::getType)
+				.distinct()
+		).toList();
 	}
 
 	public List<String> getDistinctTaskDetails() {
 		return Stream.concat(
-				Stream.of("전체"),
-				taskTypeRepository.findDistinctByTaskDetailNotNull()
-					.stream()
-					.map(TaskType::getTaskDetail)
-					.distinct()
-			)
-			.collect(Collectors.toList());
+			Stream.of("전체"),
+			taskTypeRepository.findDistinctByTaskDetailNotNull().stream()
+				.map(TaskType::getTaskDetail)
+				.distinct()
+		).toList();
 	}
 }
 
