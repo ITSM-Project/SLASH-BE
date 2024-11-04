@@ -11,9 +11,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringTemplate;
@@ -84,6 +86,67 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 			ps.setLong(13, dto.getSystemIncidentCount());
 			ps.setLong(14, dto.getDueOnTimeCount());
 		});
+	}
+
+	@Override
+	public Tuple getIncidentsCount() {
+		StringTemplate yearMonth = Expressions.stringTemplate(
+			"DATE_FORMAT({0}, '%Y-%m')",
+			taskRequest.createTime);
+
+		LocalDate previousMonthDate = LocalDate.now().minusMonths(1);
+		String previousMonth = previousMonthDate.format(DateTimeFormatter.ofPattern("yyyy-MM"));
+
+		return queryFactory
+			.select(Projections.constructor(Tuple.class,
+				Expressions.asNumber(
+					Expressions.cases()
+						.when(
+							taskRequest.dueOnTime.eq(false)
+								.and(taskType.deadline.multiply(2).lt(systemIncident.incidentTime))
+								.and(taskType.inclusionStatus.eq(true))
+						).then(1)
+						.otherwise(0)
+				).sum().as("OverTimeDouble"),
+
+				Expressions.asNumber(
+					Expressions.cases()
+						.when(
+							taskRequest.dueOnTime.eq(false)
+								.and(taskType.deadline.multiply(2).goe(systemIncident.incidentTime))
+								.and(taskType.inclusionStatus.eq(true))
+						).then(1)
+						.otherwise(0)
+				).sum().as("overTime"),
+				Expressions.asNumber(
+					Expressions.cases()
+						.when(
+							taskRequest.dueOnTime.eq(true)
+								.and(taskType.inclusionStatus.eq(true))
+						).then(1)
+						.otherwise(0)
+				).sum().as("dueOnTime"),
+				Expressions.asNumber(
+					Expressions.cases()
+						.when(
+							taskType.inclusionStatus.eq(false)
+						).then(1)
+						.otherwise(0)
+				).sum().as("invalid")
+			))
+			.from(taskRequest)
+			.leftJoin(equipment).on(taskRequest.equipment.id.eq(equipment.id))
+			.leftJoin(systems).on(equipment.systems.id.eq(systems.id))
+			.leftJoin(systemIncident).on(systemIncident.taskRequest.id.eq(taskRequest.id))
+			.leftJoin(taskType).on(taskRequest.taskType.id.eq(taskType.id))
+			.where(
+				yearMonth.eq(previousMonth),
+				taskRequest.dueOnTime.eq(false)
+			)
+			.groupBy(systems.name)
+			.orderBy(systems.name.asc())
+			.fetchOne();
+
 	}
 
 }
