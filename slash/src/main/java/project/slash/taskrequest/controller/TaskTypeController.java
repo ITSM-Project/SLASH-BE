@@ -28,4 +28,27 @@ public class TaskTypeController {
 
 		return BaseResponse.ok(allTaskTypes);
 	}
+
+	/**
+	 * 현재 계약의 업무 유형 목록을 조회하는 메서드입니다.
+	 *
+	 * @return 업무 유형 목록
+	 */
+
+	@GetMapping("/task-type")
+	public BaseResponse<List<String>> getDistinctTaskType() {
+		List<String> allTaskTypes = taskTypeService.getDistinctTaskTypes();
+		return BaseResponse.ok(allTaskTypes);
+	}
+
+	/**
+	 * 현재 계약의 업무 세부 사항 목록을 조회하는 메서드입니다.
+	 *
+	 * @return 업무 세부 사항 목록
+	 */
+	@GetMapping("/task-detail")
+	public BaseResponse<List<String>> getDistinctTaskDetails() {
+		List<String> allTaskDetails = taskTypeService.getDistinctTaskDetails();
+		return BaseResponse.ok(allTaskDetails);
+	}
 }
