@@ -1,12 +1,13 @@
 package project.slash.taskrequest.repository;
 
+import static project.slash.taskrequest.model.QTaskRequest.*;
+import static project.slash.taskrequest.model.constant.RequestStatus.*;
+import static project.slash.user.model.QUser.*;
+
 import static project.slash.system.model.QEquipment.*;
 import static project.slash.system.model.QSystems.*;
 
-import static project.slash.taskrequest.model.QTaskRequest.*;
 import static project.slash.taskrequest.model.QTaskType.*;
-import static project.slash.taskrequest.model.constant.RequestStatus.*;
-import static project.slash.user.model.QUser.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,9 +15,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
@@ -105,6 +104,21 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 
 		return results;
 
+	}
+
+	@Override
+	public List<TaskRequestOfManagerDto> findTaskRequestOfManager() {
+		return queryFactory
+			.select(Projections.constructor(TaskRequestOfManagerDto.class, taskRequest.manager.id, user.name,
+				taskRequest.count().as("total_count"), Expressions.numberTemplate(Long.class,
+					"SUM(CASE WHEN {0} THEN 1 ELSE 0 END)",
+					taskRequest.status.eq(IN_PROGRESS)).as("in_progress_count")))
+			.from(taskRequest)
+			.leftJoin(user)
+			.on(taskRequest.manager.id.eq(user.id))
+			.groupBy(taskRequest.manager.id)
+			.orderBy(user.name.asc())
+			.fetch();
 	}
 
 	@Override
@@ -211,20 +225,5 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 			.where(taskRequest.id.eq(requestId)
 				.and(taskRequest.manager.id.eq(managerId)))
 			.execute();
-	}
-
-	@Override
-	public List<TaskRequestOfManagerDto> findTaskRequestOfManager() {
-		return queryFactory
-			.select(Projections.constructor(TaskRequestOfManagerDto.class, taskRequest.manager.id, user.name,
-				taskRequest.count().as("total_count"), Expressions.numberTemplate(Long.class,
-					"SUM(CASE WHEN {0} THEN 1 ELSE 0 END)",
-					taskRequest.status.eq(IN_PROGRESS)).as("in_progress_count")))
-			.from(taskRequest)
-			.leftJoin(user)
-			.on(taskRequest.manager.id.eq(user.id))
-			.groupBy(taskRequest.manager.id)
-			.orderBy(user.name.asc())
-			.fetch();
 	}
 }
