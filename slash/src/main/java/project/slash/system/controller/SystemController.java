@@ -26,4 +26,15 @@ public class SystemController {
 
 		return BaseResponse.ok(allSystemsInfos);
 	}
+
+	/**
+	 * 시스템의 고유한 이름 목록을 조회하는 메서드입니다.
+	 *
+	 * @return 시스템 이름 목록
+	 */
+	@GetMapping("/systems")
+	public BaseResponse<List<String>> getDistinctSystemNames() {
+		List<String> allSystemsNames = systemService.getDistinctSystemNames();
+		return BaseResponse.ok(allSystemsNames);
+	}
 }
