@@ -19,6 +19,8 @@ public class Statistics {
 	@Column(name = "statistics_id")
 	private Long id;
 	private LocalDate date;
+	@Column(name = "target_system")
+	private String targetSystem;
 	@Column(name = "service_type")
 	private String serviceType;
 	private String grade;
@@ -37,8 +39,13 @@ public class Statistics {
 	@Column(name = "request_count")
 	private long requestCount;
 
-	@Column( name = "due_on_time_count")
+	@Column(name = "due_on_time_count")
 	private long dueOnTimeCount;
+
+	private double estimate;
+
+	@Column(name = "system_incident_count")
+	private long systemIncidentCount;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "evaluation_item_id")

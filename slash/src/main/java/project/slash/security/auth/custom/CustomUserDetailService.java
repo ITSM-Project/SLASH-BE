@@ -1,4 +1,4 @@
-package project.slash.security.auth;
+package project.slash.security.auth.custom;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
