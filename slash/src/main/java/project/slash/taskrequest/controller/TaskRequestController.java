@@ -109,7 +109,7 @@ public class TaskRequestController {
 	 * @param size 페이지당 항목 수 (기본값: 5)
 	 * @return 요청 목록과 페이지네이션 정보를 포함한 응답 객체
 	 */
-	@GetMapping("/requests")
+	@GetMapping("/common/requests")
 	public BaseResponse<?> getRequests(
 		@RequestParam(required = false) String equipmentName,
 		@RequestParam(required = false) String type,

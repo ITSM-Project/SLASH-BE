@@ -32,7 +32,7 @@ public class SystemController {
 	 *
 	 * @return 시스템 이름 목록
 	 */
-	@GetMapping("/systems")
+	@GetMapping("/common/systems")
 	public BaseResponse<List<String>> getDistinctSystemNames() {
 		List<String> allSystemsNames = systemService.getDistinctSystemNames();
 		return BaseResponse.ok(allSystemsNames);
