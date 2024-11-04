@@ -1,6 +1,8 @@
 package project.slash.system.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.stereotype.Service;
 
@@ -43,4 +45,15 @@ public class SystemService {
 	public List<AllSystemsInfo> showAllSystems() {
 		return systemsRepository.findAllSystemsWithEquipments();
 	}
+
+	public List<String> getDistinctSystemNames() {
+		return Stream.concat(
+			Stream.of("전체"),
+			systemsRepository.findDistinctByNameNotNull().stream()
+				.map(Systems::getName)
+				.distinct()
+		).toList();
+	}
+
 }
+

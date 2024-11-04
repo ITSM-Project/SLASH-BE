@@ -5,6 +5,8 @@ import static project.slash.taskrequest.exception.TaskRequestErrorCode.*;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,15 +14,17 @@ import lombok.RequiredArgsConstructor;
 import project.slash.common.exception.BusinessException;
 import project.slash.system.model.Equipment;
 import project.slash.system.repository.EquipmentRepository;
+import project.slash.taskrequest.dto.request.RequestManagementDto;
+import project.slash.taskrequest.dto.request.TaskRequestDto;
+import project.slash.taskrequest.dto.response.RequestDetailDto;
+import project.slash.taskrequest.dto.response.RequestManagementResponseDto;
+import project.slash.taskrequest.dto.response.RequestManagerMainResponseDto;
 import project.slash.taskrequest.dto.response.StatusCountDto;
 import project.slash.taskrequest.dto.response.SystemCountDto;
-import project.slash.taskrequest.dto.request.TaskRequestDto;
 import project.slash.taskrequest.dto.response.TaskTypeCountDto;
-import project.slash.taskrequest.dto.response.RequestManagerMainResponseDto;
-import project.slash.taskrequest.dto.response.AllTaskTypeDto;
-import project.slash.taskrequest.dto.response.RequestDetailDto;
 import project.slash.taskrequest.model.TaskRequest;
 import project.slash.taskrequest.model.TaskType;
+import project.slash.taskrequest.model.constant.RequestStatus;
 import project.slash.taskrequest.repository.TaskRequestRepository;
 import project.slash.taskrequest.repository.TaskTypeRepository;
 
@@ -129,4 +133,24 @@ public class TaskRequestService {
 
 		return new RequestManagerMainResponseDto(statusCounts, taskTypeCounts, systemCounts);
 	}
+
+	public RequestManagementResponseDto findFilteredRequests(
+		String equipmentName,
+		String type,
+		String taskDetail,
+		RequestStatus status,
+		String keyword,
+		Pageable pageable
+	) {
+		Page<RequestManagementDto> taskResponseRequestDtos = taskRequestRepository.findFilteredRequests(
+			equipmentName, type, taskDetail, status, keyword, pageable);
+
+		return new RequestManagementResponseDto(
+			taskResponseRequestDtos.getContent(),
+			taskResponseRequestDtos.getTotalPages(),
+			taskResponseRequestDtos.getNumber() + 1,
+			taskResponseRequestDtos.getTotalElements()
+		);
+	}
+
 }
