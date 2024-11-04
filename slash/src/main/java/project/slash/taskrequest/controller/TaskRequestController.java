@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,6 +20,7 @@ import project.slash.taskrequest.service.TaskRequestService;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/request-manager")
 public class TaskRequestController {
 	private final TaskRequestService taskRequestService;
 
@@ -36,7 +38,8 @@ public class TaskRequestController {
 	}
 
 	@GetMapping("/monthly-data")
-	public BaseResponse<?> getMonthlyRequestData(@RequestParam("year") int year, @RequestParam("month") int month, String user) {
+	public BaseResponse<?> getMonthlyRequestData(@RequestParam("year") int year, @RequestParam("month") int month,
+		String user) {
 		RequestManagerMainResponseDto requestManager = taskRequestService.getMonthlyRequestData(year, month, "1");
 
 		return BaseResponse.ok(requestManager);
@@ -64,7 +67,7 @@ public class TaskRequestController {
 	 */
 	@DeleteMapping("/request/{requestId}")
 	public BaseResponse<Void> deleteRequest(@PathVariable("requestId") Long requestId) {
-		taskRequestService.deleteRequest(requestId, "1");	//TODO: 로그인 된 사용자로 변경해야함
+		taskRequestService.deleteRequest(requestId, "1");    //TODO: 로그인 된 사용자로 변경해야함
 
 		return BaseResponse.ok();
 	}
@@ -76,7 +79,8 @@ public class TaskRequestController {
 	 * @return 성공 여부
 	 */
 	@PatchMapping("/request/{requestId}")
-	public BaseResponse<Void> editRequest(@PathVariable("requestId") Long requestId, @RequestBody TaskRequestDto taskRequestDto) {
+	public BaseResponse<Void> editRequest(@PathVariable("requestId") Long requestId,
+		@RequestBody TaskRequestDto taskRequestDto) {
 		taskRequestService.editRequest(requestId, "1", taskRequestDto);
 
 		return BaseResponse.ok();
