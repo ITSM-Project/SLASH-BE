@@ -23,7 +23,7 @@ import project.slash.taskrequest.service.TaskRequestService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/request-manager")
+// @RequestMapping("/request-manager")
 public class TaskRequestController {
 	private final TaskRequestService taskRequestService;
 
@@ -48,7 +48,7 @@ public class TaskRequestController {
 	 * @param user 요청 데이터를 조회할 매니저 ID
 	 * @return 월간 요청 데이터(처리상태별, 장비유형별, 업무유형별 요청건수)
 	 */
-	@GetMapping("/monthly-data")
+	@GetMapping("/request-manager/monthly-data")
 	public BaseResponse<?> getMonthlyRequestData(@RequestParam("year") int year, @RequestParam("month") int month, String user) {
 		RequestManagerMainResponseDto requestManager = taskRequestService.getMonthlyRequestData(year, month, "2");
 
@@ -96,7 +96,7 @@ public class TaskRequestController {
 		return BaseResponse.ok();
 	}
 
-	@GetMapping("/manager/status")
+	@GetMapping("/contract-manager/status")
 	public BaseResponse<?> getManagerStatus() {
 		List<TaskRequestOfManagerDto> taskRequestOfManager = taskRequestService.getTaskRequestOfManager();
 		return BaseResponse.ok(taskRequestOfManager);
