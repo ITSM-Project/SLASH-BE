@@ -1,8 +1,15 @@
 package project.slash.taskrequest.repository;
 
+import static project.slash.taskrequest.model.QTaskRequest.*;
+import static project.slash.taskrequest.model.constant.RequestStatus.*;
+import static project.slash.user.model.QUser.*;
+
 import static project.slash.system.model.QEquipment.*;
 import static project.slash.system.model.QSystems.*;
 
+import static project.slash.taskrequest.model.QTaskType.*;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -13,6 +20,8 @@ import org.springframework.stereotype.Repository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -21,6 +30,7 @@ import project.slash.system.model.QSystems;
 import project.slash.taskrequest.dto.request.RequestManagementDto;
 import project.slash.taskrequest.dto.response.StatusCountDto;
 import project.slash.taskrequest.dto.response.SystemCountDto;
+import project.slash.taskrequest.dto.response.TaskRequestOfManagerDto;
 import project.slash.taskrequest.dto.response.TaskTypeCountDto;
 import project.slash.taskrequest.model.QTaskRequest;
 import project.slash.taskrequest.model.QTaskType;
@@ -97,11 +107,26 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 	}
 
 	@Override
+	public List<TaskRequestOfManagerDto> findTaskRequestOfManager() {
+		return queryFactory
+			.select(Projections.constructor(TaskRequestOfManagerDto.class, taskRequest.manager.id, user.name,
+				taskRequest.count().as("total_count"), Expressions.numberTemplate(Long.class,
+					"SUM(CASE WHEN {0} THEN 1 ELSE 0 END)",
+					taskRequest.status.eq(IN_PROGRESS)).as("in_progress_count")))
+			.from(taskRequest)
+			.leftJoin(user)
+			.on(taskRequest.manager.id.eq(user.id))
+			.groupBy(taskRequest.manager.id)
+			.orderBy(user.name.asc())
+			.fetch();
+	}
+
+	@Override
 	public Page<RequestManagementDto> findFilteredRequests(String equipmentName, String type,
 		String taskDetail, RequestStatus status, String keyword, Pageable pageable) {
 
 		QTaskRequest taskRequestEntity = QTaskRequest.taskRequest;
-		QTaskType taskTypeEntity = QTaskType.taskType;
+		QTaskType taskTypeEntity = taskType;
 		QSystems systemsEntity = systems;
 
 		BooleanBuilder builder = new BooleanBuilder();
@@ -140,6 +165,7 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 				taskRequestEntity.equipment.name,
 				taskRequestEntity.taskType.type,
 				taskRequestEntity.taskType.taskDetail,
+				taskRequestEntity.requester.id,
 				taskRequestEntity.requester.name,
 				taskRequestEntity.manager.name,
 				taskRequestEntity.createTime,
@@ -160,4 +186,45 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 		return new PageImpl<>(results.getResults(), pageable, results.getTotal());
 	}
 
+	@Override
+	public void updateManagerByRequestId(Long requestId, String managerId) {
+		queryFactory
+			.update(taskRequest)
+			.set(taskRequest.manager.id, managerId)
+			.set(taskRequest.status, IN_PROGRESS)
+			.set(taskRequest.updateTime, LocalDateTime.now())
+			.where(taskRequest.id.eq(requestId))
+			.execute();
+	}
+
+	@Override
+	public void updateDueOnTime(Long requestId,String managerId,RequestStatus status) {
+		LocalDateTime currentTime = LocalDateTime.now();
+
+		Integer deadline = queryFactory
+			.select(taskType.deadline)
+			.from(taskType)
+			.where(taskType.id.eq(
+				JPAExpressions.select(taskRequest.taskType.id)
+					.from(taskRequest)
+					.where(taskRequest.id.eq(requestId))))
+			.fetchOne();
+
+		queryFactory
+			.update(taskRequest)
+			.set(taskRequest.dueOnTime,
+				Expressions.cases()
+					.when(Expressions.dateTimeTemplate(LocalDateTime.class,
+							"TIMESTAMPADD(HOUR, {0}, {1})",
+							Expressions.constant(deadline),
+							taskRequest.createTime)
+						.gt(currentTime))
+					.then(true)
+					.otherwise(false))
+			.set(taskRequest.updateTime, currentTime)
+			.set(taskRequest.status,status)
+			.where(taskRequest.id.eq(requestId)
+				.and(taskRequest.manager.id.eq(managerId)))
+			.execute();
+	}
 }

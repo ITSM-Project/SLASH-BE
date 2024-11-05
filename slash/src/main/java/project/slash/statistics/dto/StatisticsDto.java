@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class StatsDto {
+public class StatisticsDto {
 	private LocalDate date;
 	private String serviceType;
 	private String grade;
@@ -15,4 +15,6 @@ public class StatsDto {
 	private long totalDowntime;
 	private long requestCount;
 	private long dueOnTimeCount;
+	private String targetSystem;
+	private String targetEquipment;
 }

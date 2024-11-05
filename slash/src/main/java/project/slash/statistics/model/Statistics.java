@@ -23,6 +23,10 @@ public class Statistics {
 	private String targetSystem;
 	@Column(name = "service_type")
 	private String serviceType;
+
+	@Column(name = "target_equipment")
+	private String targetEquipment;
+
 	private String grade;
 	private double score;
 	private String period;

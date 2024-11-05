@@ -8,6 +8,7 @@ import lombok.Getter;
 public class MonthlyDataDto {
 	private String yearMonth;
 	private String systemName;
+	private String equipmentName;
 	private long requestCount;
 	private long totalDownTime;
 	private int lastDay;

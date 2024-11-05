@@ -1,5 +1,7 @@
 package project.slash.taskrequest.controller;
 
+import java.util.List;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -8,7 +10,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,9 +17,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
 import project.slash.taskrequest.dto.request.TaskRequestDto;
+import project.slash.taskrequest.dto.request.UpdateTaskRequestManagerDto;
 import project.slash.taskrequest.dto.response.RequestManagementResponseDto;
 import project.slash.taskrequest.dto.response.RequestManagerMainResponseDto;
 import project.slash.taskrequest.dto.response.RequestDetailDto;
+import project.slash.taskrequest.dto.response.TaskRequestOfManagerDto;
 import project.slash.taskrequest.model.constant.RequestStatus;
 import project.slash.taskrequest.service.TaskRequestService;
 
@@ -49,7 +52,7 @@ public class TaskRequestController {
 	 * @param user 요청 데이터를 조회할 매니저 ID
 	 * @return 월간 요청 데이터(처리상태별, 장비유형별, 업무유형별 요청건수)
 	 */
-	@GetMapping("/monthly-data")
+	@GetMapping("/request-manager/monthly-data")
 	public BaseResponse<?> getMonthlyRequestData(@RequestParam("year") int year, @RequestParam("month") int month, String user) {
 		RequestManagerMainResponseDto requestManager = taskRequestService.getMonthlyRequestData(year, month, "2");
 
@@ -97,6 +100,12 @@ public class TaskRequestController {
 		return BaseResponse.ok();
 	}
 
+	@GetMapping("/contract-manager/status")
+	public BaseResponse<?> getManagerStatus() {
+		List<TaskRequestOfManagerDto> taskRequestOfManager = taskRequestService.getTaskRequestOfManager();
+		return BaseResponse.ok(taskRequestOfManager);
+	}
+
 	/**
 	 * 필터링된 요청 목록을 조회하는 메서드입니다.
 	 *
@@ -130,5 +139,15 @@ public class TaskRequestController {
 		return BaseResponse.ok(responseData);
 	}
 
+	@PatchMapping("/request/allocate")
+	public BaseResponse<Void> allocateRequest(@RequestBody UpdateTaskRequestManagerDto updateTaskRequestManagerDto) {
+		taskRequestService.allocateRequest(updateTaskRequestManagerDto);
+		return BaseResponse.ok();
+	}
 
+	@PatchMapping("/request/complete")
+	public BaseResponse<Void> completeRequest(@RequestBody UpdateTaskRequestManagerDto updateTaskRequestManagerDto) {
+		taskRequestService.completeRequest(updateTaskRequestManagerDto);
+		return BaseResponse.ok();
+	}
 }
