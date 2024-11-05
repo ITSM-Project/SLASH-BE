@@ -11,8 +11,8 @@ import lombok.RequiredArgsConstructor;
 import project.slash.contract.dto.ContractDataDto;
 import project.slash.contract.repository.ContractRepository;
 import project.slash.statistics.dto.MonthlyDataDto;
-import project.slash.statistics.dto.MonthlyServiceStatsDto;
-import project.slash.statistics.dto.StatsDto;
+import project.slash.statistics.dto.MonthlyServiceStatisticsDto;
+import project.slash.statistics.dto.StatisticsDto;
 import project.slash.statistics.repository.StatisticsRepository;
 
 @Service
@@ -22,15 +22,15 @@ public class StatisticsService {
 	private final ContractRepository contractRepository;
 
 	public void createMonthlyStats(String serviceType) {
-		List<MonthlyServiceStatsDto> monthlyServiceStatsDtoList = calculateMonthlyStats(serviceType);
-		statisticsRepository.saveMonthlyData(monthlyServiceStatsDtoList);
+		List<MonthlyServiceStatisticsDto> monthlyServiceStatisticsDtoList = calculateMonthlyStats(serviceType);
+		statisticsRepository.saveMonthlyData(monthlyServiceStatisticsDtoList);
 	}
 
 	// 자동 계산 로직, 조건별 산출식 변경
-	public List<MonthlyServiceStatsDto> calculateMonthlyStats(String serviceType) {
+	public List<MonthlyServiceStatisticsDto> calculateMonthlyStats(String serviceType) {
 		List<MonthlyDataDto> monthlyData = statisticsRepository.getMonthlyData();
 		List<ContractDataDto> contractData = contractRepository.findIndicatorByCategory(serviceType);
-		List<MonthlyServiceStatsDto> result = new ArrayList<>();
+		List<MonthlyServiceStatisticsDto> result = new ArrayList<>();
 
 		for (MonthlyDataDto monthlyDataDto : monthlyData) {
 			double score = 0.0;
@@ -65,7 +65,7 @@ public class StatisticsService {
 			// 서비스 가동률의 경우 , 아래에 if문 추가하면 됨
 			if (serviceType.equals("서비스 가동률")) {
 				result.add(
-					new MonthlyServiceStatsDto(date, serviceType, monthlyDataDto.getEquipmentName(), grade, score, "월별",
+					new MonthlyServiceStatisticsDto(date, serviceType, monthlyDataDto.getEquipmentName(), grade, score, "월별",
 						weightedScore, true,
 						monthlyDataDto.getTotalDownTime(), monthlyDataDto.getRequestCount(), EvaluationItemId,
 						monthlyDataDto.getSystemName(), score, monthlyDataDto.getSystemIncidentCount(), 0L));
@@ -98,7 +98,7 @@ public class StatisticsService {
 		return Math.round(uptimePercentage * 100.0) / 100.0;
 	}
 
-	public List<StatsDto> getStatistics(String serviceType, String period, String targetSystem,
+	public List<StatisticsDto> getStatistics(String serviceType, String period, String targetSystem,
 		String targetEquipment) {
 		String defaultServiceType = serviceType != null ? serviceType : "전체";
 		String defaultPeriod = period != null ? period : "전체";

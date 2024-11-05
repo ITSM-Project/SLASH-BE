@@ -23,8 +23,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 import project.slash.statistics.dto.MonthlyDataDto;
-import project.slash.statistics.dto.MonthlyServiceStatsDto;
-import project.slash.statistics.dto.StatsDto;
+import project.slash.statistics.dto.MonthlyServiceStatisticsDto;
+import project.slash.statistics.dto.StatisticsDto;
 
 @Repository
 @RequiredArgsConstructor
@@ -66,7 +66,7 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 	}
 
 	@Override
-	public void saveMonthlyData(List<MonthlyServiceStatsDto> statsDtoList) {
+	public void saveMonthlyData(List<MonthlyServiceStatisticsDto> statsDtoList) {
 		String sql = "INSERT INTO statistics (`date`, service_type, grade, score, period, weighted_score, " +
 			"approval_status, total_downtime, request_count, evaluation_item_id, target_system, estimate,system_incident_count,due_on_time_count,target_equipment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)";
 
@@ -90,7 +90,7 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 	}
 
 	@Override
-	public List<StatsDto> getStatistics(String serviceType, String period, String targetSystem,
+	public List<StatisticsDto> getStatistics(String serviceType, String period, String targetSystem,
 		String targetEquipment) {
 		BooleanBuilder builder = new BooleanBuilder();
 
@@ -111,7 +111,7 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 		// 쿼리 실행
 
 		return queryFactory
-			.select(Projections.constructor(StatsDto.class, // DTO로 변환
+			.select(Projections.constructor(StatisticsDto.class, // DTO로 변환
 				statistics.date,
 				statistics.serviceType,
 				statistics.grade,

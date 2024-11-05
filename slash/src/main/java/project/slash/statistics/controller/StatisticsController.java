@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
-import project.slash.statistics.dto.StatsDto;
+import project.slash.statistics.dto.StatisticsDto;
 import project.slash.statistics.service.StatisticsService;
 
 @RestController
@@ -21,7 +21,7 @@ public class StatisticsController {
 		@RequestParam(value = "period", required = false) String period,
 		@RequestParam(value = "targetSystem", required = false) String targetSystem,
 		@RequestParam(value = "targetEquipment", required = false) String targetEquipment){
-		List<StatsDto> statistics = statisticsService.getStatistics(serviceType, period, targetSystem,targetEquipment);
+		List<StatisticsDto> statistics = statisticsService.getStatistics(serviceType, period, targetSystem,targetEquipment);
 
 		return BaseResponse.ok(statistics);
 	}
