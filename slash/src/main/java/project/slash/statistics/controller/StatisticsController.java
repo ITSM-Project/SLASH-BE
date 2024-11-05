@@ -16,9 +16,12 @@ import project.slash.statistics.service.StatisticsService;
 public class StatisticsController {
 	private final StatisticsService statisticsService;
 
-	@GetMapping("/statistics")
-	public BaseResponse<?> getStatistics(@RequestParam("serviceType") String serviceType,@RequestParam("period") String period,@RequestParam("targetSystem") String targetSystem) {
-		List<StatsDto> statistics = statisticsService.getStatistics(serviceType, period, targetSystem);
+	@GetMapping("/user/statistics")
+	public BaseResponse<?> getStatistics(@RequestParam(value = "serviceType", required = false) String serviceType,
+		@RequestParam(value = "period", required = false) String period,
+		@RequestParam(value = "targetSystem", required = false) String targetSystem,
+		@RequestParam(value = "targetEquipment", required = false) String targetEquipment){
+		List<StatsDto> statistics = statisticsService.getStatistics(serviceType, period, targetSystem,targetEquipment);
 
 		return BaseResponse.ok(statistics);
 	}
