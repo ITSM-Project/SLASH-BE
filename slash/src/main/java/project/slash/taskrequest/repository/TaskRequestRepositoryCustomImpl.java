@@ -165,6 +165,7 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 				taskRequestEntity.equipment.name,
 				taskRequestEntity.taskType.type,
 				taskRequestEntity.taskType.taskDetail,
+				taskRequestEntity.requester.id,
 				taskRequestEntity.requester.name,
 				taskRequestEntity.manager.name,
 				taskRequestEntity.createTime,
