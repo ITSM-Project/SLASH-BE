@@ -20,7 +20,7 @@ public class SystemController {
 	 *
 	 * @return 시스템-장비 정보
 	 */
-	@GetMapping("/all-systems")
+	@GetMapping("/common/all-systems")
 	public BaseResponse<?> showAllSystems(){
 		List<AllSystemsInfo> allSystemsInfos = systemService.showAllSystems();
 

@@ -20,7 +20,7 @@ import project.slash.contract.service.ContractService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/contract-manager")
+// @RequestMapping("/contract-manager")
 public class ContractController {
 
 	private final ContractService contractService;
@@ -44,7 +44,7 @@ public class ContractController {
 	 * @param contractId 조회 할 계약 ID
 	 * @return 게약 내용
 	 */
-	@GetMapping("/contract/{contractId}")
+	@GetMapping("/common/contract/{contractId}")
 	public BaseResponse<ContractDetailDto> showContractInfo(@PathVariable("contractId") Long contractId) {
 		ContractDetailDto contractDetailDto = contractService.showContractInfo(contractId);
 
