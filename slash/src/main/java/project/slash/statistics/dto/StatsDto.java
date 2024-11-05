@@ -15,4 +15,6 @@ public class StatsDto {
 	private long totalDowntime;
 	private long requestCount;
 	private long dueOnTimeCount;
+	private String targetSystem;
+	private String targetEquipment;
 }
