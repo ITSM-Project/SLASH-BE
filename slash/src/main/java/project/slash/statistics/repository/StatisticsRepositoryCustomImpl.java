@@ -23,8 +23,11 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 import project.slash.statistics.dto.MonthlyDataDto;
+import project.slash.statistics.dto.MonthlyIncidentDataDto;
 import project.slash.statistics.dto.MonthlyServiceStatisticsDto;
 import project.slash.statistics.dto.StatisticsDto;
+import project.slash.taskrequest.controller.TaskRequestController;
+import project.slash.taskrequest.model.constant.RequestStatus;
 
 @Repository
 @RequiredArgsConstructor
@@ -60,6 +63,45 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 			.leftJoin(systemIncident).on(systemIncident.taskRequest.id.eq(taskRequest.id))
 			.leftJoin(taskType).on(taskRequest.taskType.id.eq(taskType.id))// 현재 년-월보다 이전 것만 필터링
 			.where(yearMonth.eq(previousMonth))
+			.groupBy(equipment.name)
+			.orderBy(systems.name.asc(), equipment.name.asc())
+			.fetch();
+	}
+
+	@Override
+	public List<MonthlyIncidentDataDto> getMonthlyIncidentData() {
+		StringTemplate yearMonth = Expressions.stringTemplate(
+			"DATE_FORMAT({0}, '%Y-%m')",
+			taskRequest.createTime);
+
+		LocalDate previousMonthDate = LocalDate.now().minusMonths(1);
+		String previousMonth = previousMonthDate.format(DateTimeFormatter.ofPattern("yyyy-MM"));
+
+		return queryFactory
+			.select(Projections.constructor(MonthlyIncidentDataDto.class,
+				yearMonth,
+				systems.name,
+				equipment.name,
+				taskRequest.count(),
+				Expressions.asNumber(systemIncident.incidentTime.sum().coalesce(0L)).castToNum(Long.class),
+				Expressions.numberTemplate(Integer.class, "DAY(LAST_DAY({0}))", taskRequest.createTime),
+				Expressions.asNumber(systemIncident.count().coalesce(0L)).castToNum(Long.class),
+				Expressions.numberTemplate(Long.class,
+					"SUM(CASE WHEN {0} THEN 1 ELSE 0 END)",
+					taskRequest.dueOnTime.isTrue()).as("dueOnTimeCount"))
+			)
+			.from(taskRequest)
+			.leftJoin(equipment).on(taskRequest.equipment.id.eq(equipment.id))
+			.leftJoin(systems).on(equipment.systems.id.eq(systems.id))
+			.leftJoin(systemIncident).on(systemIncident.taskRequest.id.eq(taskRequest.id))
+			.leftJoin(taskType).on(taskRequest.taskType.id.eq(taskType.id))
+			.where(
+				yearMonth.eq(previousMonth)
+					.and(taskType.type.eq("장애 요청"))
+					.and(taskType.inclusionStatus.eq(true))
+					.and(taskRequest.status.eq(RequestStatus.COMPLETED))
+					.and(taskRequest.dueOnTime.eq(true))
+			)
 			.groupBy(equipment.name)
 			.orderBy(systems.name.asc(), equipment.name.asc())
 			.fetch();
