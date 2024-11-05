@@ -16,7 +16,7 @@ import project.slash.statistics.service.StatisticsService;
 public class StatisticsController {
 	private final StatisticsService statisticsService;
 
-	@GetMapping("/user/statistics")
+	@GetMapping("/common/statistics")
 	public BaseResponse<?> getStatistics(@RequestParam(value = "serviceType", required = false) String serviceType,
 		@RequestParam(value = "period", required = false) String period,
 		@RequestParam(value = "targetSystem", required = false) String targetSystem,
