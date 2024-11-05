@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
@@ -20,7 +19,6 @@ import project.slash.contract.service.ContractService;
 
 @RestController
 @RequiredArgsConstructor
-// @RequestMapping("/contract-manager")
 public class ContractController {
 
 	private final ContractService contractService;
@@ -31,7 +29,7 @@ public class ContractController {
 	 * @param contractRequestDto 계약 생성 정보
 	 * @return 저장된 계약 ID
 	 */
-	@PostMapping("/contract")
+	@PostMapping("/contract-manager/contract")
 	public BaseResponse<Long> createContract(@RequestBody @Valid ContractRequestDto contractRequestDto) {
 		Long contractId = contractService.createContract(contractRequestDto);
 
@@ -56,7 +54,7 @@ public class ContractController {
 	 *
 	 * @return 모든 계약 정보
 	 */
-	@GetMapping("/all-contract")
+	@GetMapping("/contract-manager/all-contract")
 	public BaseResponse<List<AllContractDto>> showAllContract() {
 		List<AllContractDto> allContracts = contractService.showAllContract();
 
@@ -69,7 +67,7 @@ public class ContractController {
 	 * @param contractId 삭제할 계약 ID
 	 * @return 성공 여부
 	 */
-	@DeleteMapping("/contract/{contractId}")
+	@DeleteMapping("/contract-manager/contract/{contractId}")
 	public BaseResponse<Void> deleteContract(@PathVariable("contractId") Long contractId) {
 		contractService.deleteContract(contractId);
 
