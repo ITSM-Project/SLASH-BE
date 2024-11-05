@@ -12,6 +12,6 @@ public class MonthlyDataDto {
 	private long requestCount;
 	private long totalDownTime;
 	private int lastDay;
-	private long validIncidentCount;
-	private long validDelayedIncidentCount;
+	private long systemIncidentCount;
+	private long dueOnTime;
 }
