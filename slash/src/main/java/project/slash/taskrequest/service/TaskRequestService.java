@@ -167,7 +167,7 @@ public class TaskRequestService {
 	}
 
 	@Transactional
-	public void completeRequest(UpdateTaskRequestManagerDto updateTaskRequestManagerDto) {
-		taskRequestRepository.updateDueOnTime(updateTaskRequestManagerDto.getRequestId(),updateTaskRequestManagerDto.getManagerId(),COMPLETED);
+	public void completeRequest(long requestId,String managerId) {
+		taskRequestRepository.updateDueOnTime(requestId,managerId,COMPLETED);
 	}
 }
