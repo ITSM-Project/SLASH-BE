@@ -12,7 +12,6 @@ import project.slash.contract.dto.ContractDataDto;
 import project.slash.contract.repository.ContractRepository;
 import project.slash.statistics.dto.MonthlyDataDto;
 import project.slash.statistics.dto.MonthlyServiceStatisticsDto;
-import project.slash.statistics.dto.MonthlyServiceStatsDto;
 import project.slash.statistics.dto.StatisticsDto;
 import project.slash.statistics.repository.StatisticsRepository;
 
@@ -35,11 +34,9 @@ public class StatisticsService {
 
 		for (MonthlyDataDto monthlyDataDto : monthlyData) {
 			double score = 0.0;
-			//이부분은 서비스타입별로 다륾
+			//이부분은 서비스타입별로 다름
 			if (serviceType.equals("서비스 가동률")) {
 				score = getServiceUptimeScore(monthlyDataDto.getLastDay(), monthlyDataDto.getTotalDownTime());
-			} else if (serviceType.equals("장애 적기처리율")) {
-				score = getIncidentTaskDueOnTimeCount(statisticsRepository.getIncidentsCount());
 			}
 			String grade = null;
 			double weightedScore = 0.0;
@@ -68,18 +65,11 @@ public class StatisticsService {
 			// 서비스 가동률의 경우 , 아래에 if문 추가하면 됨
 			if (serviceType.equals("서비스 가동률")) {
 				result.add(
-					new MonthlyServiceStatisticsDto(date, serviceType, monthlyDataDto.getEquipmentName(), grade, score, "월별",
+					new MonthlyServiceStatisticsDto(date, serviceType, monthlyDataDto.getEquipmentName(), grade, score,
+						"월별",
 						weightedScore, true,
 						monthlyDataDto.getTotalDownTime(), monthlyDataDto.getRequestCount(), EvaluationItemId,
 						monthlyDataDto.getSystemName(), score, monthlyDataDto.getSystemIncidentCount(), 0L));
-			}
-			else if (serviceType.equals("장애 적기처리율")) {
-				result.add(new MonthlyServiceStatsDto(date, serviceType, grade, score, "월별", weightedScore, true,
-					monthlyDataDto.getTotalDownTime(), monthlyDataDto.getRequestCount(), EvaluationItemId,
-					monthlyDataDto.getSystemName(), score, monthlyDataDto.getValidIncidentCount(),
-					monthlyDataDto.getValidIncidentCount() -
-						monthlyDataDto.getValidDelayedIncidentCount()));
-
 			}
 
 		}
