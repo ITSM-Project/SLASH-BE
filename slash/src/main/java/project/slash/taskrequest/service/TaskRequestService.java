@@ -2,6 +2,7 @@ package project.slash.taskrequest.service;
 
 import static project.slash.system.exception.SystemsErrorCode.*;
 import static project.slash.taskrequest.exception.TaskRequestErrorCode.*;
+import static project.slash.taskrequest.model.constant.RequestStatus.*;
 
 import java.util.List;
 
@@ -16,11 +17,13 @@ import project.slash.system.model.Equipment;
 import project.slash.system.repository.EquipmentRepository;
 import project.slash.taskrequest.dto.request.RequestManagementDto;
 import project.slash.taskrequest.dto.request.TaskRequestDto;
+import project.slash.taskrequest.dto.request.UpdateTaskRequestManagerDto;
 import project.slash.taskrequest.dto.response.RequestDetailDto;
 import project.slash.taskrequest.dto.response.RequestManagementResponseDto;
 import project.slash.taskrequest.dto.response.RequestManagerMainResponseDto;
 import project.slash.taskrequest.dto.response.StatusCountDto;
 import project.slash.taskrequest.dto.response.SystemCountDto;
+import project.slash.taskrequest.dto.response.TaskRequestOfManagerDto;
 import project.slash.taskrequest.dto.response.TaskTypeCountDto;
 import project.slash.taskrequest.model.TaskRequest;
 import project.slash.taskrequest.model.TaskType;
@@ -134,6 +137,10 @@ public class TaskRequestService {
 		return new RequestManagerMainResponseDto(statusCounts, taskTypeCounts, systemCounts);
 	}
 
+	public List<TaskRequestOfManagerDto> getTaskRequestOfManager() {
+		return taskRequestRepository.findTaskRequestOfManager();
+	}
+
 	public RequestManagementResponseDto findFilteredRequests(
 		String equipmentName,
 		String type,
@@ -153,4 +160,14 @@ public class TaskRequestService {
 		);
 	}
 
+	@Transactional
+	public void allocateRequest(UpdateTaskRequestManagerDto updateTaskRequestManagerDto) {
+		taskRequestRepository.updateManagerByRequestId(updateTaskRequestManagerDto.getRequestId(),
+			updateTaskRequestManagerDto.getManagerId());// 저장
+	}
+
+	@Transactional
+	public void completeRequest(UpdateTaskRequestManagerDto updateTaskRequestManagerDto) {
+		taskRequestRepository.updateDueOnTime(updateTaskRequestManagerDto.getRequestId(),updateTaskRequestManagerDto.getManagerId(),COMPLETED);
+	}
 }

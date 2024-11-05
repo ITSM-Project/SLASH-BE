@@ -9,10 +9,11 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class MonthlyServiceStatsDto {
+public class MonthlyServiceStatisticsDto {
 	@DateTimeFormat(pattern = "yyyy-MM")
 	private LocalDate date;
 	private String serviceType;
+	private String targetEquipment;
 	private String grade;
 	private double score;
 	private String period;
