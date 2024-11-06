@@ -3,6 +3,7 @@ package project.slash.taskrequest.service;
 import static project.slash.system.exception.SystemsErrorCode.*;
 import static project.slash.taskrequest.exception.TaskRequestErrorCode.*;
 import static project.slash.taskrequest.model.constant.RequestStatus.*;
+import static project.slash.user.exception.UserErrorCode.*;
 
 import java.util.List;
 
@@ -30,6 +31,8 @@ import project.slash.taskrequest.model.TaskType;
 import project.slash.taskrequest.model.constant.RequestStatus;
 import project.slash.taskrequest.repository.TaskRequestRepository;
 import project.slash.taskrequest.repository.TaskTypeRepository;
+import project.slash.user.model.User;
+import project.slash.user.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +41,7 @@ public class TaskRequestService {
 	private final TaskTypeRepository taskTypeRepository;
 	private final TaskRequestRepository taskRequestRepository;
 	private final EquipmentRepository equipmentRepository;
+	private final UserRepository userRepository;
 
 
 	@Transactional
@@ -46,7 +50,8 @@ public class TaskRequestService {
 
 		Equipment equipment = findEquipment(taskRequestDto.getEquipmentName());
 
-		TaskRequest taskRequest = TaskRequest.from(taskRequestDto, taskType, null,
+		User requester = userRepository.findById("3").orElseThrow(() -> new BusinessException(NOT_FOUND_USER));
+		TaskRequest taskRequest = TaskRequest.from(taskRequestDto, taskType, requester,
 			equipment); //TODO: 유저는 로그인 기능 완료 후 넣기
 
 		taskRequestRepository.save(taskRequest);
