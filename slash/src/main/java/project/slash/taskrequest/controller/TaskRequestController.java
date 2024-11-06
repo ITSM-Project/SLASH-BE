@@ -36,7 +36,7 @@ public class TaskRequestController {
 	 * @param taskRequestDto 요청 정보
 	 * @return 성공 여부
 	 */
-	@PostMapping("/request-manager/request")
+	@PostMapping("/user/request")
 	public BaseResponse<Void> createRequest(@RequestBody @Valid TaskRequestDto taskRequestDto) {
 		taskRequestService.createRequest(taskRequestDto);
 
@@ -80,7 +80,7 @@ public class TaskRequestController {
 	 */
 	@DeleteMapping("/request-manager/request/{requestId}")
 	public BaseResponse<Void> deleteRequest(@PathVariable("requestId") Long requestId) {
-		taskRequestService.deleteRequest(requestId, "1");    //TODO: 로그인 된 사용자로 변경해야함
+		taskRequestService.deleteRequest(requestId, "3");    //TODO: 로그인 된 사용자로 변경해야함
 
 		return BaseResponse.ok();
 	}
@@ -91,7 +91,7 @@ public class TaskRequestController {
 	 * @param requestId 수정할 요청 ID
 	 * @return 성공 여부
 	 */
-	@PatchMapping("/request-manager/request/{requestId}")
+	@PatchMapping("/user/request/{requestId}")
 	public BaseResponse<Void> editRequest(@PathVariable("requestId") Long requestId,
 		@RequestBody TaskRequestDto taskRequestDto) {
 		taskRequestService.editRequest(requestId, "1", taskRequestDto);
