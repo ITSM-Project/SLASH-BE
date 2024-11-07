@@ -45,14 +45,14 @@ public class TaskRequestService {
 
 
 	@Transactional
-	public void createRequest(TaskRequestDto taskRequestDto) {    //요청 생성
+	public void createRequest(TaskRequestDto taskRequestDto, String userId) {    //요청 생성
 		TaskType taskType = findTaskType(taskRequestDto.getTaskDetail(), taskRequestDto.isServiceRelevance());
 
 		Equipment equipment = findEquipment(taskRequestDto.getEquipmentName());
 
-		User requester = userRepository.findById("3").orElseThrow(() -> new BusinessException(NOT_FOUND_USER));
+		User requester = userRepository.findById(userId).orElseThrow(() -> new BusinessException(NOT_FOUND_USER));
 		TaskRequest taskRequest = TaskRequest.from(taskRequestDto, taskType, requester,
-			equipment); //TODO: 유저는 로그인 기능 완료 후 넣기
+			equipment);
 
 		taskRequestRepository.save(taskRequest);
 	}
@@ -172,7 +172,7 @@ public class TaskRequestService {
 	}
 
 	@Transactional
-	public void completeRequest(long requestId,String managerId) {
-		taskRequestRepository.updateDueOnTime(requestId,managerId,COMPLETED);
+	public void completeRequest(long requestId, String managerId) {
+		taskRequestRepository.updateDueOnTime(requestId, managerId, COMPLETED);
 	}
 }
