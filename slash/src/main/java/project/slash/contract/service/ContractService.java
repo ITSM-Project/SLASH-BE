@@ -41,9 +41,6 @@ public class ContractService {
 
 	@Transactional
 	public Long createContract(ContractRequestDto contractRequestDto) {
-		//기존 계약이 존재하는 경우 생성 시 기존 계약 만료 처리
-		contractRepository.findByIsTerminateFalse().ifPresent(Contract::updateTerminateStatus);
-
 		Contract contract = contractRepository.save(contractMapper.toEntity(contractRequestDto));
 
 		List<TotalTarget> totalTargets = totalTargetMapper.toTotalTargetList(contractRequestDto.getTotalTargets(), contract);
