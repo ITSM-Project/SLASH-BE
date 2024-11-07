@@ -24,20 +24,4 @@ public class UserController {
 		JwtTokenDto tokenInfo = authService.login(userId, password);
 		return ResponseEntity.status(HttpStatus.OK).body(tokenInfo);
 	}
-
-	@GetMapping("contract-manager/dashboard")
-	public String contractManagerDashboard() {
-		return "contract-manager/dashboard";
-	}
-
-	@GetMapping("/request-manager/dashboard")
-	public String requestManagerDashboard() {
-		return "request-manager/dashboard";
-	}
-
-	@GetMapping("/user/dashboard")
-	public String userDashboard() {
-		return "user/dashboard";
-	}
-
 }
