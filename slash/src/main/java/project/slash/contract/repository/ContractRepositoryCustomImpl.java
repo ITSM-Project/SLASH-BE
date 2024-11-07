@@ -24,6 +24,7 @@ public class ContractRepositoryCustomImpl implements ContractRepositoryCustom {
 	public ContractRepositoryCustomImpl(JPAQueryFactory queryFactory) {
 		this.queryFactory = queryFactory;
 	}
+
 	@Override
 	public Optional<ContractDto> findContractById(Long contractId) {
 		return queryFactory
@@ -48,6 +49,7 @@ public class ContractRepositoryCustomImpl implements ContractRepositoryCustom {
 	}
 
 	// 카테고리별 지표 찾기
+	// TODO: 계약 아이디로 찾는거 수정해야함
 	@Override
 	public List<ContractDataDto> findIndicatorByCategory(String category) {
 

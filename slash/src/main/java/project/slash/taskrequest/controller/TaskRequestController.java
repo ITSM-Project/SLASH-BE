@@ -52,7 +52,8 @@ public class TaskRequestController {
 	 * @return 월간 요청 데이터(처리상태별, 장비유형별, 업무유형별 요청건수)
 	 */
 	@GetMapping("/request-manager/monthly-data")
-	public BaseResponse<?> getMonthlyRequestData(@RequestParam("year") int year, @RequestParam("month") int month, String user) {
+	public BaseResponse<?> getMonthlyRequestData(@RequestParam("year") int year, @RequestParam("month") int month,
+		String user) {
 		RequestManagerMainResponseDto requestManager = taskRequestService.getMonthlyRequestData(year, month, "2");
 
 		return BaseResponse.ok(requestManager);
@@ -134,7 +135,6 @@ public class TaskRequestController {
 			equipmentName, type, taskDetail, status, keyword, pageable
 		);
 
-
 		return BaseResponse.ok(responseData);
 	}
 
@@ -145,8 +145,9 @@ public class TaskRequestController {
 	}
 
 	@PatchMapping("/request-manager/request/complete")
-	public BaseResponse<Void> completeRequest(@RequestParam("requestId") long requestId,@RequestParam("managerId") String managerId) {
-		taskRequestService.completeRequest(requestId,managerId);
+	public BaseResponse<Void> completeRequest(@RequestParam("requestId") long requestId,
+		@RequestParam("managerId") String managerId) {
+		taskRequestService.completeRequest(requestId, managerId);
 		return BaseResponse.ok();
 	}
 }

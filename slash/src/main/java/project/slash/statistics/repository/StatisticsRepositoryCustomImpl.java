@@ -68,7 +68,7 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 	@Override
 	public void saveMonthlyData(List<MonthlyServiceStatisticsDto> statsDtoList) {
 		String sql = "INSERT INTO statistics (`date`, service_type, grade, score, period, weighted_score, " +
-			"approval_status, total_downtime, request_count, evaluation_item_id, target_system, estimate,system_incident_count,due_on_time_count,target_equipment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)";
+			"approval_status, total_downtime, request_count, evaluation_item_id, target_system, estimate, system_incident_count, due_on_time_count, target_equipment, is_auto) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 		jdbcTemplate.batchUpdate(sql, statsDtoList, 50, (ps, dto) -> {
 			ps.setDate(1, java.sql.Date.valueOf(dto.getDate()));
@@ -86,6 +86,7 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 			ps.setLong(13, dto.getSystemIncidentCount());
 			ps.setLong(14, dto.getDueOnTimeCount());
 			ps.setString(15, dto.getTargetEquipment());
+			ps.setBoolean(16, dto.getIsAuto());
 		});
 	}
 
@@ -108,10 +109,8 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 			builder.and(statistics.targetEquipment.eq(targetEquipment));
 		}
 
-		// 쿼리 실행
-
 		return queryFactory
-			.select(Projections.constructor(StatisticsDto.class, // DTO로 변환
+			.select(Projections.constructor(StatisticsDto.class,
 				statistics.date,
 				statistics.serviceType,
 				statistics.grade,

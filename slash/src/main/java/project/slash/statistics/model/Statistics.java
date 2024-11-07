@@ -51,6 +51,9 @@ public class Statistics {
 	@Column(name = "system_incident_count")
 	private long systemIncidentCount;
 
+	@Column(name = "is_auto")
+	private boolean isAuto;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "evaluation_item_id")
 	private EvaluationItem evaluationItems;
