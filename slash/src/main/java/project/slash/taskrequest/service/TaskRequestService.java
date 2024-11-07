@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -172,7 +173,10 @@ public class TaskRequestService {
 	}
 
 	@Transactional
-	public void completeRequest(long requestId,String managerId) {
-		taskRequestRepository.updateDueOnTime(requestId,managerId,COMPLETED);
+	@Modifying
+	public void completeRequest(long requestId, String managerId) {
+		taskRequestRepository.updateDueOnTime(requestId, managerId, COMPLETED);
+		Long duration = taskRequestRepository.getDuration(requestId);
+		taskRequestRepository.updateSystemIncident(duration, requestId);
 	}
 }

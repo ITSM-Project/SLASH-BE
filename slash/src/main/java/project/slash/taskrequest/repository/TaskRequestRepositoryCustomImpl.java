@@ -8,13 +8,14 @@ import static project.slash.system.model.QEquipment.*;
 import static project.slash.system.model.QSystems.*;
 
 import static project.slash.taskrequest.model.QTaskType.*;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.BooleanBuilder;
@@ -27,6 +28,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import project.slash.system.model.QEquipment;
 import project.slash.system.model.QSystems;
+import project.slash.systemincident.model.QSystemIncident;
 import project.slash.taskrequest.dto.request.RequestManagementDto;
 import project.slash.taskrequest.dto.response.StatusCountDto;
 import project.slash.taskrequest.dto.response.SystemCountDto;
@@ -34,6 +36,7 @@ import project.slash.taskrequest.dto.response.TaskRequestOfManagerDto;
 import project.slash.taskrequest.dto.response.TaskTypeCountDto;
 import project.slash.taskrequest.model.QTaskRequest;
 import project.slash.taskrequest.model.QTaskType;
+import project.slash.taskrequest.model.TaskRequest;
 import project.slash.taskrequest.model.constant.RequestStatus;
 
 @Repository
@@ -41,6 +44,9 @@ import project.slash.taskrequest.model.constant.RequestStatus;
 public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCustom {
 
 	private final JPAQueryFactory queryFactory;
+
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
 
 	// 처리 상태 별 카운트 수
 	@Override
@@ -228,4 +234,24 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 				.and(taskRequest.manager.id.eq(managerId)))
 			.execute();
 	}
+
+	@Override
+	public Long getDuration(Long requestId){
+
+			return queryFactory
+				.select(Expressions.numberTemplate(Long.class,
+					"TIMESTAMPDIFF(MINUTE, {0}, {1})",
+					taskRequest.createTime, taskRequest.updateTime))
+				.from(taskRequest)
+				.where(taskRequest.id.eq(requestId))
+				.fetchOne();
+
+	}
+
+	@Override
+	public void updateSystemIncident(Long duration,Long requestId) {
+		String sql = "INSERT INTO system_incident (incident_time, request_id) VALUES (?, ?)";
+		jdbcTemplate.update(sql, duration, requestId);
+	}
+
 }

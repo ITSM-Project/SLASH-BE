@@ -27,4 +27,8 @@ public interface TaskRequestRepositoryCustom {
 	void updateManagerByRequestId(Long requestId, String managerId);
 
 	void updateDueOnTime(Long requestId,String managerId,RequestStatus requestStatus);
+
+	Long getDuration(Long requestId);
+
+	void updateSystemIncident(Long duration, Long requestId);
 }
