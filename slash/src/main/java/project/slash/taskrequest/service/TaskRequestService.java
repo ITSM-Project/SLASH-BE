@@ -168,6 +168,12 @@ public class TaskRequestService {
 
 	@Transactional
 	public void allocateRequest(UpdateTaskRequestManagerDto updateTaskRequestManagerDto) {
+		TaskRequest taskRequest = taskRequestRepository.findById(updateTaskRequestManagerDto.getRequestId())
+			.orElseThrow(() -> new BusinessException(NOT_FOUND_REQUEST));
+
+		if (taskRequest.getStatus() != IN_PROGRESS || taskRequest.getManager().getId() != null) {
+			throw new BusinessException(MANAGER_ALREADY_ASSIGNED);
+		}
 		taskRequestRepository.updateManagerByRequestId(updateTaskRequestManagerDto.getRequestId(),
 			updateTaskRequestManagerDto.getManagerId());// 저장
 	}
@@ -175,6 +181,9 @@ public class TaskRequestService {
 	@Transactional
 	@Modifying
 	public void completeRequest(long requestId, String managerId) {
+		taskRequestRepository.findById(requestId)
+			.orElseThrow(() -> new BusinessException(NOT_FOUND_REQUEST));
+
 		taskRequestRepository.updateDueOnTime(requestId, managerId, COMPLETED);
 		Long duration = taskRequestRepository.getDuration(requestId);
 		taskRequestRepository.updateSystemIncident(duration, requestId);

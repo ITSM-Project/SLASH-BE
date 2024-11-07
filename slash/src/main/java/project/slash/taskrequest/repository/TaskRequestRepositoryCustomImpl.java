@@ -200,7 +200,7 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 			.set(taskRequest.manager.id, managerId)
 			.set(taskRequest.status, IN_PROGRESS)
 			.set(taskRequest.updateTime, LocalDateTime.now())
-			.where(taskRequest.id.eq(requestId))
+			.where(taskRequest.id.eq(requestId).and(taskRequest.manager.id.isNull()).and(taskRequest.status.eq(REGISTERED)))
 			.execute();
 	}
 
@@ -249,7 +249,7 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 	}
 
 	@Override
-	public void updateSystemIncident(Long duration,Long requestId) {
+	public void updateSystemIncident(Long duration, Long requestId) {
 		String sql = "INSERT INTO system_incident (incident_time, request_id) VALUES (?, ?)";
 		jdbcTemplate.update(sql, duration, requestId);
 	}
