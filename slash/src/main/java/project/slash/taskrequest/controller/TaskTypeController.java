@@ -3,6 +3,7 @@ package project.slash.taskrequest.controller;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
@@ -20,9 +21,9 @@ public class TaskTypeController {
 	 *
 	 * @return 업무 유형
 	 */
-	@GetMapping("/common/all-task-types")
-	public BaseResponse<List<AllTaskTypeDto>> allTaskTypes() {
-		List<AllTaskTypeDto> allTaskTypes = taskTypeService.allTaskTypes();
+	@GetMapping("/user/all-task-types/{contractId}")
+	public BaseResponse<List<AllTaskTypeDto>> allTaskTypes(@PathVariable("contractId") Long contractId) {
+		List<AllTaskTypeDto> allTaskTypes = taskTypeService.allTaskTypes(contractId);
 
 		return BaseResponse.ok(allTaskTypes);
 	}

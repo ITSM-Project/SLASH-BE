@@ -1,13 +1,12 @@
 package project.slash.taskrequest.dto.response;
 
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class AllTaskTypeDto {
-	private String type;
-	private List<TaskTypeDto> typeDetails;
+public class TaskTypeDto {
+	private Long taskTypeId;
+	private String taskDetail;
+	private boolean serviceRelevance;
 }
