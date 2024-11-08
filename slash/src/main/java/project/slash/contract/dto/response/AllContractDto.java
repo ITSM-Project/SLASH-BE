@@ -13,7 +13,7 @@ import project.slash.contract.model.Contract;
 public class AllContractDto {
 	private Long contractId;
 
-	private String companyName;
+	private String contractName;
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private LocalDate startDate;
