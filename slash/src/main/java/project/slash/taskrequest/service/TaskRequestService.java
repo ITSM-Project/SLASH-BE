@@ -43,22 +43,19 @@ public class TaskRequestService {
 	private final EquipmentRepository equipmentRepository;
 	private final UserRepository userRepository;
 
-
 	@Transactional
-	public void createRequest(TaskRequestDto taskRequestDto) {    //요청 생성
-		TaskType taskType = findTaskType(taskRequestDto.getTaskDetail(), taskRequestDto.isServiceRelevance());
-
+	public void createRequest(TaskRequestDto taskRequestDto, String userId) {    //요청 생성
+		TaskType taskType = findTaskType(taskRequestDto.getTaskDetail(), taskRequestDto.isServiceRelevance(), taskRequestDto.getContractId());
 		Equipment equipment = findEquipment(taskRequestDto.getEquipmentName());
 
-		User requester = userRepository.findById("3").orElseThrow(() -> new BusinessException(NOT_FOUND_USER));
-		TaskRequest taskRequest = TaskRequest.from(taskRequestDto, taskType, requester,
-			equipment); //TODO: 유저는 로그인 기능 완료 후 넣기
+		User requester = userRepository.findById(userId).orElseThrow(() -> new BusinessException(NOT_FOUND_USER));
+		TaskRequest taskRequest = TaskRequest.from(taskRequestDto, taskType, requester, equipment);
 
 		taskRequestRepository.save(taskRequest);
 	}
 
-	private TaskType findTaskType(String taskDetail, boolean isServiceRelevance) {
-		return taskTypeRepository.findTaskTypeByTaskRequestInfo(taskDetail, isServiceRelevance)
+	private TaskType findTaskType(String taskDetail, boolean isServiceRelevance, Long contractId) {
+		return taskTypeRepository.findTaskTypeByTaskRequestInfo(taskDetail, isServiceRelevance, contractId)
 			.orElseThrow(() -> new BusinessException(NOT_FOUND_TASK_TYPE));
 	}
 
@@ -102,7 +99,7 @@ public class TaskRequestService {
 
 	private TaskType getEditTaskType(TaskRequestDto taskRequestDto) {
 		if(taskRequestDto.getTaskDetail() != null) {
-			return findTaskType(taskRequestDto.getTaskDetail(), taskRequestDto.isServiceRelevance());
+			return findTaskType(taskRequestDto.getTaskDetail(), taskRequestDto.isServiceRelevance(), taskRequestDto.getContractId());
 		}
 		return null;
 	}
@@ -172,7 +169,7 @@ public class TaskRequestService {
 	}
 
 	@Transactional
-	public void completeRequest(long requestId,String managerId) {
-		taskRequestRepository.updateDueOnTime(requestId,managerId,COMPLETED);
+	public void completeRequest(long requestId, String managerId) {
+		taskRequestRepository.updateDueOnTime(requestId, managerId, COMPLETED);
 	}
 }

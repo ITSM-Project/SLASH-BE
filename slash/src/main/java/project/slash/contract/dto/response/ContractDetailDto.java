@@ -17,7 +17,7 @@ import project.slash.contract.model.Contract;
 public class ContractDetailDto {
 	private Long contractId;
 
-	private String companyName;
+	private String contractName;
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private LocalDate startDate;
@@ -34,7 +34,7 @@ public class ContractDetailDto {
 	public static ContractDetailDto of(Contract contract, List<GradeDto> totalTargets, List<EvaluationItemDetailDto> evaluationItems) {
 		return new ContractDetailDto(
 			contract.getId(),
-			contract.getCompanyName(),
+			contract.getContractName(),
 			contract.getStartDate(),
 			contract.getEndDate(),
 			contract.isTerminate(),

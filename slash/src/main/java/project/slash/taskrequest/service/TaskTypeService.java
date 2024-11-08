@@ -1,13 +1,11 @@
 package project.slash.taskrequest.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import project.slash.system.model.Systems;
 import project.slash.taskrequest.dto.response.AllTaskTypeDto;
 import project.slash.taskrequest.model.TaskType;
 import project.slash.taskrequest.repository.TaskTypeRepository;
@@ -17,8 +15,8 @@ import project.slash.taskrequest.repository.TaskTypeRepository;
 public class TaskTypeService {
 	private final TaskTypeRepository taskTypeRepository;
 
-	public List<AllTaskTypeDto> allTaskTypes() {
-		return taskTypeRepository.findAllTaskTypes();
+	public List<AllTaskTypeDto> allTaskTypes(Long contractId) {
+		return taskTypeRepository.findAllTaskTypes(contractId);
 	}
 
 	public List<String> getDistinctTaskTypes() {

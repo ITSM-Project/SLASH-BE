@@ -24,7 +24,7 @@ public class AllContractDto {
 	private boolean isTerminate;
 
 	public static AllContractDto from(Contract contract) {
-		return new AllContractDto(contract.getId(), contract.getCompanyName(), contract.getStartDate(),
+		return new AllContractDto(contract.getId(), contract.getContractName(), contract.getStartDate(),
 			contract.getEndDate(), contract.isTerminate());
 	}
 }
