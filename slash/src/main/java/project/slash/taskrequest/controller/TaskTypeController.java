@@ -3,6 +3,7 @@ package project.slash.taskrequest.controller;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
@@ -14,15 +15,16 @@ import project.slash.taskrequest.service.TaskTypeService;
 @RequiredArgsConstructor
 public class TaskTypeController {
 	private final TaskTypeService taskTypeService;
-
+	
 	/**
 	 * 현재 계약의 업무 유형 조회 메서드 입니다.
-	 *
-	 * @return 업무 유형
+	 * 
+	 * @param contractId 계약 아이디
+	 * @return 현재 계약 업무 유형
 	 */
-	@GetMapping("/common/all-task-types")
-	public BaseResponse<List<AllTaskTypeDto>> allTaskTypes() {
-		List<AllTaskTypeDto> allTaskTypes = taskTypeService.allTaskTypes();
+	@GetMapping("/user/all-task-types/{contractId}")
+	public BaseResponse<List<AllTaskTypeDto>> allTaskTypes(@PathVariable("contractId") Long contractId) {
+		List<AllTaskTypeDto> allTaskTypes = taskTypeService.allTaskTypes(contractId);
 
 		return BaseResponse.ok(allTaskTypes);
 	}

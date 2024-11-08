@@ -4,6 +4,9 @@ spring:
     url: ENC(UOkjJ+1ugeYB00/XVsN9CvEri1MngAL9Sh2wugwnhpWHbbOvK8TMUT67euCML9OhcVr4t3Dp6XC1gieXnDwO48sWqhkiWStkw63WJLnSb5GqjEJx9IVGK4ooVaZelOwmNvnvcRPyBAkZbwiROLrQ8/13dxhs6gXz0rMgXDHr8/J2zKLOxMCbZw==)
     username: ENC(PhyaRJCJP89U3bl2A9njuA==)
     password: ENC(RqQ+m97Mi+ianfhwxg0JI4EOZk3cPdzh)
+#    url: ENC(N6G22iNIGwVJsc1B+dPUcKyr00EdPnbEHUNn85QtbCxyLitR6FcTDnr3QApRUOXwFP7RoZBF1R+ReKeEwllWPnz83Fim7Qwq4aEIz7y8ZXJjrfGNuLMZ4o4CF0gFL6iPf3nGRbZ+evU=)
+#    username: ENC(rbAYXvnEtHLKTZhqKbLtHA==)
+#    password: ENC(WhT4M4/oia1FZqQ/BES/jw==)
   jpa:
     open-in-view: true
     hibernate:

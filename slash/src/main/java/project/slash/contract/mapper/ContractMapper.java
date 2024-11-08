@@ -12,7 +12,7 @@ import project.slash.contract.model.Contract;
 public class ContractMapper {
 	public Contract toEntity(ContractRequestDto dto) {
 		return Contract.builder()
-			.companyName(dto.getCompanyName())
+			.contractName(dto.getContractName())
 			.startDate(dto.getStartDate())
 			.endDate(dto.getEndDate())
 			.build();

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
+import project.slash.security.annotation.Login;
 import project.slash.taskrequest.dto.request.TaskRequestDto;
 import project.slash.taskrequest.dto.request.UpdateTaskRequestManagerDto;
 import project.slash.taskrequest.dto.response.RequestManagementResponseDto;
@@ -37,8 +38,8 @@ public class TaskRequestController {
 	 * @return 성공 여부
 	 */
 	@PostMapping("/user/request")
-	public BaseResponse<Void> createRequest(@RequestBody @Valid TaskRequestDto taskRequestDto) {
-		taskRequestService.createRequest(taskRequestDto);
+	public BaseResponse<Void> createRequest(@Login String userId, @RequestBody @Valid TaskRequestDto taskRequestDto) {
+		taskRequestService.createRequest(taskRequestDto, userId);
 
 		return BaseResponse.ok();
 	}
@@ -79,8 +80,8 @@ public class TaskRequestController {
 	 * @return 성공 여부
 	 */
 	@DeleteMapping("/request-manager/request/{requestId}")
-	public BaseResponse<Void> deleteRequest(@PathVariable("requestId") Long requestId) {
-		taskRequestService.deleteRequest(requestId, "3");    //TODO: 로그인 된 사용자로 변경해야함
+	public BaseResponse<Void> deleteRequest(@Login String userId, @PathVariable("requestId") Long requestId) {
+		taskRequestService.deleteRequest(requestId, userId);
 
 		return BaseResponse.ok();
 	}
@@ -92,9 +93,9 @@ public class TaskRequestController {
 	 * @return 성공 여부
 	 */
 	@PatchMapping("/user/request/{requestId}")
-	public BaseResponse<Void> editRequest(@PathVariable("requestId") Long requestId,
+	public BaseResponse<Void> editRequest(@Login String userId, @PathVariable("requestId") Long requestId,
 		@RequestBody TaskRequestDto taskRequestDto) {
-		taskRequestService.editRequest(requestId, "1", taskRequestDto);
+		taskRequestService.editRequest(requestId, userId, taskRequestDto);
 
 		return BaseResponse.ok();
 	}
@@ -145,8 +146,9 @@ public class TaskRequestController {
 	}
 
 	@PatchMapping("/request-manager/request/complete")
-	public BaseResponse<Void> completeRequest(@RequestParam("requestId") long requestId,@RequestParam("managerId") String managerId) {
-		taskRequestService.completeRequest(requestId,managerId);
+	public BaseResponse<Void> completeRequest(@RequestParam("requestId") long requestId,
+		@RequestParam("managerId") String managerId) {
+		taskRequestService.completeRequest(requestId, managerId);
 		return BaseResponse.ok();
 	}
 }

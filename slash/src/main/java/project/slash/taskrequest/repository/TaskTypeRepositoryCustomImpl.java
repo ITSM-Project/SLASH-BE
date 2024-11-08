@@ -21,17 +21,16 @@ public class TaskTypeRepositoryCustomImpl implements TaskTypeRepositoryCustom {
 	}
 
 	@Override
-	public List<AllTaskTypeDto> findAllTaskTypes() {
+	public List<AllTaskTypeDto> findAllTaskTypes(Long contractId) {
 		return queryFactory
 			.from(taskType)
 			.where(taskType.evaluationItem.id.in(
 				JPAExpressions
 					.select(evaluationItem.id)
 					.from(evaluationItem)
-					.leftJoin(contract)
-					.on(evaluationItem.contract.id.eq(contract.id).and(
-						contract.isTerminate.isFalse()
-					))
+					.join(contract)
+					.on(evaluationItem.contract.id.eq(contract.id))
+					.where(contract.id.eq(contractId))
 			))
 			.transform(GroupBy.groupBy(taskType.type).list(
 				constructor(AllTaskTypeDto.class,

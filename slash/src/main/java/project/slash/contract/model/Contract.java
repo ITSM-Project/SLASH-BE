@@ -30,14 +30,14 @@ public class Contract {
 	@Column(name = "is_terminate")
 	private boolean isTerminate;
 
-	@Column(name = "company_name")
-	private String companyName;
+	@Column(name = "contract_name")
+	private String contractName;
 
 	@Builder
-	private Contract(String companyName, LocalDate startDate, LocalDate endDate, boolean isTerminate) {
+	private Contract(String contractName, LocalDate startDate, LocalDate endDate, boolean isTerminate) {
 		this.startDate = startDate;
 		this.endDate = endDate;
-		this.companyName = companyName;
+		this.contractName = contractName;
 		this.isTerminate = isTerminate;
 	}
 
