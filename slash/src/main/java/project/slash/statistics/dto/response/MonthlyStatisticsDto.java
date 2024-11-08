@@ -1,4 +1,4 @@
-package project.slash.statistics.dto;
+package project.slash.statistics.dto.response;
 
 import java.time.LocalDate;
 
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class MonthlyServiceStatisticsDto {
+public class MonthlyStatisticsDto {
 	@DateTimeFormat(pattern = "yyyy-MM")
 	private LocalDate date;
 	private String serviceType;
@@ -31,25 +31,4 @@ public class MonthlyServiceStatisticsDto {
 	private long dueOnTimeCount;
 	private Boolean isAuto;
 
-	@Override
-	public String toString() {
-		return "MonthlyServiceStatisticsDto{" +
-			"date=" + date +
-			", serviceType='" + serviceType + '\'' +
-			", targetEquipment='" + targetEquipment + '\'' +
-			", grade='" + grade + '\'' +
-			", score=" + score +
-			", period='" + period + '\'' +
-			", weightedScore=" + weightedScore +
-			", approvalStatus=" + approvalStatus +
-			", totalDowntime=" + totalDowntime +
-			", requestCount=" + requestCount +
-			", evaluationItemId=" + evaluationItemId +
-			", targetSystem='" + targetSystem + '\'' +
-			", estimate=" + estimate +
-			", systemIncidentCount=" + systemIncidentCount +
-			", dueOnTimeCount=" + dueOnTimeCount +
-			", isAuto=" + isAuto +
-			'}';
-	}
 }

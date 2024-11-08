@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
-import project.slash.statistics.dto.SelectedDateStatisticsDto;
-import project.slash.statistics.dto.StatisticsDto;
+import project.slash.statistics.dto.request.SelectedDateDto;
+import project.slash.statistics.dto.response.StatisticsDto;
 import project.slash.statistics.service.StatisticsService;
 
 @RestController
@@ -30,9 +30,9 @@ public class StatisticsController {
 	}
 
 	@PostMapping("/contract-manager/statistics")
-	public BaseResponse<?> addStatistics(@RequestBody SelectedDateStatisticsDto selectedDateStatisticsDto) {
-		statisticsService.createMonthlyStats(selectedDateStatisticsDto.getDate(),
-			selectedDateStatisticsDto.getEvaluationItemId());
+	public BaseResponse<?> addStatistics(@RequestBody SelectedDateDto selectedDateDto) {
+		statisticsService.createMonthlyStats(selectedDateDto.getDate(),
+			selectedDateDto.getEvaluationItemId());
 
 		return BaseResponse.ok();
 	}

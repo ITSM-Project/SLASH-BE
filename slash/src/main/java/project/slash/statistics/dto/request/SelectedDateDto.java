@@ -1,4 +1,4 @@
-package project.slash.statistics.dto;
+package project.slash.statistics.dto.request;
 
 import java.time.LocalDate;
 
@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class SelectedDateStatisticsDto {
+public class SelectedDateDto {
 	LocalDate date;
 	long evaluationItemId;
 }

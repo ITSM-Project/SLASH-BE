@@ -20,9 +20,9 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
-import project.slash.statistics.dto.MonthlyDataDto;
-import project.slash.statistics.dto.MonthlyServiceStatisticsDto;
-import project.slash.statistics.dto.StatisticsDto;
+import project.slash.statistics.dto.response.MonthlyDataDto;
+import project.slash.statistics.dto.response.MonthlyStatisticsDto;
+import project.slash.statistics.dto.response.StatisticsDto;
 
 @Repository
 @RequiredArgsConstructor
@@ -60,7 +60,7 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 	}
 
 	@Override
-	public void saveMonthlyData(List<MonthlyServiceStatisticsDto> statsDtoList) {
+	public void saveMonthlyData(List<MonthlyStatisticsDto> statsDtoList) {
 		String sql = "INSERT INTO statistics (`date`, service_type, grade, score, period, weighted_score, " +
 			"approval_status, total_downtime, request_count, evaluation_item_id, target_system, estimate, system_incident_count, due_on_time_count, target_equipment, is_auto) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 

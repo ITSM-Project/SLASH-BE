@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import project.slash.statistics.dto.MonthlyServiceStatisticsDto;
+import project.slash.statistics.dto.response.MonthlyStatisticsDto;
 
 @SpringBootTest
 class StatisticsServiceTest {
@@ -19,10 +19,10 @@ class StatisticsServiceTest {
 	@Test
 	@DisplayName("월간통계 출력")
 	void calculateMonthlyStats() {
-		List<MonthlyServiceStatisticsDto> monthlyServiceStatisticsDtoList = statisticsService.calculateMonthlyStats(
+		List<MonthlyStatisticsDto> monthlyStatisticsDtoList = statisticsService.calculateMonthlyStats(
 			"서비스 가동률", true);
-		for (MonthlyServiceStatisticsDto monthlyServiceStatisticsDto : monthlyServiceStatisticsDtoList) {
-			System.out.println(monthlyServiceStatisticsDto);
+		for (MonthlyStatisticsDto monthlyStatisticsDto : monthlyStatisticsDtoList) {
+			System.out.println(monthlyStatisticsDto);
 		}
 	}
 }

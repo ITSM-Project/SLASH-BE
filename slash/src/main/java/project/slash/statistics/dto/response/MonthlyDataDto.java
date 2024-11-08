@@ -1,12 +1,10 @@
-package project.slash.statistics.dto;
+package project.slash.statistics.dto.response;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-@Data
 public class MonthlyDataDto {
 	private String systemName;
 	private String equipmentName;

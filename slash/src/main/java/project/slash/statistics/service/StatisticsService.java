@@ -13,10 +13,10 @@ import project.slash.contract.model.Contract;
 import project.slash.contract.model.EvaluationItem;
 import project.slash.contract.repository.ContractRepository;
 import project.slash.contract.repository.evaluationItem.EvaluationItemRepository;
-import project.slash.statistics.dto.EvaluatedDto;
-import project.slash.statistics.dto.MonthlyDataDto;
-import project.slash.statistics.dto.MonthlyServiceStatisticsDto;
-import project.slash.statistics.dto.StatisticsDto;
+import project.slash.statistics.dto.response.EvaluatedDto;
+import project.slash.statistics.dto.response.MonthlyDataDto;
+import project.slash.statistics.dto.response.MonthlyStatisticsDto;
+import project.slash.statistics.dto.response.StatisticsDto;
 import project.slash.statistics.repository.StatisticsRepository;
 
 @Service
@@ -27,13 +27,13 @@ public class StatisticsService {
 	private final EvaluationItemRepository evaluationItemRepository;
 
 	public void createMonthlyStats(LocalDate date, long evaluationItemId) {
-		List<MonthlyServiceStatisticsDto> monthlyServiceStatisticsDtoList = calculateMonthlyStats(date,
+		List<MonthlyStatisticsDto> monthlyStatisticsDtoList = calculateMonthlyStats(date,
 			evaluationItemId);
-		statisticsRepository.saveMonthlyData(monthlyServiceStatisticsDtoList);
+		statisticsRepository.saveMonthlyData(monthlyStatisticsDtoList);
 	}
 
 	// 자동 계산 로직
-	public List<MonthlyServiceStatisticsDto> calculateMonthlyStats(LocalDate date, long evaluationItemId) {
+	public List<MonthlyStatisticsDto> calculateMonthlyStats(LocalDate date, long evaluationItemId) {
 		List<MonthlyDataDto> monthlyData = statisticsRepository.getMonthlyData(date);
 		Optional<EvaluationItem> evaluationItem = evaluationItemRepository.findById(evaluationItemId);
 		Long contractId = evaluationItem
@@ -45,12 +45,12 @@ public class StatisticsService {
 			.orElse(null);
 		List<ContractDataDto> contractData = contractRepository.findIndicatorByEvaluationItemId(evaluationItemId,
 			contractId);
-		List<MonthlyServiceStatisticsDto> result = new ArrayList<>();
+		List<MonthlyStatisticsDto> result = new ArrayList<>();
 		for (MonthlyDataDto monthlyDataDto : monthlyData) {
 			EvaluatedDto evaluatedDto = calculateScoreAndEvaluate(monthlyDataDto, contractData, category);
-			MonthlyServiceStatisticsDto monthlyServiceStatisticsDto = makeConstructByServiceType(date, category,
+			MonthlyStatisticsDto monthlyStatisticsDto = makeConstructByServiceType(date, category,
 				monthlyDataDto, evaluatedDto);
-			result.add(monthlyServiceStatisticsDto);
+			result.add(monthlyStatisticsDto);
 		}
 		return result;
 	}
@@ -64,11 +64,11 @@ public class StatisticsService {
 	}
 
 	// 각자 추가
-	private MonthlyServiceStatisticsDto makeConstructByServiceType(LocalDate date, String category,
+	private MonthlyStatisticsDto makeConstructByServiceType(LocalDate date, String category,
 		MonthlyDataDto monthlyDataDto, EvaluatedDto evaluatedDto) {
 		//서비스 가동률은 적기 처리 건수 필요없어서 0으로 넣음
 		if (category.equals("서비스 가동률")) {
-			return new MonthlyServiceStatisticsDto(
+			return new MonthlyStatisticsDto(
 				date, category, monthlyDataDto.getEquipmentName(), evaluatedDto.getGrade(), evaluatedDto.getScore(),
 				"월별", evaluatedDto.getWeightedScore(), false, monthlyDataDto.getTotalDownTime(),
 				monthlyDataDto.getRequestCount(), evaluatedDto.getEvaluationItemId(), monthlyDataDto.getSystemName(),
@@ -76,7 +76,7 @@ public class StatisticsService {
 			);
 		}
 
-		return new MonthlyServiceStatisticsDto();
+		return new MonthlyStatisticsDto();
 	}
 
 	private EvaluatedDto evaluateWithIndicator(List<ContractDataDto> contractData, double score) {
