@@ -113,9 +113,10 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 				taskRequest.count().as("total_count"), Expressions.numberTemplate(Long.class,
 					"SUM(CASE WHEN {0} THEN 1 ELSE 0 END)",
 					taskRequest.status.eq(IN_PROGRESS)).as("in_progress_count")))
-			.from(taskRequest)
-			.leftJoin(user)
+			.from(user)
+			.leftJoin(taskRequest)
 			.on(taskRequest.manager.id.eq(user.id))
+			.where(user.role.eq("ROLE_REQUEST_MANAGER"))
 			.groupBy(taskRequest.manager.id)
 			.orderBy(user.name.asc())
 			.fetch();

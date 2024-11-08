@@ -24,7 +24,7 @@ public class EvaluationItemController {
 	 * @param createEvaluationItemDto 세부 내용 정보
 	 * @return 성공 여부
 	 */
-	@PostMapping("/evaluation-item")
+	@PostMapping("/contract-manager/evaluation-item")
 	public BaseResponse<Void> createEvaluationItem(@RequestBody @Valid CreateEvaluationItemDto createEvaluationItemDto) {
 		evaluationItemService.createEvaluationItem(createEvaluationItemDto);
 
@@ -37,7 +37,7 @@ public class EvaluationItemController {
 	 * @param evaluationItemId 서비스 항목 ID
 	 * @return 서비스 항목 세부 내용(서비스 목표, 업무 유형, 서비스 항목 설명)
 	 */
-	@GetMapping("/detail/{evaluationItemId}")
+	@GetMapping("/common/detail/{evaluationItemId}")
 	public BaseResponse<EvaluationItemDetailDto> showCategoryDetail(@PathVariable("evaluationItemId") Long evaluationItemId) {
 		EvaluationItemDetailDto evaluationItemDetail = evaluationItemService.findDetailByItemId(evaluationItemId);
 

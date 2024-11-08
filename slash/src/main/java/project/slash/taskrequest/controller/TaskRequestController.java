@@ -27,7 +27,6 @@ import project.slash.taskrequest.service.TaskRequestService;
 
 @RestController
 @RequiredArgsConstructor
-// @RequestMapping("/request-manager")
 public class TaskRequestController {
 	private final TaskRequestService taskRequestService;
 
@@ -37,7 +36,7 @@ public class TaskRequestController {
 	 * @param taskRequestDto 요청 정보
 	 * @return 성공 여부
 	 */
-	@PostMapping("/request")
+	@PostMapping("/user/request")
 	public BaseResponse<Void> createRequest(@RequestBody @Valid TaskRequestDto taskRequestDto) {
 		taskRequestService.createRequest(taskRequestDto);
 
@@ -65,7 +64,7 @@ public class TaskRequestController {
 	 * @param requestId 상세보기 할 요청 ID
 	 * @return 상세 내용
 	 */
-	@GetMapping("/request/{requestId}")
+	@GetMapping("/common/request/{requestId}")
 	public BaseResponse<RequestDetailDto> showRequestDetail(@PathVariable("requestId") Long requestId) {
 		RequestDetailDto requestDetailDto = taskRequestService.showRequestDetail(requestId);
 
@@ -79,9 +78,9 @@ public class TaskRequestController {
 	 * @param requestId 삭제할 요청 ID
 	 * @return 성공 여부
 	 */
-	@DeleteMapping("/request/{requestId}")
+	@DeleteMapping("/request-manager/request/{requestId}")
 	public BaseResponse<Void> deleteRequest(@PathVariable("requestId") Long requestId) {
-		taskRequestService.deleteRequest(requestId, "1");    //TODO: 로그인 된 사용자로 변경해야함
+		taskRequestService.deleteRequest(requestId, "3");    //TODO: 로그인 된 사용자로 변경해야함
 
 		return BaseResponse.ok();
 	}
@@ -92,7 +91,7 @@ public class TaskRequestController {
 	 * @param requestId 수정할 요청 ID
 	 * @return 성공 여부
 	 */
-	@PatchMapping("/request/{requestId}")
+	@PatchMapping("/user/request/{requestId}")
 	public BaseResponse<Void> editRequest(@PathVariable("requestId") Long requestId,
 		@RequestBody TaskRequestDto taskRequestDto) {
 		taskRequestService.editRequest(requestId, "1", taskRequestDto);
@@ -139,7 +138,7 @@ public class TaskRequestController {
 		return BaseResponse.ok(responseData);
 	}
 
-	@PatchMapping("/request/allocate")
+	@PatchMapping("/contract-manager/request/allocate")
 	public BaseResponse<Void> allocateRequest(@RequestBody UpdateTaskRequestManagerDto updateTaskRequestManagerDto) {
 		taskRequestService.allocateRequest(updateTaskRequestManagerDto);
 		return BaseResponse.ok();
