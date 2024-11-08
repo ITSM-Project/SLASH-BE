@@ -10,11 +10,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TaskRequestDto {
+	@NotNull(message = "계약 아이디는 필수입니다.")
+	private Long contractId;
+
 	@NotEmpty(message = "장비 이름은 필수입니다.")
 	private String equipmentName;
 
-	@NotEmpty(message = "요청 유형 아이디는 필수입니다.")
-	private Long taskTypeId;
+	@NotEmpty(message = "업무 유형 상세는 필수입니다.")
+	private String taskDetail;
+
+	private boolean serviceRelevance;
 
 	@NotEmpty(message = "제목은 필수입니다.")
 	private String title;

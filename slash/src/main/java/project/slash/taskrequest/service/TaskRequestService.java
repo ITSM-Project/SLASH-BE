@@ -45,10 +45,7 @@ public class TaskRequestService {
 
 	@Transactional
 	public void createRequest(TaskRequestDto taskRequestDto, String userId) {    //요청 생성
-		// TaskType taskType = findTaskType(taskRequestDto.getTaskDetail(), taskRequestDto.isServiceRelevance());
-		TaskType taskType = taskTypeRepository.findById(taskRequestDto.getTaskTypeId())
-			.orElseThrow(() -> new BusinessException(NOT_FOUND_TASK_TYPE));
-
+		TaskType taskType = findTaskType(taskRequestDto.getTaskDetail(), taskRequestDto.isServiceRelevance(), taskRequestDto.getContractId());
 		Equipment equipment = findEquipment(taskRequestDto.getEquipmentName());
 
 		User requester = userRepository.findById(userId).orElseThrow(() -> new BusinessException(NOT_FOUND_USER));
@@ -57,10 +54,10 @@ public class TaskRequestService {
 		taskRequestRepository.save(taskRequest);
 	}
 
-	// private TaskType findTaskType(String taskDetail, boolean isServiceRelevance) {
-	// 	return taskTypeRepository.findTaskTypeByTaskRequestInfo(taskDetail, isServiceRelevance)
-	// 		.orElseThrow(() -> new BusinessException(NOT_FOUND_TASK_TYPE));
-	// }
+	private TaskType findTaskType(String taskDetail, boolean isServiceRelevance, Long contractId) {
+		return taskTypeRepository.findTaskTypeByTaskRequestInfo(taskDetail, isServiceRelevance, contractId)
+			.orElseThrow(() -> new BusinessException(NOT_FOUND_TASK_TYPE));
+	}
 
 	private Equipment findEquipment(String equipmentName) {
 		return equipmentRepository.findByName(equipmentName)
@@ -87,10 +84,10 @@ public class TaskRequestService {
 		TaskRequest request = findRequest(requestId);
 		validRequest(userId, request);
 
-		// TaskType taskType = getEditTaskType(taskRequestDto);
+		TaskType taskType = getEditTaskType(taskRequestDto);
 		Equipment equipment = getEditEquipment(taskRequestDto);
 
-		// request.update(taskRequestDto, taskType, equipment);
+		request.update(taskRequestDto, taskType, equipment);
 	}
 
 	private Equipment getEditEquipment(TaskRequestDto taskRequestDto) {
@@ -100,12 +97,12 @@ public class TaskRequestService {
 		return null;
 	}
 
-	// private TaskType getEditTaskType(TaskRequestDto taskRequestDto) {
-	// 	if(taskRequestDto.getTaskDetail() != null) {
-	// 		return findTaskType(taskRequestDto.getTaskDetail(), taskRequestDto.isServiceRelevance());
-	// 	}
-	// 	return null;
-	// }
+	private TaskType getEditTaskType(TaskRequestDto taskRequestDto) {
+		if(taskRequestDto.getTaskDetail() != null) {
+			return findTaskType(taskRequestDto.getTaskDetail(), taskRequestDto.isServiceRelevance(), taskRequestDto.getContractId());
+		}
+		return null;
+	}
 
 	private void validRequest(String userId, TaskRequest request) {
 		if(!request.isRequester(userId)){

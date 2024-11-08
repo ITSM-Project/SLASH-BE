@@ -1,6 +1,6 @@
 package project.slash.taskrequest.dto.response;
 
-import java.util.List;
+import java.util.Set;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,5 +9,5 @@ import lombok.Getter;
 @Getter
 public class AllTaskTypeDto {
 	private String type;
-	private List<TaskTypeDto> typeDetails;
+	private Set<String> typeDetails;
 }
