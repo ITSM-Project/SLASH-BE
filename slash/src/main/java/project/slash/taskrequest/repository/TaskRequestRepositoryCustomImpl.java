@@ -228,4 +228,15 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 				.and(taskRequest.manager.id.eq(managerId)))
 			.execute();
 	}
+
+	@Override
+	public Long getDuration(Long requestId) {
+		return queryFactory
+			.select(Expressions.numberTemplate(Long.class,
+				"TIMESTAMPDIFF(MINUTE, {0}, {1})",
+				taskRequest.createTime, taskRequest.updateTime))
+			.from(taskRequest)
+			.where(taskRequest.id.eq(requestId))
+			.fetchOne();
+	}
 }
