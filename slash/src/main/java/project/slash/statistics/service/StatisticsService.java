@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import project.slash.contract.dto.ContractDataDto;
@@ -21,6 +22,7 @@ import project.slash.statistics.model.Statistics;
 import project.slash.statistics.repository.StatisticsRepository;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class StatisticsService {
 	private final StatisticsRepository statisticsRepository;
@@ -117,6 +119,7 @@ public class StatisticsService {
 	}
 
 	//서비스요청 통계 처리
+	@Transactional
 	public void getServiceTaskStatics(RequestStatisticsDto requestStatisticsDto) {
 		ResponseServiceTaskDto responseServiceTaskDto = statisticsRepository.getServiceTaskStatics(
 			requestStatisticsDto);
