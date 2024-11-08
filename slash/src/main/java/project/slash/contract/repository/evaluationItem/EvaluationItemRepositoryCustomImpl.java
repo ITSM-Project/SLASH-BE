@@ -2,12 +2,14 @@ package project.slash.contract.repository.evaluationItem;
 
 import static com.querydsl.core.group.GroupBy.*;
 import static com.querydsl.core.types.Projections.*;
+import static project.slash.contract.model.QContract.*;
 import static project.slash.contract.model.QEvaluationItem.*;
 import static project.slash.contract.model.QServiceTarget.*;
 
 import java.util.List;
 import java.util.Optional;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -51,6 +53,21 @@ public class EvaluationItemRepositoryCustomImpl implements EvaluationItemReposit
 					evaluationItem.unit,
 					list(createServiceTargetDto())
 				)));
+	}
+
+	public Integer getTotalWeight(Long evaluationItemId) {
+		return queryFactory
+			.select(evaluationItem.weight.sum())
+			.from(evaluationItem)
+			.where(
+				evaluationItem.contract.id.in(
+					(queryFactory.select(evaluationItem.contract.id)
+						.from(evaluationItem)
+						.where(evaluationItem.id.eq(evaluationItemId))
+					)
+				)
+			)
+			.fetchOne();
 	}
 
 	private ConstructorExpression<GradeDto> createServiceTargetDto() {
