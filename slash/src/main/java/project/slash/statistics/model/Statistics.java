@@ -8,11 +8,21 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import project.slash.contract.model.EvaluationItem;
+import project.slash.statistics.dto.response.ResponseServiceTaskDto;
 
 import java.time.LocalDate;
 
 @Entity
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
+@ToString
 public class Statistics {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,4 +64,25 @@ public class Statistics {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "evaluation_item_id")
 	private EvaluationItem evaluationItems;
+
+	@Column(name = "is_auto")
+	private boolean isAuto;
+
+	public static Statistics fromResponseServiceTask(ResponseServiceTaskDto responseServiceTaskDto, String endDate,
+		double score,double weightedScore ,String grade) {
+		return Statistics.builder()
+			.date(LocalDate.parse(endDate))
+			.serviceType(responseServiceTaskDto.getEvaluationItem().getCategory())
+			.grade(grade)
+			.score(score)
+			.period(responseServiceTaskDto.getEvaluationItem().getPeriod())
+			.weightedScore(weightedScore)
+			.requestCount(responseServiceTaskDto.getTaskRequest())
+			.approvalStatus(false)
+			.dueOnTimeCount(responseServiceTaskDto.getDueOnTimeCount())
+			.estimate(score)
+			.evaluationItems(responseServiceTaskDto.getEvaluationItem())
+			.isAuto(false)
+			.build();
+	}
 }

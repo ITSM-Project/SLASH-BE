@@ -1,6 +1,7 @@
 package project.slash.statistics.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,10 +10,15 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import project.slash.contract.dto.ContractDataDto;
+import project.slash.contract.model.ServiceTarget;
 import project.slash.contract.repository.ContractRepository;
+import project.slash.contract.repository.ServiceTargetRepository;
 import project.slash.statistics.dto.MonthlyDataDto;
 import project.slash.statistics.dto.MonthlyServiceStatisticsDto;
 import project.slash.statistics.dto.StatisticsDto;
+import project.slash.statistics.dto.request.RequestStatisticsDto;
+import project.slash.statistics.dto.response.ResponseServiceTaskDto;
+import project.slash.statistics.model.Statistics;
 import project.slash.statistics.repository.StatisticsRepository;
 
 @Service
@@ -20,6 +26,7 @@ import project.slash.statistics.repository.StatisticsRepository;
 public class StatisticsService {
 	private final StatisticsRepository statisticsRepository;
 	private final ContractRepository contractRepository;
+	private final ServiceTargetRepository serviceTargetRepository;
 
 	public void createMonthlyStats(String serviceType) {
 		List<MonthlyServiceStatisticsDto> monthlyServiceStatisticsDtoList = calculateMonthlyStats(serviceType);
@@ -65,7 +72,8 @@ public class StatisticsService {
 			// 서비스 가동률의 경우 , 아래에 if문 추가하면 됨
 			if (serviceType.equals("서비스 가동률")) {
 				result.add(
-					new MonthlyServiceStatisticsDto(date, serviceType, monthlyDataDto.getEquipmentName(), grade, score, "월별",
+					new MonthlyServiceStatisticsDto(date, serviceType, monthlyDataDto.getEquipmentName(), grade, score,
+						"월별",
 						weightedScore, true,
 						monthlyDataDto.getTotalDownTime(), monthlyDataDto.getRequestCount(), EvaluationItemId,
 						monthlyDataDto.getSystemName(), score, monthlyDataDto.getSystemIncidentCount(), 0L));
@@ -107,5 +115,39 @@ public class StatisticsService {
 
 		return statisticsRepository.getStatistics(
 			serviceType, period, targetSystem, targetEquipment);
+	}
+
+	//서비스요청 통계 처리
+	public void getServiceTaskStatics(RequestStatisticsDto requestStatisticsDto) {
+		LocalDateTime startDate = LocalDate.parse(requestStatisticsDto.getEndDate())
+			.withDayOfMonth(1)
+			.atTime(0, 0, 0);  // 시작일은 endDate의 첫 번째 날
+		LocalDateTime endDate = LocalDate.parse(requestStatisticsDto.getEndDate()).atTime(23, 59, 59);
+		ResponseServiceTaskDto responseServiceTaskDto = statisticsRepository.getServiceTaskStatics(
+			requestStatisticsDto.getEvaluationItemId(), startDate, endDate);
+		double score = Math.round(
+			(double)responseServiceTaskDto.getDueOnTimeCount() / responseServiceTaskDto.getTaskRequest() * 10000)
+			/ 100.0;
+		double weightScore = Math.round(
+			score / responseServiceTaskDto.getTotalWeight() * responseServiceTaskDto.getEvaluationItem().getWeight()
+				* 100) / 100.0;
+		String grade = getGrade(responseServiceTaskDto.getEvaluationItem().getId(), score);
+		Statistics statistics = Statistics.fromResponseServiceTask(responseServiceTaskDto,
+			requestStatisticsDto.getEndDate(), score, weightScore, grade);
+		statisticsRepository.save(statistics);
+	}
+
+	//등급산출
+	public String getGrade(Long evaluationItemId, double score) {
+		return serviceTargetRepository.getServiceTargetByEvaluationItem_Id(
+				evaluationItemId)
+			.stream()
+			.filter(serviceTarget ->
+				(serviceTarget.isMinInclusive() ? score >= serviceTarget.getMin() : score > serviceTarget.getMin()) &&
+					(serviceTarget.isMaxInclusive() ? score <= serviceTarget.getMax() : score < serviceTarget.getMax())
+			)
+			.map(ServiceTarget::getGrade)  // 조건을 만족하는 ServiceTarget의 grade 값을 추출
+			.findFirst()
+			.orElse(null);
 	}
 }
