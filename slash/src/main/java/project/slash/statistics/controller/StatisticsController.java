@@ -3,12 +3,14 @@ package project.slash.statistics.controller;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
 import project.slash.statistics.dto.StatisticsDto;
+import project.slash.statistics.dto.response.MonthlyIndicatorsDto;
 import project.slash.statistics.service.StatisticsService;
 
 @RestController
@@ -26,4 +28,12 @@ public class StatisticsController {
 		return BaseResponse.ok(statistics);
 	}
 
+	@GetMapping("/common/{contractId}/indicators/{year}/{month}")
+	public BaseResponse<?> getMonthlyIndicators(@PathVariable("contractId") Long contractId,
+		@PathVariable("year") int year,
+		@PathVariable("month") int month) {
+		List<MonthlyIndicatorsDto> monthlyIndicators = statisticsService.getMonthlyIndicators(contractId, year, month);
+
+		return BaseResponse.ok(monthlyIndicators);
+	}
 }

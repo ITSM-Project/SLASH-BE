@@ -9,10 +9,14 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import project.slash.contract.dto.ContractDataDto;
+import project.slash.contract.model.TotalTarget;
 import project.slash.contract.repository.ContractRepository;
+import project.slash.contract.repository.TotalTargetRepository;
 import project.slash.statistics.dto.MonthlyDataDto;
 import project.slash.statistics.dto.MonthlyServiceStatisticsDto;
 import project.slash.statistics.dto.StatisticsDto;
+import project.slash.statistics.dto.response.MonthlyIndicatorsDto;
+import project.slash.statistics.model.Statistics;
 import project.slash.statistics.repository.StatisticsRepository;
 
 @Service
@@ -20,6 +24,7 @@ import project.slash.statistics.repository.StatisticsRepository;
 public class StatisticsService {
 	private final StatisticsRepository statisticsRepository;
 	private final ContractRepository contractRepository;
+	private final TotalTargetRepository totalTargetRepository;
 
 	public void createMonthlyStats(String serviceType) {
 		List<MonthlyServiceStatisticsDto> monthlyServiceStatisticsDtoList = calculateMonthlyStats(serviceType);
@@ -107,5 +112,25 @@ public class StatisticsService {
 
 		return statisticsRepository.getStatistics(
 			serviceType, period, targetSystem, targetEquipment);
+	}
+
+	public List<MonthlyIndicatorsDto> getMonthlyIndicators(Long contractId, int year, int month) {
+		LocalDate startDate = LocalDate.of(year, month, 1);
+		LocalDate endDate = LocalDate.of(year, month, startDate.lengthOfMonth());
+
+		List<TotalTarget> totalTargets = totalTargetRepository.findByContractId(contractId);
+		List<Statistics> statistics = statisticsRepository.findByDateBetweenAndEvaluationItemsContractIdAndApprovalStatusTrue(
+			startDate, endDate, contractId);
+
+		List<MonthlyIndicatorsDto> monthlyIndicators = getMonthlyIndicators(statistics);
+
+		return monthlyIndicators;
+	}
+
+	private static List<MonthlyIndicatorsDto> getMonthlyIndicators(List<Statistics> statistics) {
+		return statistics.stream()
+			.filter(s -> s.getTargetSystem().equals("전체"))
+			.map(MonthlyIndicatorsDto::of)
+			.toList();
 	}
 }
