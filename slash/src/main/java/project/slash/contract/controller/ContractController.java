@@ -15,6 +15,7 @@ import project.slash.common.response.BaseResponse;
 import project.slash.contract.dto.request.ContractRequestDto;
 import project.slash.contract.dto.response.AllContractDto;
 import project.slash.contract.dto.response.ContractDetailDto;
+import project.slash.contract.dto.response.ContractNameDto;
 import project.slash.contract.service.ContractService;
 
 @RestController
@@ -72,5 +73,17 @@ public class ContractController {
 		contractService.deleteContract(contractId);
 
 		return BaseResponse.ok();
+	}
+
+	/**
+	 * 협약서 이름 조회 메서드입니다.
+	 * 
+	 * @return 모든 협약서 이름
+	 */
+	@GetMapping("/common/all-contract-name")
+	public BaseResponse<List<ContractNameDto>> showAllContractName() {
+		List<ContractNameDto> contractNames = contractService.showAllContractName();
+
+		return BaseResponse.ok(contractNames);
 	}
 }
