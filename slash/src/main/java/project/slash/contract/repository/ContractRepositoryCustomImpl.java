@@ -34,7 +34,7 @@ public class ContractRepositoryCustomImpl implements ContractRepositoryCustom {
 			.where(contract.id.eq(contractId))
 			.transform(GroupBy.groupBy(contract.id)
 				.list(Projections.constructor(ContractDto.class,
-					contract.companyName,
+					contract.contractName,
 					contract.startDate,
 					contract.endDate,
 					contract.isTerminate,

@@ -8,5 +8,4 @@ import lombok.Getter;
 public class UpdateTaskRequestManagerDto {
 	private long requestId;
 	private String managerId;
-
 }

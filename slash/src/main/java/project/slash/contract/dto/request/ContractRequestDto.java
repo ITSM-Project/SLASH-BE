@@ -11,8 +11,8 @@ import project.slash.contract.dto.GradeDto;
 
 @Getter
 public class ContractRequestDto {
-	@NotBlank(message = "회사 이름은 필수입니다.")
-	String companyName;
+	@NotBlank(message = "협약서 이름은 필수입니다.")
+	String contractName;
 
 	@NotNull(message = "계약 시작일은 필수입니다.")
 	LocalDate startDate;

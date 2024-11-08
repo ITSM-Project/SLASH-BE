@@ -18,7 +18,7 @@ public class RequestManagementDto {
 	private String equipmentName;
 	private String type;
 	private String taskDetail;
-	private String requester;
+	private Long id;
 	private String requesterName;
 	private String managerName;
 	private LocalDateTime createTime;
