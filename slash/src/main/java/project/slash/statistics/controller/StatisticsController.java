@@ -3,11 +3,14 @@ package project.slash.statistics.controller;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
+import project.slash.statistics.dto.SelectedDateStatisticsDto;
 import project.slash.statistics.dto.StatisticsDto;
 import project.slash.statistics.service.StatisticsService;
 
@@ -24,6 +27,14 @@ public class StatisticsController {
 		List<StatisticsDto> statistics = statisticsService.getStatistics(serviceType, period, targetSystem,targetEquipment);
 
 		return BaseResponse.ok(statistics);
+	}
+
+	@PostMapping("/contract-manager/statistics")
+	public BaseResponse<?> addStatistics(@RequestBody SelectedDateStatisticsDto selectedDateStatisticsDto) {
+		statisticsService.createMonthlyStats(selectedDateStatisticsDto.getDate(),
+			selectedDateStatisticsDto.getEvaluationItemId());
+
+		return BaseResponse.ok();
 	}
 
 }

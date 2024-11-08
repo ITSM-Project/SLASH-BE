@@ -48,11 +48,8 @@ public class ContractRepositoryCustomImpl implements ContractRepositoryCustom {
 			.findFirst();
 	}
 
-	// 카테고리별 지표 찾기
-	// TODO: 계약 아이디로 찾는거 수정해야함
 	@Override
-	public List<ContractDataDto> findIndicatorByCategory(String category) {
-
+	public List<ContractDataDto> findIndicatorByEvaluationItemId(long evaluationItmeId, long contractId) {
 		return queryFactory
 			.select(Projections.constructor(ContractDataDto.class,
 				serviceTarget.grade,
@@ -65,16 +62,14 @@ public class ContractRepositoryCustomImpl implements ContractRepositoryCustom {
 				ExpressionUtils.as(
 					JPAExpressions.select(evaluationItem.weight.sum())
 						.from(evaluationItem)
-						.where(evaluationItem.contract.id.eq(contract.id)),
+						.where(evaluationItem.contract.id.eq(contractId)),
 					"weightTotal"
 				), evaluationItem.id,
 				evaluationItem.category))
-			.from(contract)
-			.leftJoin(evaluationItem)
-			.on(evaluationItem.contract.id.eq(contract.id))
+			.from(evaluationItem)
 			.leftJoin(serviceTarget)
 			.on(serviceTarget.evaluationItem.id.eq(evaluationItem.id))
-			.where(contract.isTerminate.isFalse().and(evaluationItem.category.eq(category)))
+			.where(evaluationItem.id.eq(evaluationItmeId))
 			.fetch();
 	}
 }

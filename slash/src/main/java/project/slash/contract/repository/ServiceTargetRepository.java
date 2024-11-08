@@ -1,7 +1,5 @@
 package project.slash.contract.repository;
 
-import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import project.slash.contract.model.ServiceTarget;

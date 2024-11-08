@@ -8,7 +8,6 @@ import static project.slash.taskrequest.model.QTaskRequest.*;
 import static project.slash.taskrequest.model.QTaskType.*;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Repository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.StringTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -36,30 +34,26 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 	private JdbcTemplate jdbcTemplate;
 
 	@Override
-	public List<MonthlyDataDto> getMonthlyData() {
-		StringTemplate yearMonth = Expressions.stringTemplate(
-			"DATE_FORMAT({0}, '%Y-%m')",
-			taskRequest.createTime);
-
-		LocalDate previousMonthDate = LocalDate.now().minusMonths(1);
-		String previousMonth = previousMonthDate.format(DateTimeFormatter.ofPattern("yyyy-MM"));
-
+	public List<MonthlyDataDto> getMonthlyData(LocalDate date) {
 		return queryFactory
 			.select(Projections.constructor(MonthlyDataDto.class,
-				yearMonth,
 				systems.name,
 				equipment.name,
 				taskRequest.count(),
 				systemIncident.incidentTime.sum(),
-				Expressions.numberTemplate(Integer.class, "DAY(LAST_DAY({0}))", taskRequest.createTime),
+				Expressions.numberTemplate(Integer.class, "DAY({0})", date),
 				systemIncident.count()
 			))
 			.from(taskRequest)
 			.leftJoin(equipment).on(taskRequest.equipment.id.eq(equipment.id))
 			.leftJoin(systems).on(equipment.systems.id.eq(systems.id))
 			.leftJoin(systemIncident).on(systemIncident.taskRequest.id.eq(taskRequest.id))
-			.leftJoin(taskType).on(taskRequest.taskType.id.eq(taskType.id))// 현재 년-월보다 이전 것만 필터링
-			.where(yearMonth.eq(previousMonth))
+			.leftJoin(taskType).on(taskRequest.taskType.id.eq(taskType.id))
+			.where(
+				taskRequest.createTime.year().eq(date.getYear())
+					.and(taskRequest.createTime.month().eq(date.getMonthValue()))
+					.and(taskRequest.createTime.dayOfMonth().loe(date.getDayOfMonth()))
+			)
 			.groupBy(equipment.name)
 			.orderBy(systems.name.asc(), equipment.name.asc())
 			.fetch();

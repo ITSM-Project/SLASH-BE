@@ -9,5 +9,5 @@ import project.slash.contract.dto.response.ContractDto;
 public interface ContractRepositoryCustom {
 	Optional<ContractDto> findContractById(Long contractId);
 
-	List<ContractDataDto> findIndicatorByCategory(String category);
+	List<ContractDataDto> findIndicatorByEvaluationItemId(long evaluationItmeId, long contractId);
 }
