@@ -73,6 +73,8 @@ public class Statistics {
 		return Statistics.builder()
 			.date(LocalDate.parse(endDate))
 			.serviceType(responseServiceTaskDto.getEvaluationItem().getCategory())
+			.targetSystem("전체")
+			.targetEquipment("전체")
 			.grade(grade)
 			.score(score)
 			.period(responseServiceTaskDto.getEvaluationItem().getPeriod())
