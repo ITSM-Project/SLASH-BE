@@ -28,11 +28,19 @@ public class StatisticsController {
 		return BaseResponse.ok(statistics);
 	}
 
+	/**
+	 * 월간 지표 조회하는 메서드입니다.
+	 *
+	 * @param contractId 지표 조회할 계약서 아이디
+	 * @param year 조회할 년도
+	 * @param month 조회할 월
+	 * @return 월간 지표
+	 */
 	@GetMapping("/common/{contractId}/indicators/{year}/{month}")
 	public BaseResponse<?> getMonthlyIndicators(@PathVariable("contractId") Long contractId,
 		@PathVariable("year") int year,
 		@PathVariable("month") int month) {
-		List<MonthlyIndicatorsDto> monthlyIndicators = statisticsService.getMonthlyIndicators(contractId, year, month);
+		MonthlyIndicatorsDto monthlyIndicators = statisticsService.getMonthlyIndicators(contractId, year, month);
 
 		return BaseResponse.ok(monthlyIndicators);
 	}
