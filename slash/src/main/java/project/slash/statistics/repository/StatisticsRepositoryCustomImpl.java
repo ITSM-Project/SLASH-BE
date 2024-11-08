@@ -1,6 +1,5 @@
 package project.slash.statistics.repository;
 
-import static project.slash.contract.model.QServiceTarget.*;
 import static project.slash.statistics.model.QStatistics.*;
 import static project.slash.system.model.QEquipment.*;
 import static project.slash.system.model.QSystems.*;
@@ -33,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 import project.slash.statistics.dto.MonthlyDataDto;
 import project.slash.statistics.dto.MonthlyServiceStatisticsDto;
 import project.slash.statistics.dto.StatisticsDto;
+import project.slash.statistics.dto.request.RequestStatisticsDto;
 import project.slash.statistics.dto.response.ResponseServiceTaskDto;
 import project.slash.taskrequest.model.constant.RequestStatus;
 
@@ -140,14 +140,18 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 	}
 
 	@Override
-	public ResponseServiceTaskDto getServiceTaskStatics(Long evaluationItemId, LocalDateTime startDate,
-		LocalDateTime endDate) {
+	public ResponseServiceTaskDto getServiceTaskStatics(RequestStatisticsDto requestStatisticsDto) {
+
+		LocalDateTime startDate = requestStatisticsDto.getDate()
+			.withDayOfMonth(1)
+			.atTime(0, 0, 0);  // 시작일은 endDate의 첫 번째 날
+		LocalDateTime endDate = requestStatisticsDto.getDate().atTime(23, 59, 59);
 
 		// evaluationItemId의 contractId 가져오기
 		Long contractId = new JPAQuery<>(entityManager)
 			.select(evaluationItem.contract.id)
 			.from(evaluationItem)
-			.where(evaluationItem.id.eq(evaluationItemId))
+			.where(evaluationItem.id.eq(requestStatisticsDto.getEvaluationItemId()))
 			.fetchOne();
 
 		// totalWeight 서브쿼리
@@ -169,7 +173,7 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 				.from(taskRequest)
 				.where(taskRequest.status.eq(RequestStatus.COMPLETED))
 				.where(taskRequest.createTime.between(startDate, endDate))
-				.where(taskRequest.taskType.evaluationItem.id.eq(evaluationItemId))
+				.where(taskRequest.taskType.evaluationItem.id.eq(requestStatisticsDto.getEvaluationItemId()))
 		);
 
 		return queryFactory
@@ -184,7 +188,7 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 			.leftJoin(taskRequest.taskType, taskType)
 			.leftJoin(taskType.evaluationItem, evaluationItem)
 			.where(taskRequest.createTime.between(startDate, endDate))
-			.where(evaluationItem.id.eq(evaluationItemId))
+			.where(evaluationItem.id.eq(requestStatisticsDto.getEvaluationItemId()))
 			.fetchOne(); // ResponseServiceTaskDto 타입으로 반환
 	}
 

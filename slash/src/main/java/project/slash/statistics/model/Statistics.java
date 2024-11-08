@@ -68,10 +68,10 @@ public class Statistics {
 	@Column(name = "is_auto")
 	private boolean isAuto;
 
-	public static Statistics fromResponseServiceTask(ResponseServiceTaskDto responseServiceTaskDto, String endDate,
-		double score,double weightedScore ,String grade) {
+	public static Statistics fromResponseServiceTask(ResponseServiceTaskDto responseServiceTaskDto, LocalDate endDate,
+		double score, double weightedScore, String grade) {
 		return Statistics.builder()
-			.date(LocalDate.parse(endDate))
+			.date(endDate)
 			.serviceType(responseServiceTaskDto.getEvaluationItem().getCategory())
 			.targetSystem("전체")
 			.targetEquipment("전체")
@@ -84,6 +84,8 @@ public class Statistics {
 			.dueOnTimeCount(responseServiceTaskDto.getDueOnTimeCount())
 			.estimate(score)
 			.evaluationItems(responseServiceTaskDto.getEvaluationItem())
+			.totalDowntime(0)
+			.systemIncidentCount(0)
 			.isAuto(false)
 			.build();
 	}

@@ -1,7 +1,6 @@
 package project.slash.statistics.service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -119,12 +118,8 @@ public class StatisticsService {
 
 	//서비스요청 통계 처리
 	public void getServiceTaskStatics(RequestStatisticsDto requestStatisticsDto) {
-		LocalDateTime startDate = LocalDate.parse(requestStatisticsDto.getEndDate())
-			.withDayOfMonth(1)
-			.atTime(0, 0, 0);  // 시작일은 endDate의 첫 번째 날
-		LocalDateTime endDate = LocalDate.parse(requestStatisticsDto.getEndDate()).atTime(23, 59, 59);
 		ResponseServiceTaskDto responseServiceTaskDto = statisticsRepository.getServiceTaskStatics(
-			requestStatisticsDto.getEvaluationItemId(), startDate, endDate);
+			requestStatisticsDto);
 		double score = Math.round(
 			(double)responseServiceTaskDto.getDueOnTimeCount() / responseServiceTaskDto.getTaskRequest() * 10000)
 			/ 100.0;
@@ -133,7 +128,7 @@ public class StatisticsService {
 				* 100) / 100.0;
 		String grade = getGrade(responseServiceTaskDto.getEvaluationItem().getId(), score);
 		Statistics statistics = Statistics.fromResponseServiceTask(responseServiceTaskDto,
-			requestStatisticsDto.getEndDate(), score, weightScore, grade);
+			requestStatisticsDto.getDate(), score, weightScore, grade);
 		statisticsRepository.save(statistics);
 	}
 
