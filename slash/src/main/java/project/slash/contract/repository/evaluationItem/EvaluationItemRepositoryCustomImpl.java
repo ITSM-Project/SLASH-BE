@@ -34,6 +34,17 @@ public class EvaluationItemRepositoryCustomImpl implements EvaluationItemReposit
 			.findFirst();
 	}
 
+	@Override
+	public Integer findTotalWeightByEvaluationItemId(Long evaluationItemId) {
+		return queryFactory.select(evaluationItem.weight.sum())
+			.from(evaluationItem)
+			.where(evaluationItem.contract.id.eq(
+				queryFactory.select(evaluationItem.contract.id)
+					.from(evaluationItem)
+					.where(evaluationItem.id.eq(evaluationItemId))
+			)).fetchOne();
+	}
+
 	private List<EvaluationItemDto> findEvaluationItems(BooleanExpression condition) {
 		return queryFactory
 			.from(evaluationItem)

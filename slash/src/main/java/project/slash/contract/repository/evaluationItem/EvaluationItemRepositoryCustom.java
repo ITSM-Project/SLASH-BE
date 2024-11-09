@@ -9,4 +9,6 @@ public interface EvaluationItemRepositoryCustom {
 	List<EvaluationItemDto> findAllEvaluationItems(Long contractId);
 
 	Optional<EvaluationItemDto> findEvaluationItem(Long evaluationItemId);
+
+	Integer findTotalWeightByEvaluationItemId(Long evaluationItemId);
 }
