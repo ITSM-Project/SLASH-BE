@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -22,7 +21,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import project.slash.statistics.dto.response.MonthlyDataDto;
 import project.slash.statistics.dto.response.MonthlyStatisticsDto;
-import project.slash.statistics.dto.response.StatisticsDto;
 
 @Repository
 @RequiredArgsConstructor
@@ -84,39 +82,4 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 		});
 	}
 
-	@Override
-	public List<StatisticsDto> getStatistics(String serviceType, String period, String targetSystem,
-		String targetEquipment) {
-		BooleanBuilder builder = new BooleanBuilder();
-
-		// 매개변수가 null이 아닐 때만 조건 추가
-		if (serviceType != null) {
-			builder.and(statistics.serviceType.eq(serviceType));
-		}
-		if (period != null) {
-			builder.and(statistics.period.eq(period));
-		}
-		if (targetSystem != null) {
-			builder.and(statistics.targetSystem.eq(targetSystem));
-		}
-		if (targetEquipment != null) {
-			builder.and(statistics.targetEquipment.eq(targetEquipment));
-		}
-
-		return queryFactory
-			.select(Projections.constructor(StatisticsDto.class,
-				statistics.date,
-				statistics.serviceType,
-				statistics.grade,
-				statistics.score,
-				statistics.totalDowntime,
-				statistics.requestCount,
-				statistics.dueOnTimeCount,
-				statistics.targetSystem,
-				statistics.targetEquipment))
-			.from(statistics)
-			.where(builder)
-			.fetch();
-	}
 }
-

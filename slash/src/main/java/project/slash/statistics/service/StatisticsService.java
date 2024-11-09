@@ -16,7 +16,6 @@ import project.slash.contract.repository.evaluationItem.EvaluationItemRepository
 import project.slash.statistics.dto.response.EvaluatedDto;
 import project.slash.statistics.dto.response.MonthlyDataDto;
 import project.slash.statistics.dto.response.MonthlyStatisticsDto;
-import project.slash.statistics.dto.response.StatisticsDto;
 import project.slash.statistics.repository.StatisticsRepository;
 
 @Service
@@ -120,11 +119,5 @@ public class StatisticsService {
 			return Math.round(uptimePercentage * 100.0) / 100.0;
 		}
 		return 0.0;
-	}
-
-	public List<StatisticsDto> getStatistics(String serviceType, String period, String targetSystem,
-		String targetEquipment) {
-		return statisticsRepository.getStatistics(
-			serviceType, period, targetSystem, targetEquipment);
 	}
 }
