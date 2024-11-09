@@ -27,7 +27,7 @@ public class EvaluationItemDetailDto {
 
 	private String purpose;
 
-	private boolean isAuto;
+	private Boolean isAuto;
 
 	private String formula;
 

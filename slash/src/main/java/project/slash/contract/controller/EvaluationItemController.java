@@ -43,4 +43,17 @@ public class EvaluationItemController {
 
 		return BaseResponse.ok(evaluationItemDetail);
 	}
+
+	/**
+	 * 계약 내용 수정 가능 여부 조회 메서드
+	 *
+	 * @param contractId 조회 할 계약 아이디
+	 * @return 수정 가능 여부
+	 */
+	@GetMapping("/contract-manager/modifiable/{contractId}")
+	public BaseResponse<Boolean> checkModifiable(@PathVariable("contractId") Long contractId) {
+		boolean modifiable = evaluationItemService.checkModifiable(contractId);
+
+		return BaseResponse.ok(modifiable);
+	}
 }

@@ -22,6 +22,8 @@ import project.slash.contract.dto.response.EvaluationItemDetailDto;
 import project.slash.contract.dto.response.EvaluationItemDto;
 import project.slash.contract.repository.evaluationItem.EvaluationItemRepository;
 import project.slash.contract.repository.ServiceTargetRepository;
+import project.slash.statistics.model.Statistics;
+import project.slash.statistics.repository.StatisticsRepository;
 import project.slash.taskrequest.mapper.TaskTypeMapper;
 import project.slash.taskrequest.model.TaskType;
 import project.slash.taskrequest.repository.TaskTypeRepository;
@@ -33,6 +35,7 @@ public class EvaluationItemService {
 	private final EvaluationItemRepository evaluationItemRepository;
 	private final ServiceTargetRepository serviceTargetRepository;
 	private final TaskTypeRepository taskTypeRepository;
+	private final StatisticsRepository statisticsRepository;
 
 	private final TaskTypeMapper taskTypeMapper;
 	private final ServiceTargetMapper serviceTargetMapper;
@@ -70,5 +73,12 @@ public class EvaluationItemService {
 			taskTypeRepository.findTaskTypesByEvaluationItemId(evaluationItemId));
 
 		return EvaluationItemDetailDto.createAll(evaluationItemDto, taskTypes);
+	}
+
+	public boolean checkModifiable(Long contractId) {
+		List<Long> evaluationItemIds = evaluationItemRepository.findIdsByContractId(contractId);
+		List<Statistics> statisticsList = statisticsRepository.findByEvaluationItems_IdIn(evaluationItemIds);
+
+		return statisticsList.isEmpty();
 	}
 }
