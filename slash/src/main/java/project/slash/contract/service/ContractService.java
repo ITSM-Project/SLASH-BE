@@ -93,6 +93,7 @@ public class ContractService {
 		return totalTargetRepository.findByContractId(contractId);
 	}
 
+	@Transactional
 	public void newTotalTarget(Long contractId, List<GradeDto> gradeDtos) {
 		Contract contract = findContract(contractId);
 		findTotalTarget(contractId).forEach(TotalTarget::deactivate);	//기존 등급 비활성화

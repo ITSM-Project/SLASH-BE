@@ -68,4 +68,8 @@ public class EvaluationItem {
 		this.formula = newEvaluationItem.getFormula();
 		this.unit = newEvaluationItem.getUnit();
 	}
+
+	public void deactivate() {
+		this.isActive = false;
+	}
 }

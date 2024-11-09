@@ -72,4 +72,18 @@ public class EvaluationItemController {
 
 		return BaseResponse.ok();
 	}
+
+	/**
+	 * 변경된 서비스 평가 항목 생성 메서드입니다.(기존 서비스 평가 항목 비활성화)
+	 *
+	 * @param evaluationItemId 수정할 서비스 평가 항목
+	 * @param evaluationItemDto 수정 내용
+	 * @return 성공 여부
+	 */
+	@PostMapping("/contract-manager/evaluation-item/{id}")
+	public BaseResponse<Void> newEvaluationItem(@PathVariable("id") Long evaluationItemId, @RequestBody CreateEvaluationItemDto evaluationItemDto) {
+		evaluationItemService.newEvaluationItem(evaluationItemId, evaluationItemDto);
+
+		return BaseResponse.ok();
+	}
 }

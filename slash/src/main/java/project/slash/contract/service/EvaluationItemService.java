@@ -42,17 +42,30 @@ public class EvaluationItemService {
 
 	@Transactional
 	public void createEvaluationItem(CreateEvaluationItemDto createEvaluationItemDto) {
-		Contract contract = contractRepository.findById(createEvaluationItemDto.getContractId())
-			.orElseThrow(() -> new BusinessException(NOT_FOUND_CONTRACT));
+		Contract contract = findContract(createEvaluationItemDto.getContractId());
 
-		EvaluationItem evaluationItem = saveEvaluationItem(createEvaluationItemDto, contract);	//서비스 평가 항목 저장
-		saveServiceTargets(createEvaluationItemDto.getServiceTargets(), evaluationItem);	//서비스 목표 저장
-		saveTaskTypes(createEvaluationItemDto.getTaskTypes(), evaluationItem);	//업무 유형 저장
+		saveEvaluationItem(createEvaluationItemDto, contract);
 	}
 
-	private EvaluationItem saveEvaluationItem(CreateEvaluationItemDto createEvaluationItemDto, Contract contract) {
+	private Contract findContract(Long contractId) {
+		return contractRepository.findById(contractId).orElseThrow(() -> new BusinessException(NOT_FOUND_CONTRACT));
+	}
+
+	@Transactional
+	public void newEvaluationItem(Long evaluationItemId, CreateEvaluationItemDto evaluationItemDto) {
+		EvaluationItem evaluationItem = findEvaluationItem(evaluationItemId);
+		evaluationItem.deactivate();	//기존 항목 비활성화
+
+		Contract contract = findContract(evaluationItemDto.getContractId());
+		saveEvaluationItem(evaluationItemDto, contract);
+	}
+
+	private void saveEvaluationItem(CreateEvaluationItemDto createEvaluationItemDto, Contract contract) {
 		EvaluationItem evaluationItem = EvaluationItem.from(createEvaluationItemDto, contract);
-		return evaluationItemRepository.save(evaluationItem);
+		evaluationItemRepository.save(evaluationItem);	//서비스 평가 항목 생성
+
+		saveServiceTargets(createEvaluationItemDto.getServiceTargets(), evaluationItem);	//서비스 목표 저장
+		saveTaskTypes(createEvaluationItemDto.getTaskTypes(), evaluationItem);	//업무 유형 저장
 	}
 
 	public EvaluationItemDetailDto findDetailByItemId(Long evaluationItemId) {
@@ -74,8 +87,7 @@ public class EvaluationItemService {
 
 	@Transactional
 	public void updateEvaluationItem(Long evaluationItemId, CreateEvaluationItemDto newEvaluationItem) {
-		EvaluationItem evaluationItem = evaluationItemRepository.findById(evaluationItemId)
-			.orElseThrow(() -> new BusinessException(NOT_FOUND_ITEMS));
+		EvaluationItem evaluationItem = findEvaluationItem(evaluationItemId);
 
 		evaluationItem.update(newEvaluationItem);	//서비스 평가 항목 내용 수정
 
@@ -86,6 +98,11 @@ public class EvaluationItemService {
 		if(!newEvaluationItem.getTaskTypes().isEmpty()) {	//업무 유형 수정
 			updateTaskTypes(evaluationItemId, newEvaluationItem.getTaskTypes(), evaluationItem);
 		}
+	}
+
+	private EvaluationItem findEvaluationItem(Long evaluationItemId) {
+		return evaluationItemRepository.findById(evaluationItemId)
+			.orElseThrow(() -> new BusinessException(NOT_FOUND_ITEMS));
 	}
 
 	private void updateTaskTypes(Long evaluationItemId, List<TaskTypeDto> newTaskTypes, EvaluationItem evaluationItem) {
