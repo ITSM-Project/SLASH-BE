@@ -112,6 +112,7 @@ public class ContractController {
 	 */
 	@PostMapping("/contract-manager/total-target/{contractId}")
 	public BaseResponse<Void> newTotalTarget(@PathVariable("contractId") Long contractId, @RequestBody List<GradeDto> gradeDtos) {
+		contractService.newTotalTarget(contractId, gradeDtos);
 
 		return BaseResponse.ok();
 	}

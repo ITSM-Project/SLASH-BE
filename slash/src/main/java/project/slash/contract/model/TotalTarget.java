@@ -58,4 +58,8 @@ public class TotalTarget {
 			.isActive(true)
 			.build();
 	}
+
+	public void deactivate() {
+		this.isActive = false;
+	}
 }

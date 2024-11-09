@@ -43,10 +43,8 @@ public class ContractService {
 	@Transactional
 	public Long createContract(ContractRequestDto contractRequestDto) {
 		Contract contract = contractRepository.save(contractMapper.toEntity(contractRequestDto));
+		saveTotalTargets(contractRequestDto.getTotalTargets(), contract);
 
-		List<TotalTarget> totalTargets = totalTargetMapper.toTotalTargetList(contractRequestDto.getTotalTargets(), contract);
-
-		totalTargetRepository.saveAll(totalTargets);
 		return contract.getId();
 	}
 
@@ -84,11 +82,21 @@ public class ContractService {
 	public void updateTotalTarget(Long contractId, List<GradeDto> gradeDtos) {
 		Contract contract = findContract(contractId);
 
-		List<TotalTarget> totalTargets = totalTargetRepository.findByContractId(contractId);
+		List<TotalTarget> totalTargets = findTotalTarget(contractId);
 		totalTargetRepository.deleteAll(totalTargets); //기존 평가 등급 삭제
 
 		List<TotalTarget> newTotalTargets = totalTargetMapper.toTotalTargetList(gradeDtos, contract);
 		totalTargetRepository.saveAll(newTotalTargets);    //새 평가 등급 추가
+	}
+
+	private List<TotalTarget> findTotalTarget(Long contractId) {
+		return totalTargetRepository.findByContractId(contractId);
+	}
+
+	public void newTotalTarget(Long contractId, List<GradeDto> gradeDtos) {
+		Contract contract = findContract(contractId);
+		findTotalTarget(contractId).forEach(TotalTarget::deactivate);	//기존 등급 비활성화
+		saveTotalTargets(gradeDtos, contract);	//새로운 등급 추가
 	}
 
 	private record ContractInfo(Contract contract, List<GradeDto> totalTargets) {
@@ -111,14 +119,19 @@ public class ContractService {
 		return contractMapper.toAllContractDtoList(allContracts);
 	}
 
+	public List<ContractNameDto> showAllContractName() {
+		List<Contract> allContractNames = contractRepository.findAll();
+
+		return contractMapper.toAllContractNameList(allContractNames);
+	}
+
 	private Contract findContract(Long contractId) {
 		return contractRepository.findById(contractId)
 			.orElseThrow(() -> new BusinessException(NOT_FOUND_CONTRACT));
 	}
 
-	public List<ContractNameDto> showAllContractName() {
-		List<Contract> allContractNames = contractRepository.findAll();
-
-		return contractMapper.toAllContractNameList(allContractNames);
+	private void saveTotalTargets(List<GradeDto> gradeDtos, Contract contract) {
+		List<TotalTarget> totalTargets = totalTargetMapper.toTotalTargetList(gradeDtos, contract);
+		totalTargetRepository.saveAll(totalTargets);
 	}
 }
