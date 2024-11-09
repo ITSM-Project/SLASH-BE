@@ -33,10 +33,8 @@ public class StatisticsController {
 	public BaseResponse<?> addStatistics(@RequestBody SelectedDateDto selectedDateDto) {
 		statisticsService.createMonthlyStats(selectedDateDto.getDate(),
 			selectedDateDto.getEvaluationItemId());
-		List<MonthlyStatisticsDto> result = statisticsService.calculateMonthlyStats(selectedDateDto.getDate(),
-			selectedDateDto.getEvaluationItemId());
 
-		return BaseResponse.ok(result);
+		return BaseResponse.ok();
 	}
 
 }
