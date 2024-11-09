@@ -44,8 +44,8 @@ public class ContractController {
 	 * @return 게약 내용
 	 */
 	@GetMapping("/common/contract/{contractId}")
-	public BaseResponse<ContractDetailDto> showContractInfo(@PathVariable("contractId") Long contractId) {
-		ContractDetailDto contractDetailDto = contractService.showContractInfo(contractId);
+	public BaseResponse<ContractDetailDto> showAllContractInfo(@PathVariable("contractId") Long contractId) {
+		ContractDetailDto contractDetailDto = contractService.showAllContractInfo(contractId);
 
 		return BaseResponse.ok(contractDetailDto);
 	}

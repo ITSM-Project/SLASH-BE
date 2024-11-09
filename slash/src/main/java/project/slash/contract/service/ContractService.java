@@ -50,16 +50,12 @@ public class ContractService {
 		return contract.getId();
 	}
 
-	public ContractDetailDto showContractInfo(Long contractId) {
-		Contract contract = contractRepository.findById(contractId)
-			.orElseThrow(() -> new BusinessException(NOT_FOUND_CONTRACT));
-
-		List<GradeDto> totalTargets = totalTargetMapper.toGradeDtoList(
-			totalTargetRepository.findByContractId(contract.getId()));
+	public ContractDetailDto showAllContractInfo(Long contractId) {
+		ContractInfo contractInfo = getContractInfo(contractId);
 
 		List<EvaluationItemDetailDto> evaluationItemDetails = findEvaluationItemDetails(contractId);
 
-		return ContractDetailDto.of(contract, totalTargets, evaluationItemDetails);
+		return ContractDetailDto.of(contractInfo.contract(), contractInfo.totalTargets(), evaluationItemDetails);
 	}
 
 	private List<EvaluationItemDetailDto> findEvaluationItemDetails(Long contractId) {
@@ -69,9 +65,21 @@ public class ContractService {
 				List<TaskTypeDto> taskTypes = taskTypeMapper.toTaskTypeDtoList(
 					taskTypeRepository.findTaskTypesByEvaluationItemId(evaluationItem.getEvaluationItemId()));
 
-				return EvaluationItemDetailDto.from(evaluationItem, taskTypes);
+				return EvaluationItemDetailDto.createAll(evaluationItem, taskTypes);
 			})
 			.toList();
+	}
+
+	private ContractInfo getContractInfo(Long contractId) {
+		Contract contract = findContract(contractId);
+
+		List<GradeDto> totalTargets = totalTargetMapper.toGradeDtoList(
+			totalTargetRepository.findByContractId(contract.getId()));
+
+		return new ContractInfo(contract, totalTargets);
+	}
+
+	private record ContractInfo(Contract contract, List<GradeDto> totalTargets) {
 	}
 
 	@Transactional

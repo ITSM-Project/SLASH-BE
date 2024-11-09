@@ -69,6 +69,6 @@ public class EvaluationItemService {
 		List<TaskTypeDto> taskTypes = taskTypeMapper.toTaskTypeDtoList(
 			taskTypeRepository.findTaskTypesByEvaluationItemId(evaluationItemId));
 
-		return EvaluationItemDetailDto.from(evaluationItemDto, taskTypes);
+		return EvaluationItemDetailDto.createAll(evaluationItemDto, taskTypes);
 	}
 }

@@ -5,12 +5,14 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.slash.contract.dto.GradeDto;
 import project.slash.contract.dto.TaskTypeDto;
 
 @Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -25,6 +27,8 @@ public class EvaluationItemDetailDto {
 
 	private String purpose;
 
+	private boolean isAuto;
+
 	private String formula;
 
 	private String unit;
@@ -33,16 +37,18 @@ public class EvaluationItemDetailDto {
 
 	private List<TaskTypeDto> taskTypes;
 
-	public static EvaluationItemDetailDto from(EvaluationItemDto evaluationItemDto, List<TaskTypeDto> taskTypeDto) {
-		return new EvaluationItemDetailDto(
-			evaluationItemDto.getEvaluationItemId(),
-			evaluationItemDto.getCategory(),
-			evaluationItemDto.getWeight(),
-			evaluationItemDto.getPeriod(),
-			evaluationItemDto.getPurpose(),
-			evaluationItemDto.getFormula(),
-			evaluationItemDto.getUnit(),
-			evaluationItemDto.getServiceTargets(),
-			taskTypeDto);
+	public static EvaluationItemDetailDto createAll(EvaluationItemDto evaluationItemDto, List<TaskTypeDto> taskTypeDto) {
+		return EvaluationItemDetailDto.builder()
+			.evaluationItemId(evaluationItemDto.getEvaluationItemId())
+			.category(evaluationItemDto.getCategory())
+			.weight(evaluationItemDto.getWeight())
+			.period(evaluationItemDto.getPeriod())
+			.purpose(evaluationItemDto.getPurpose())
+			.isAuto(true)
+			.formula(evaluationItemDto.getFormula())
+			.unit(evaluationItemDto.getUnit())
+			.serviceTargets(evaluationItemDto.getServiceTargets())
+			.taskTypes(taskTypeDto)
+			.build();
 	}
 }
