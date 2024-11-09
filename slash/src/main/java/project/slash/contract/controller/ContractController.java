@@ -102,4 +102,17 @@ public class ContractController {
 
 		return BaseResponse.ok();
 	}
+
+	/**
+	 * 새 종합 등급 생성 메서드 입니다. (기존 등급 비활성화)
+	 *
+	 * @param contractId 수정할 계약 아이디
+	 * @param gradeDtos 수정할 종합 등급 정보
+	 * @return 성공 여부
+	 */
+	@PostMapping("/contract-manager/total-target/{contractId}")
+	public BaseResponse<Void> newTotalTarget(@PathVariable("contractId") Long contractId, @RequestBody List<GradeDto> gradeDtos) {
+
+		return BaseResponse.ok();
+	}
 }

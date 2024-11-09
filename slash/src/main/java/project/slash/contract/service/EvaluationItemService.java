@@ -79,11 +79,11 @@ public class EvaluationItemService {
 
 		evaluationItem.update(newEvaluationItem);	//서비스 평가 항목 내용 수정
 
-		if(!newEvaluationItem.getServiceTargets().isEmpty()) {
+		if(!newEvaluationItem.getServiceTargets().isEmpty()) {	//서비스 목표 수정
 			updateServiceTargets(evaluationItemId, newEvaluationItem.getServiceTargets(), evaluationItem);
 		}
 
-		if(!newEvaluationItem.getTaskTypes().isEmpty()) {
+		if(!newEvaluationItem.getTaskTypes().isEmpty()) {	//업무 유형 수정
 			updateTaskTypes(evaluationItemId, newEvaluationItem.getTaskTypes(), evaluationItem);
 		}
 	}

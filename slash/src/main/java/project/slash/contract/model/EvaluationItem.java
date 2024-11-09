@@ -41,6 +41,9 @@ public class EvaluationItem {
 
 	private String unit;
 
+	@Column(name = "is_active")
+	private boolean isActive;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "contract_id")
 	private Contract contract;
@@ -54,6 +57,7 @@ public class EvaluationItem {
 			.purpose(createEvaluationItemDto.getPurpose())
 			.formula(createEvaluationItemDto.getFormula())
 			.unit(createEvaluationItemDto.getUnit())
+			.isActive(true)
 			.build();
 	}
 
