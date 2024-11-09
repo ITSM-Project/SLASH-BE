@@ -1,10 +1,12 @@
 package project.slash.taskrequest.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import project.slash.statistics.dto.IncidentInfoDto;
 import project.slash.taskrequest.dto.request.RequestManagementDto;
 import project.slash.taskrequest.dto.response.StatusCountDto;
 import project.slash.taskrequest.dto.response.SystemCountDto;
@@ -26,5 +28,8 @@ public interface TaskRequestRepositoryCustom {
 
 	void updateManagerByRequestId(Long requestId, String managerId);
 
-	void updateDueOnTime(Long requestId,String managerId,RequestStatus requestStatus);
+	void updateDueOnTime(Long requestId, String managerId, RequestStatus requestStatus);
+
+	IncidentInfoDto getIncidentCount(Long evaluationItemId, LocalDate endDate);
+
 }
