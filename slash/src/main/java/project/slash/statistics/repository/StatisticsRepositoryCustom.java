@@ -16,5 +16,5 @@ public interface StatisticsRepositoryCustom {
 
 	List<StatisticsDto> getStatistics(String serviceType, String period, String targetSystem, String targetEquipment);
 
-	ResponseServiceTaskDto getServiceTaskStatics(RequestStatisticsDto requestStatisticsDto);
+	ResponseServiceTaskDto getServiceTaskStatics(Long evaluationItemId, LocalDate date);
 }

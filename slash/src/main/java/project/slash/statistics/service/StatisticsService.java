@@ -18,6 +18,7 @@ import project.slash.statistics.dto.MonthlyServiceStatisticsDto;
 import project.slash.statistics.dto.StatisticsDto;
 import project.slash.statistics.dto.request.RequestStatisticsDto;
 import project.slash.statistics.dto.response.ResponseServiceTaskDto;
+import project.slash.statistics.dto.response.ResponseStatisticsDto;
 import project.slash.statistics.model.Statistics;
 import project.slash.statistics.repository.StatisticsRepository;
 
@@ -120,9 +121,9 @@ public class StatisticsService {
 
 	//서비스요청 통계 처리
 	@Transactional
-	public void createServiceTaskStatics(RequestStatisticsDto requestStatisticsDto) {
+	public void createServiceTaskStatistics(RequestStatisticsDto requestStatisticsDto) {
 		ResponseServiceTaskDto responseServiceTaskDto = statisticsRepository.getServiceTaskStatics(
-			requestStatisticsDto);
+			requestStatisticsDto.getEvaluationItemId(), requestStatisticsDto.getDate());
 		double score = Math.round(
 			(double)responseServiceTaskDto.getDueOnTimeCount() / responseServiceTaskDto.getTaskRequest() * 10000)
 			/ 100.0;
@@ -147,5 +148,18 @@ public class StatisticsService {
 			.map(ServiceTarget::getGrade)  // 조건을 만족하는 ServiceTarget의 grade 값을 추출
 			.findFirst()
 			.orElse(null);
+	}
+
+	public ResponseStatisticsDto getServiceStatistics(Long evaluationItemId, LocalDate date) {
+		ResponseServiceTaskDto responseServiceTaskDto = statisticsRepository.getServiceTaskStatics(
+			evaluationItemId, date);
+		double score = Math.round(
+			(double)responseServiceTaskDto.getDueOnTimeCount() / responseServiceTaskDto.getTaskRequest() * 10000)
+			/ 100.0;
+		double weightScore = Math.round(
+			score / responseServiceTaskDto.getTotalWeight() * responseServiceTaskDto.getEvaluationItem().getWeight()
+				* 100) / 100.0;
+		String grade = getGrade(responseServiceTaskDto.getEvaluationItem().getId(), score);
+		return ResponseStatisticsDto.fromResponseServiceTask(responseServiceTaskDto, score, weightScore, grade);
 	}
 }
