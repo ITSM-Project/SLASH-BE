@@ -5,18 +5,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
 import project.slash.statistics.dto.request.RequestStatisticsDto;
 import project.slash.statistics.service.IncidentStatisticsService;
 
 @RestController
+@RequiredArgsConstructor
 public class IncidentTaskController {
+	private final IncidentStatisticsService incidentStatisticsService;
 
-	@PostMapping("/contract-manager/statistics")
-	public BaseResponse<Void> addIncidentResolvedOnTimeRate(
+	@PostMapping("/common/statistics/incident-statistics")
+	public BaseResponse<Void> addIncidentDueOnTimeRate(
 		@RequestBody @Valid RequestStatisticsDto requestStatisticsDto) {
-		IncidentStatisticsService.saveIncidentStatistics(requestStatisticsDto.getEvaluationItemId(),
-			requestStatisticsDto.getEndDate());
+		incidentStatisticsService.getIncidentStatistics(requestStatisticsDto);
 		return BaseResponse.ok();
 	}
 }
