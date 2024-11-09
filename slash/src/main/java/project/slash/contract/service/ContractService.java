@@ -51,7 +51,6 @@ public class ContractService {
 	public ContractDetailDto showAllContractInfo(Long contractId) {
 		ContractInfo contractInfo = getContractInfo(contractId);
 
-		//TODO: Active 인것만 찾아야 함
 		List<EvaluationItemDetailDto> evaluationItemDetails = findEvaluationItemDetails(contractId);
 
 		return ContractDetailDto.of(contractInfo.contract(), contractInfo.totalTargets(), evaluationItemDetails);
@@ -73,7 +72,7 @@ public class ContractService {
 		Contract contract = findContract(contractId);
 
 		List<GradeDto> totalTargets = totalTargetMapper.toGradeDtoList(
-			totalTargetRepository.findByContractId(contract.getId()));
+			totalTargetRepository.findByContractIdAndIsActiveTrue(contract.getId()));
 
 		return new ContractInfo(contract, totalTargets);
 	}
@@ -90,7 +89,7 @@ public class ContractService {
 	}
 
 	private List<TotalTarget> findTotalTarget(Long contractId) {
-		return totalTargetRepository.findByContractId(contractId);
+		return totalTargetRepository.findByContractIdAndIsActiveTrue(contractId);
 	}
 
 	@Transactional

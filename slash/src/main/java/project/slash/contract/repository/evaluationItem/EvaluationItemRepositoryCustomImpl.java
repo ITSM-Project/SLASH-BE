@@ -23,8 +23,8 @@ public class EvaluationItemRepositoryCustomImpl implements EvaluationItemReposit
 	}
 
 	@Override
-	public List<EvaluationItemDto> findAllEvaluationItems(Long contractId) {
-		return findEvaluationItems(evaluationItem.contract.id.eq(contractId));
+	public List<EvaluationItemDto> findAllEvaluationItems(Long contractId) { 	//활성화 된것만 찾기
+		return findEvaluationItems(evaluationItem.contract.id.eq(contractId).and(evaluationItem.isActive.isTrue()));
 	}
 
 	@Override
