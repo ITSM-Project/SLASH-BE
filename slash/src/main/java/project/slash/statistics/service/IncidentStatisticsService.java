@@ -47,7 +47,7 @@ public class IncidentStatisticsService {
 
 		// 저장
 		statisticsRepository.save(
-			Statistics.fromIncidentTask(incidentInfoDto, requestStatisticsDto.getEndDate(), gradeScoreDto.getScore(),
+			Statistics.fromIncidentInfo(incidentInfoDto, requestStatisticsDto.getEndDate(), gradeScoreDto.getScore(),
 				weightScore, gradeScoreDto.getGrade(), gradeScoreDto.getScore(),
 				evaluationItemRepository.getReferenceById(requestStatisticsDto.getEvaluationItemId())));
 	}

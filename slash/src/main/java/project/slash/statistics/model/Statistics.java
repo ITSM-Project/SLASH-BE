@@ -65,7 +65,7 @@ public class Statistics {
 	@JoinColumn(name = "evaluation_item_id")
 	private EvaluationItem evaluationItems;
 
-	public static Statistics fromIncidentTask(IncidentInfoDto incidentInfoDto, LocalDate date, double score,
+	public static Statistics fromIncidentInfo(IncidentInfoDto incidentInfoDto, LocalDate date, double score,
 		double weightedScore, String grade, double estimate, EvaluationItem evaluationItem) {
 		return Statistics.builder()
 			.targetSystem("전체")
