@@ -120,7 +120,7 @@ public class StatisticsService {
 
 	//서비스요청 통계 처리
 	@Transactional
-	public void getServiceTaskStatics(RequestStatisticsDto requestStatisticsDto) {
+	public void createServiceTaskStatics(RequestStatisticsDto requestStatisticsDto) {
 		ResponseServiceTaskDto responseServiceTaskDto = statisticsRepository.getServiceTaskStatics(
 			requestStatisticsDto);
 		double score = Math.round(

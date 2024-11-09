@@ -21,9 +21,9 @@ public class ServiceStaticsController {
 	 * @return 저장성공여부
 	 */
 	@PostMapping("/contract-manager/service-statistic")
-	public BaseResponse<Void> getServiceStatics(
+	public BaseResponse<Void> createServiceStatics(
 		@RequestBody @Valid RequestStatisticsDto requestStatisticsDto) {
-		statisticsService.getServiceTaskStatics(requestStatisticsDto);
+		statisticsService.createServiceTaskStatics(requestStatisticsDto);
 		return BaseResponse.ok();
 	}
 }
