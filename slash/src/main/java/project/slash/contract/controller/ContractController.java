@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -96,7 +96,7 @@ public class ContractController {
 	 * @param gradeDtos 수정할 종합 등급 정보
 	 * @return 성공 여부
 	 */
-	@PatchMapping("/contract-manager/total-target/{contractId}")
+	@PutMapping("/contract-manager/total-target/{contractId}")
 	public BaseResponse<Void> updateTotalTarget(@PathVariable("contractId") Long contractId, @RequestBody List<GradeDto> gradeDtos) {
 		contractService.updateTotalTarget(contractId, gradeDtos);
 

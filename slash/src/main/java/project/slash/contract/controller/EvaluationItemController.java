@@ -1,9 +1,9 @@
 package project.slash.contract.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,8 +38,8 @@ public class EvaluationItemController {
 	 * @param evaluationItemId 서비스 항목 ID
 	 * @return 서비스 항목 세부 내용(서비스 목표, 업무 유형, 서비스 항목 설명)
 	 */
-	@GetMapping("/common/detail/{evaluationItemId}")
-	public BaseResponse<EvaluationItemDetailDto> showCategoryDetail(@PathVariable("evaluationItemId") Long evaluationItemId) {
+	@GetMapping("/common/detail/{id}")
+	public BaseResponse<EvaluationItemDetailDto> showCategoryDetail(@PathVariable("id") Long evaluationItemId) {
 		EvaluationItemDetailDto evaluationItemDetail = evaluationItemService.findDetailByItemId(evaluationItemId);
 
 		return BaseResponse.ok(evaluationItemDetail);
@@ -58,8 +58,15 @@ public class EvaluationItemController {
 		return BaseResponse.ok(modifiable);
 	}
 
-	@PatchMapping("/contract-manager/evaluation-item/{evaluationItemId}")
-	public BaseResponse<Void> updateEvaluationItem(@PathVariable("evaluationItemId") Long evaluationItemId,
+	/**
+	 * 서비스 평가 항목 수정 메서드입니다.
+	 *
+	 * @param evaluationItemId 수정할 서비스 평가 항목 아이디
+	 * @param evaluationItemDto 수정할 내용
+	 * @return 성공 여부
+	 */
+	@PutMapping("/contract-manager/evaluation-item/{id}")
+	public BaseResponse<Void> updateEvaluationItem(@PathVariable("id") Long evaluationItemId,
 		@RequestBody CreateEvaluationItemDto evaluationItemDto) {
 		evaluationItemService.updateEvaluationItem(evaluationItemId, evaluationItemDto);
 

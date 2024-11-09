@@ -55,16 +55,6 @@ public class EvaluationItemService {
 		return evaluationItemRepository.save(evaluationItem);
 	}
 
-	private void saveTaskTypes(List<TaskTypeDto> types, EvaluationItem evaluationItem) {
-		List<TaskType> taskTypes = taskTypeMapper.toTaskTypeList(types, evaluationItem);
-		taskTypeRepository.saveAll(taskTypes);
-	}
-
-	private void saveServiceTargets(List<GradeDto> targets, EvaluationItem evaluationItem) {
-		List<ServiceTarget> serviceTargets = serviceTargetMapper.toServiceTargetList(targets, evaluationItem);
-		serviceTargetRepository.saveAll(serviceTargets);
-	}
-
 	public EvaluationItemDetailDto findDetailByItemId(Long evaluationItemId) {
 		EvaluationItemDto evaluationItemDto = evaluationItemRepository.findEvaluationItem(evaluationItemId)
 			.orElseThrow(() -> new BusinessException(NOT_FOUND_ITEMS));
@@ -87,8 +77,38 @@ public class EvaluationItemService {
 		EvaluationItem evaluationItem = evaluationItemRepository.findById(evaluationItemId)
 			.orElseThrow(() -> new BusinessException(NOT_FOUND_ITEMS));
 
-		//TODO: 등급이랑, 요청 수정은 그냥 다 지우고 다 넣는 방식으로 하기!
+		evaluationItem.update(newEvaluationItem);	//서비스 평가 항목 내용 수정
 
-		evaluationItem.update(newEvaluationItem);
+		if(!newEvaluationItem.getServiceTargets().isEmpty()) {
+			updateServiceTargets(evaluationItemId, newEvaluationItem.getServiceTargets(), evaluationItem);
+		}
+
+		if(!newEvaluationItem.getTaskTypes().isEmpty()) {
+			updateTaskTypes(evaluationItemId, newEvaluationItem.getTaskTypes(), evaluationItem);
+		}
+	}
+
+	private void updateTaskTypes(Long evaluationItemId, List<TaskTypeDto> newTaskTypes, EvaluationItem evaluationItem) {
+		List<TaskType> taskTypes = taskTypeRepository.findTaskTypesByEvaluationItemId(evaluationItemId);
+		taskTypeRepository.deleteAll(taskTypes);	//기존 등급 삭제
+
+		saveTaskTypes(newTaskTypes, evaluationItem);	//새 등급 저장
+	}
+
+	private void updateServiceTargets(Long evaluationItemId, List<GradeDto> newServiceTargets, EvaluationItem evaluationItem) {
+		List<ServiceTarget> serviceTargets = serviceTargetRepository.findByEvaluationItemId(evaluationItemId);
+		serviceTargetRepository.deleteAll(serviceTargets);	//기존 등급 삭제
+
+		saveServiceTargets(newServiceTargets, evaluationItem);	//새 등급 저장
+	}
+
+	private void saveTaskTypes(List<TaskTypeDto> types, EvaluationItem evaluationItem) {
+		List<TaskType> taskTypes = taskTypeMapper.toTaskTypeList(types, evaluationItem);
+		taskTypeRepository.saveAll(taskTypes);
+	}
+
+	private void saveServiceTargets(List<GradeDto> targets, EvaluationItem evaluationItem) {
+		List<ServiceTarget> serviceTargets = serviceTargetMapper.toServiceTargetList(targets, evaluationItem);
+		serviceTargetRepository.saveAll(serviceTargets);
 	}
 }
