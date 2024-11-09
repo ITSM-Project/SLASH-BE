@@ -81,4 +81,14 @@ public class EvaluationItemService {
 
 		return statisticsList.isEmpty();
 	}
+
+	@Transactional
+	public void updateEvaluationItem(Long evaluationItemId, CreateEvaluationItemDto newEvaluationItem) {
+		EvaluationItem evaluationItem = evaluationItemRepository.findById(evaluationItemId)
+			.orElseThrow(() -> new BusinessException(NOT_FOUND_ITEMS));
+
+		//TODO: 등급이랑, 요청 수정은 그냥 다 지우고 다 넣는 방식으로 하기!
+
+		evaluationItem.update(newEvaluationItem);
+	}
 }

@@ -79,6 +79,17 @@ public class ContractService {
 		return new ContractInfo(contract, totalTargets);
 	}
 
+	@Transactional
+	public void updateTotalTarget(Long contractId, List<GradeDto> gradeDtos) {
+		Contract contract = findContract(contractId);
+
+		List<TotalTarget> totalTargets = totalTargetRepository.findByContractId(contractId);
+		totalTargetRepository.deleteAll(totalTargets); //기존 평가 등급 삭제
+
+		List<TotalTarget> newTotalTargets = totalTargetMapper.toTotalTargetList(gradeDtos, contract);
+		totalTargetRepository.saveAll(newTotalTargets);    //새 평가 등급 추가
+	}
+
 	private record ContractInfo(Contract contract, List<GradeDto> totalTargets) {
 	}
 

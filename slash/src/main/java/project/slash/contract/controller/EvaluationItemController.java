@@ -1,6 +1,7 @@
 package project.slash.contract.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -55,5 +56,13 @@ public class EvaluationItemController {
 		boolean modifiable = evaluationItemService.checkModifiable(contractId);
 
 		return BaseResponse.ok(modifiable);
+	}
+
+	@PatchMapping("/contract-manager/evaluation-item/{evaluationItemId}")
+	public BaseResponse<Void> updateEvaluationItem(@PathVariable("evaluationItemId") Long evaluationItemId,
+		@RequestBody CreateEvaluationItemDto evaluationItemDto) {
+		evaluationItemService.updateEvaluationItem(evaluationItemId, evaluationItemDto);
+
+		return BaseResponse.ok();
 	}
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
+import project.slash.contract.dto.GradeDto;
 import project.slash.contract.dto.request.ContractRequestDto;
 import project.slash.contract.dto.response.AllContractDto;
 import project.slash.contract.dto.response.ContractDetailDto;
@@ -85,5 +87,19 @@ public class ContractController {
 		List<ContractNameDto> contractNames = contractService.showAllContractName();
 
 		return BaseResponse.ok(contractNames);
+	}
+
+	/**
+	 * 종합 등급 수정하는 메서드입니다.
+	 *
+	 * @param contractId 수정할 계약 아이디
+	 * @param gradeDtos 수정할 종합 등급 정보
+	 * @return 성공 여부
+	 */
+	@PatchMapping("/contract-manager/total-target/{contractId}")
+	public BaseResponse<Void> updateTotalTarget(@PathVariable("contractId") Long contractId, @RequestBody List<GradeDto> gradeDtos) {
+		contractService.updateTotalTarget(contractId, gradeDtos);
+
+		return BaseResponse.ok();
 	}
 }

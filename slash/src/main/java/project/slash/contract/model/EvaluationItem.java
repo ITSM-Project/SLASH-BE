@@ -56,4 +56,12 @@ public class EvaluationItem {
 			.unit(createEvaluationItemDto.getUnit())
 			.build();
 	}
+
+	public void update(CreateEvaluationItemDto newEvaluationItem) {
+		this.category = newEvaluationItem.getCategory();
+		this.weight = newEvaluationItem.getWeight();
+		this.period = newEvaluationItem.getPurpose();
+		this.formula = newEvaluationItem.getFormula();
+		this.unit = newEvaluationItem.getUnit();
+	}
 }
