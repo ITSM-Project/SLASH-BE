@@ -55,7 +55,7 @@ class ContractRepositoryTest {
 		Contract result = contractRepository.findByIsTerminateFalse().get();
 
 		//then
-		assertThat(result).extracting("companyName", "startDate", "endDate")
+		assertThat(result).extracting("contractName", "startDate", "endDate")
 			.containsExactly("테스트 회사",
 				LocalDate.of(2024, 10, 12),
 				LocalDate.of(2025, 10, 11));
@@ -63,7 +63,7 @@ class ContractRepositoryTest {
 
 	private static Contract createContract(LocalDate startDate, LocalDate endDate, boolean isTerminate) {
 		return Contract.builder()
-			.companyName("테스트 회사")
+			.contractName("테스트 회사")
 			.startDate(startDate)
 			.endDate(endDate)
 			.isTerminate(isTerminate)

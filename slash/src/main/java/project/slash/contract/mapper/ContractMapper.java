@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import project.slash.contract.dto.request.ContractRequestDto;
 import project.slash.contract.dto.response.AllContractDto;
+import project.slash.contract.dto.response.ContractNameDto;
 import project.slash.contract.model.Contract;
 
 @Component
@@ -21,6 +22,12 @@ public class ContractMapper {
 	public List<AllContractDto> toAllContractDtoList(List<Contract> contracts) {
 		return contracts.stream()
 			.map(AllContractDto::from)
+			.toList();
+	}
+
+	public List<ContractNameDto> toAllContractNameList(List<Contract> allContracts) {
+		return allContracts.stream()
+			.map(contract -> ContractNameDto.of(contract.getId(), contract.getContractName()))
 			.toList();
 	}
 }
