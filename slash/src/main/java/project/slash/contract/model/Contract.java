@@ -41,7 +41,7 @@ public class Contract {
 		this.isTerminate = isTerminate;
 	}
 
-	public void updateTerminateStatus() {
+	public void terminate() {
 		this.isTerminate = true;
 	}
 }
