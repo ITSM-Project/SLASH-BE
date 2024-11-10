@@ -205,15 +205,17 @@ public class StatisticsService {
 			throw new BusinessException(STATISTICS_ALREADY_EXISTS);
 		}
 
-		Statistics statistics = statisticsRepository.findById(statisticsId).orElseThrow(() -> new BusinessException(NOT_FOUND_STATISTICS));
+		Statistics statistics = findStatistics(statisticsId);
 		statistics.approve();
 	}
 
 	@Transactional
 	public void editStatistics(Long statisticsId, EditStatisticsDto editStatisticsDto) {
-		Statistics statistics = statisticsRepository.findById(statisticsId)
-			.orElseThrow(() -> new BusinessException(NOT_FOUND_STATISTICS));
-
+		Statistics statistics = findStatistics(statisticsId);
 		statistics.update(editStatisticsDto.getGrade(), editStatisticsDto.getScore(), editStatisticsDto.getWeightedScore());
+	}
+
+	private Statistics findStatistics(Long statisticsId) {
+		return statisticsRepository.findById(statisticsId).orElseThrow(() -> new BusinessException(NOT_FOUND_STATISTICS));
 	}
 }
