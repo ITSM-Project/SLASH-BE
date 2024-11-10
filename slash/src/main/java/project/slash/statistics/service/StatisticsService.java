@@ -6,24 +6,35 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import project.slash.contract.dto.ContractDataDto;
 import project.slash.contract.model.Contract;
 import project.slash.contract.model.EvaluationItem;
+import project.slash.contract.model.TotalTarget;
 import project.slash.contract.repository.ContractRepository;
 import project.slash.contract.repository.evaluationItem.EvaluationItemRepository;
 import project.slash.statistics.dto.response.EvaluatedDto;
 import project.slash.statistics.dto.response.MonthlyDataDto;
 import project.slash.statistics.dto.response.MonthlyStatisticsDto;
+import project.slash.contract.repository.TotalTargetRepository;
+import project.slash.statistics.dto.response.IndicatorExtraInfoDto;
+import project.slash.statistics.dto.response.IndicatorDto;
+import project.slash.statistics.dto.response.MonthlyIndicatorsDto;
+import project.slash.statistics.model.Statistics;
 import project.slash.statistics.repository.StatisticsRepository;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class StatisticsService {
+	private static final int MINIMUM_STATISTICS_REQUIRED = 3;
+
 	private final StatisticsRepository statisticsRepository;
 	private final ContractRepository contractRepository;
 	private final EvaluationItemRepository evaluationItemRepository;
+	private final TotalTargetRepository totalTargetRepository;
 
 	public void createMonthlyStats(LocalDate date, long evaluationItemId) {
 		List<MonthlyStatisticsDto> monthlyStatisticsDtoList = calculateMonthlyStats(date,
@@ -119,5 +130,52 @@ public class StatisticsService {
 			return Math.round(uptimePercentage * 100.0) / 100.0;
 		}
 		return 0.0;
+	}
+
+	public MonthlyIndicatorsDto getMonthlyIndicators(Long contractId, int year, int month) {
+		LocalDate startDate = LocalDate.of(year, month, 1);
+		LocalDate endDate = LocalDate.of(year, month, startDate.lengthOfMonth());
+
+		List<Statistics> statistics = statisticsRepository.findByDateBetweenAndEvaluationItemsContractIdAndApprovalStatusTrue(
+			startDate, endDate, contractId);
+
+		if(statistics.size() < MINIMUM_STATISTICS_REQUIRED) {
+			return new MonthlyIndicatorsDto();
+		}
+
+		return new MonthlyIndicatorsDto(getIndicatorExtraInfo(contractId, statistics),
+			getMonthlyIndicators(statistics));
+	}
+
+	private IndicatorExtraInfoDto getIndicatorExtraInfo(Long contractId, List<Statistics> statistics) {
+		double score = 0;
+		long requestCount = 0;
+		long incidentTime = 0;
+
+		for (Statistics statistic : statistics) {
+			score += statistic.getScore();
+			requestCount += statistic.getRequestCount() + statistic.getSystemIncidentCount();
+			incidentTime += statistic.getTotalDowntime();
+		}
+
+		return new IndicatorExtraInfoDto(findTotalTarget(contractId, score), requestCount, incidentTime);
+	}
+
+	public String findTotalTarget(Long contractId, double score) {
+		return totalTargetRepository.findByContractIdOrderByMinAsc(contractId).stream()
+			.filter(target ->
+				(target.isMinInclusive() ? score >= target.getMin() : score > target.getMin()) &&
+					(target.isMaxInclusive() ? score <= target.getMax() : score < target.getMax())
+			)
+			.map(TotalTarget::getGrade)
+			.findFirst()
+			.orElse(null);
+	}
+
+	private static List<IndicatorDto> getMonthlyIndicators(List<Statistics> statistics) {
+		return statistics.stream()
+			.filter(s -> s.getTargetSystem().equals("전체"))
+			.map(IndicatorDto::of)
+			.toList();
 	}
 }

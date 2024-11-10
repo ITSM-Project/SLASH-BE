@@ -8,4 +8,6 @@ import project.slash.contract.model.TotalTarget;
 
 public interface TotalTargetRepository extends JpaRepository<TotalTarget, Long> {
 	List<TotalTarget> findByContractId(Long id);
+
+	List<TotalTarget> findByContractIdOrderByMinAsc(Long contractId);
 }
