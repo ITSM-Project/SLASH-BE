@@ -96,7 +96,7 @@ public class EvaluationItemController {
 	 * @param contractId 조회할 계약 아이디
 	 * @return 서비스 평가 항목 이름
 	 */
-	@GetMapping("/common/evaluation-item/{contractId}")
+	@GetMapping("/common/evaluation-item-category/{contractId}")
 	public BaseResponse<List<EvaluationItemCategoryDto>> getEvaluationItemCategory(@PathVariable Long contractId) {
 		List<EvaluationItemCategoryDto> evaluationItemCategories = evaluationItemService.getEvaluationItemCategory(
 			contractId);
