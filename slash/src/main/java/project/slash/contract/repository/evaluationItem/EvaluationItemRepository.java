@@ -1,6 +1,5 @@
 package project.slash.contract.repository.evaluationItem;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,5 +12,5 @@ public interface EvaluationItemRepository extends JpaRepository<EvaluationItem, 
 	@Query("select e.id from EvaluationItem e WHERE e.contract.id = :contractId")
 	List<Long> findIdsByContractId(@Param("contractId") Long contractId);
 
-	List<EvaluationItem> findByContractIdAndActiveIsTrue(Long contractId);
+	List<EvaluationItem> findByContractIdAndIsActiveTrue(Long contractId);
 }

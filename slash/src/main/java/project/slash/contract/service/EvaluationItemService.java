@@ -133,8 +133,7 @@ public class EvaluationItemService {
 	}
 
 	public List<EvaluationItemCategoryDto> getEvaluationItemCategory(Long contractId) {
-		List<EvaluationItem> evaluationItems = evaluationItemRepository.findByContractIdAndActiveIsTrue(
-			contractId);
+		List<EvaluationItem> evaluationItems = evaluationItemRepository.findByContractIdAndIsActiveTrue(contractId);
 
 		return evaluationItemMapper.toEvaluationItemCategoryDtos(evaluationItems);
 	}
