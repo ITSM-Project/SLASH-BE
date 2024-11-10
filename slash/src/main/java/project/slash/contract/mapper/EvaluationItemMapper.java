@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import project.slash.contract.dto.response.EvaluationItemCategoryDto;
 import project.slash.contract.model.EvaluationItem;
 import project.slash.statistics.dto.response.UnCalculatedStatisticsDto;
 
@@ -17,5 +18,15 @@ public class EvaluationItemMapper {
 
 	public UnCalculatedStatisticsDto toUnCalculatedStatistics(EvaluationItem evaluationItem) {
 		return new UnCalculatedStatisticsDto(evaluationItem.getId(), evaluationItem.getCategory());
+	}
+
+	public List<EvaluationItemCategoryDto> toEvaluationItemCategoryDtos(List<EvaluationItem> evaluationItems) {
+		return evaluationItems.stream()
+			.map(this::toEvaluationItemCategoryDto)
+			.toList();
+	}
+
+	public EvaluationItemCategoryDto toEvaluationItemCategoryDto(EvaluationItem evaluationItem) {
+		return new EvaluationItemCategoryDto(evaluationItem.getId(), evaluationItem.getCategory());
 	}
 }

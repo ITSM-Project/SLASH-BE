@@ -12,4 +12,6 @@ import project.slash.contract.model.EvaluationItem;
 public interface EvaluationItemRepository extends JpaRepository<EvaluationItem, Long>, EvaluationItemRepositoryCustom {
 	@Query("select e.id from EvaluationItem e WHERE e.contract.id = :contractId")
 	List<Long> findIdsByContractId(@Param("contractId") Long contractId);
+
+	List<EvaluationItem> findByContractIdAndActiveIsTrue(Long contractId);
 }
