@@ -8,19 +8,24 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.Getter;
 import project.slash.contract.model.EvaluationItem;
 
 import java.time.LocalDate;
 
 @Entity
+@Getter
 public class Statistics {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "statistics_id")
 	private Long id;
+
 	private LocalDate date;
+
 	@Column(name = "target_system")
 	private String targetSystem;
+
 	@Column(name = "service_type")
 	private String serviceType;
 
@@ -28,7 +33,9 @@ public class Statistics {
 	private String targetEquipment;
 
 	private String grade;
+
 	private double score;
+
 	private String period;
 
 	@Column(name = "weighted_score")

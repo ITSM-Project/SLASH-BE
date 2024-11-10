@@ -15,6 +15,7 @@ import project.slash.contract.dto.TaskTypeDto;
 import project.slash.contract.dto.request.ContractRequestDto;
 import project.slash.contract.dto.response.AllContractDto;
 import project.slash.contract.dto.response.ContractDetailDto;
+import project.slash.contract.dto.response.ContractNameDto;
 import project.slash.contract.dto.response.EvaluationItemDetailDto;
 import project.slash.contract.mapper.ContractMapper;
 import project.slash.contract.mapper.TotalTargetMapper;
@@ -93,5 +94,11 @@ public class ContractService {
 	private Contract findContract(Long contractId) {
 		return contractRepository.findById(contractId)
 			.orElseThrow(() -> new BusinessException(NOT_FOUND_CONTRACT));
+	}
+
+	public List<ContractNameDto> showAllContractName() {
+		List<Contract> allContractNames = contractRepository.findAll();
+
+		return contractMapper.toAllContractNameList(allContractNames);
 	}
 }
