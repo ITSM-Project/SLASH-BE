@@ -68,4 +68,10 @@ public class Statistics {
 	public void approve() {
 		this.approvalStatus = true;
 	}
+
+	public void update(String grade, double score, double weightedScore) {
+		this.grade = grade;
+		this.score = score;
+		this.weightedScore = weightedScore;
+	}
 }

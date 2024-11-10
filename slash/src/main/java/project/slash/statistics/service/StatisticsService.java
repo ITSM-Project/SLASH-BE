@@ -22,13 +22,13 @@ import project.slash.contract.repository.evaluationItem.EvaluationItemRepository
 import project.slash.statistics.dto.MonthlyDataDto;
 import project.slash.statistics.dto.MonthlyServiceStatisticsDto;
 import project.slash.statistics.dto.StatisticsDto;
+import project.slash.statistics.dto.request.EditStatisticsDto;
 import project.slash.statistics.dto.response.CalculatedStatisticsDto;
 import project.slash.statistics.dto.response.IndicatorExtraInfoDto;
 import project.slash.statistics.dto.response.IndicatorDto;
 import project.slash.statistics.dto.response.MonthlyIndicatorsDto;
 import project.slash.statistics.dto.response.StatisticsStatusDto;
 import project.slash.statistics.dto.response.UnCalculatedStatisticsDto;
-import project.slash.statistics.exception.StatisticsErrorCode;
 import project.slash.statistics.mapper.StatisticsMapper;
 import project.slash.statistics.model.Statistics;
 import project.slash.statistics.repository.StatisticsRepository;
@@ -207,5 +207,13 @@ public class StatisticsService {
 
 		Statistics statistics = statisticsRepository.findById(statisticsId).orElseThrow(() -> new BusinessException(NOT_FOUND_STATISTICS));
 		statistics.approve();
+	}
+
+	@Transactional
+	public void editStatistics(Long statisticsId, EditStatisticsDto editStatisticsDto) {
+		Statistics statistics = statisticsRepository.findById(statisticsId)
+			.orElseThrow(() -> new BusinessException(NOT_FOUND_STATISTICS));
+
+		statistics.update(editStatisticsDto.getGrade(), editStatisticsDto.getScore(), editStatisticsDto.getWeightedScore());
 	}
 }

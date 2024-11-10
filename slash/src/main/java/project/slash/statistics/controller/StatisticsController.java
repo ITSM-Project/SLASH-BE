@@ -5,12 +5,14 @@ import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
 import project.slash.statistics.dto.StatisticsDto;
+import project.slash.statistics.dto.request.EditStatisticsDto;
 import project.slash.statistics.dto.response.MonthlyIndicatorsDto;
 import project.slash.statistics.dto.response.StatisticsStatusDto;
 import project.slash.statistics.service.StatisticsService;
@@ -70,6 +72,19 @@ public class StatisticsController {
 	@PatchMapping("/contract-manager/{statisticsId}/approve/{evaluationItemId}")
 	public BaseResponse<Void> approve(@PathVariable Long statisticsId, @PathVariable Long evaluationItemId) {
 		statisticsService.approve(statisticsId, evaluationItemId);
+
+		return BaseResponse.ok();
+	}
+
+	/**
+	 * 통계 결과 수정하는 메서드입니다.
+	 *
+	 * @param statisticsId 수정할 통계 아이디
+	 * @return 성공 여부
+	 */
+	@PatchMapping("/contract-manager/statistics/{id}")
+	public BaseResponse<Void> editStatistics(@PathVariable("id") Long statisticsId, @RequestBody EditStatisticsDto editStatisticsDto) {
+		statisticsService.editStatistics(statisticsId, editStatisticsDto);
 
 		return BaseResponse.ok();
 	}
