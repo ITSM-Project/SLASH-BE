@@ -10,5 +10,7 @@ import project.slash.statistics.model.Statistics;
 public interface StatisticsRepository extends JpaRepository<Statistics, Long>, StatisticsRepositoryCustom {
 	List<Statistics> findByDateBetweenAndEvaluationItemsContractIdAndApprovalStatusTrue(LocalDate startDate, LocalDate endDate, Long contractId);
 
+	List<Statistics> findByDateBetweenAndEvaluationItemsContractId(LocalDate startDate, LocalDate endDate, Long contractId);
+
 	List<Statistics> findByEvaluationItems_IdIn(List<Long> evaluationItemIds);
 }

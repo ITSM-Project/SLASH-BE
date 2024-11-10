@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
 import project.slash.statistics.dto.StatisticsDto;
 import project.slash.statistics.dto.response.MonthlyIndicatorsDto;
+import project.slash.statistics.dto.response.StatisticsStatusDto;
 import project.slash.statistics.service.StatisticsService;
 
 @RestController
@@ -37,11 +38,28 @@ public class StatisticsController {
 	 * @return 월간 지표
 	 */
 	@GetMapping("/common/{contractId}/indicators/{year}/{month}")
-	public BaseResponse<?> getMonthlyIndicators(@PathVariable("contractId") Long contractId,
-		@PathVariable("year") int year,
-		@PathVariable("month") int month) {
+	public BaseResponse<?> getMonthlyIndicators(@PathVariable("contractId") Long contractId, @PathVariable int year,
+		@PathVariable int month) {
 		MonthlyIndicatorsDto monthlyIndicators = statisticsService.getMonthlyIndicators(contractId, year, month);
 
 		return BaseResponse.ok(monthlyIndicators);
+	}
+
+	/**
+	 * 계산, 미계산 통계 조회 메서드입니다.
+	 *
+	 * @param contractId 조회할 계약 아이디
+	 * @param year 조회할 년도
+	 * @param month 조회할 달
+	 *
+	 * @return 계산, 미계산 통계 지표 리스트
+	 */
+	@GetMapping("/contract-manager/statistics/status/{contractId}/{year}/{month}/{day}")
+	public BaseResponse<StatisticsStatusDto> getStatisticsStatus(@PathVariable("contractId") Long contractId, @PathVariable int year,
+		@PathVariable int month,
+		@PathVariable int day) {
+		StatisticsStatusDto statisticsStatus = statisticsService.getStatisticsStatus(contractId, year, month, day);
+
+		return BaseResponse.ok(statisticsStatus);
 	}
 }

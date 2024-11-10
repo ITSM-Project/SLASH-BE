@@ -4,24 +4,28 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
-import javax.swing.text.html.Option;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import project.slash.contract.dto.ContractDataDto;
+import project.slash.contract.mapper.EvaluationItemMapper;
+import project.slash.contract.model.EvaluationItem;
 import project.slash.contract.model.TotalTarget;
 import project.slash.contract.repository.ContractRepository;
 import project.slash.contract.repository.TotalTargetRepository;
+import project.slash.contract.repository.evaluationItem.EvaluationItemRepository;
 import project.slash.statistics.dto.MonthlyDataDto;
 import project.slash.statistics.dto.MonthlyServiceStatisticsDto;
 import project.slash.statistics.dto.StatisticsDto;
+import project.slash.statistics.dto.response.CalculatedStatisticsDto;
 import project.slash.statistics.dto.response.IndicatorExtraInfoDto;
 import project.slash.statistics.dto.response.IndicatorDto;
 import project.slash.statistics.dto.response.MonthlyIndicatorsDto;
+import project.slash.statistics.dto.response.StatisticsStatusDto;
+import project.slash.statistics.dto.response.UnCalculatedStatisticsDto;
+import project.slash.statistics.mapper.StatisticsMapper;
 import project.slash.statistics.model.Statistics;
 import project.slash.statistics.repository.StatisticsRepository;
 
@@ -34,6 +38,10 @@ public class StatisticsService {
 	private final StatisticsRepository statisticsRepository;
 	private final ContractRepository contractRepository;
 	private final TotalTargetRepository totalTargetRepository;
+	private final EvaluationItemRepository evaluationItemRepository;
+
+	private final EvaluationItemMapper evaluationItemMapper;
+	private final StatisticsMapper statisticsMapper;
 
 	public void createMonthlyStats(String serviceType) {
 		List<MonthlyServiceStatisticsDto> monthlyServiceStatisticsDtoList = calculateMonthlyStats(serviceType);
@@ -168,5 +176,18 @@ public class StatisticsService {
 			.filter(s -> s.getTargetSystem().equals("전체"))
 			.map(IndicatorDto::of)
 			.toList();
+	}
+
+	public StatisticsStatusDto getStatisticsStatus(Long contractId, int year, int month, int day) {
+		LocalDate startDate = LocalDate.of(year, month, 1);
+		LocalDate endDate = LocalDate.of(year, month, day);
+
+		List<EvaluationItem> unCalculatedEvaluationItem = evaluationItemRepository.findUnCalculatedEvaluationItem(contractId, endDate);
+		List<UnCalculatedStatisticsDto> unCalculatedStatistics = evaluationItemMapper.unCalculatedStatisticsList(unCalculatedEvaluationItem);	//미계산된 지표
+
+		List<Statistics> statistics = statisticsRepository.findByDateBetweenAndEvaluationItemsContractId(startDate, endDate, contractId);
+		List<CalculatedStatisticsDto> calculatedStatistics = statisticsMapper.toCalculatedStatisticsList(statistics); // 계산된 지표
+
+		return new StatisticsStatusDto(unCalculatedStatistics, calculatedStatistics);
 	}
 }
