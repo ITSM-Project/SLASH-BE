@@ -18,7 +18,8 @@ public class StatisticsMapper {
 
 	public CalculatedStatisticsDto toCalculatedStatistics(Statistics statistics) {
 		return new CalculatedStatisticsDto(
-			statistics.getEvaluationItems().getId(),
+			statistics.getId(),
+			statistics.getEvaluationItem().getId(),
 			statistics.getServiceType(),
 			statistics.isAuto(),
 			statistics.getDate(),

@@ -80,7 +80,7 @@ public class EvaluationItemService {
 
 	public boolean checkModifiable(Long contractId) {
 		List<Long> evaluationItemIds = evaluationItemRepository.findIdsByContractId(contractId);
-		List<Statistics> statisticsList = statisticsRepository.findByEvaluationItems_IdIn(evaluationItemIds);
+		List<Statistics> statisticsList = statisticsRepository.findByEvaluationItem_IdIn(evaluationItemIds);
 
 		return statisticsList.isEmpty();
 	}

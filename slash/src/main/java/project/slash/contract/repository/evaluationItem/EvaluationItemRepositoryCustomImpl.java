@@ -41,7 +41,7 @@ public class EvaluationItemRepositoryCustomImpl implements EvaluationItemReposit
 	public List<EvaluationItem> findUnCalculatedEvaluationItem(Long contractId, LocalDate beforeDate) {
 		return queryFactory
 			.selectFrom(evaluationItem)
-			.leftJoin(statistics).on(evaluationItem.id.eq(statistics.evaluationItems.id))
+			.leftJoin(statistics).on(evaluationItem.id.eq(statistics.evaluationItem.id))
 			.where(statistics.id.isNull()
 				.and(evaluationItem.contract.id.eq(contractId))
 				.and(evaluationItem.createDate.loe(beforeDate)))

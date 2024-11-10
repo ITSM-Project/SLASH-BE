@@ -1,5 +1,7 @@
 package project.slash.statistics.service;
 
+import static project.slash.statistics.exception.StatisticsErrorCode.*;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import project.slash.common.exception.BusinessException;
 import project.slash.contract.dto.ContractDataDto;
 import project.slash.contract.mapper.EvaluationItemMapper;
 import project.slash.contract.model.EvaluationItem;
@@ -25,6 +28,7 @@ import project.slash.statistics.dto.response.IndicatorDto;
 import project.slash.statistics.dto.response.MonthlyIndicatorsDto;
 import project.slash.statistics.dto.response.StatisticsStatusDto;
 import project.slash.statistics.dto.response.UnCalculatedStatisticsDto;
+import project.slash.statistics.exception.StatisticsErrorCode;
 import project.slash.statistics.mapper.StatisticsMapper;
 import project.slash.statistics.model.Statistics;
 import project.slash.statistics.repository.StatisticsRepository;
@@ -135,7 +139,7 @@ public class StatisticsService {
 		LocalDate startDate = LocalDate.of(year, month, 1);
 		LocalDate endDate = LocalDate.of(year, month, startDate.lengthOfMonth());
 
-		List<Statistics> statistics = statisticsRepository.findByDateBetweenAndEvaluationItemsContractIdAndApprovalStatusTrue(
+		List<Statistics> statistics = statisticsRepository.findByDateBetweenAndEvaluationItemContractIdAndApprovalStatusTrue(
 			startDate, endDate, contractId);
 
 		if(statistics.size() < MINIMUM_STATISTICS_REQUIRED) {
@@ -185,9 +189,23 @@ public class StatisticsService {
 		List<EvaluationItem> unCalculatedEvaluationItem = evaluationItemRepository.findUnCalculatedEvaluationItem(contractId, endDate);
 		List<UnCalculatedStatisticsDto> unCalculatedStatistics = evaluationItemMapper.unCalculatedStatisticsList(unCalculatedEvaluationItem);	//미계산된 지표
 
-		List<Statistics> statistics = statisticsRepository.findByDateBetweenAndEvaluationItemsContractId(startDate, endDate, contractId);
+		List<Statistics> statistics = statisticsRepository.findByDateBetweenAndEvaluationItemContractId(startDate, endDate, contractId);
 		List<CalculatedStatisticsDto> calculatedStatistics = statisticsMapper.toCalculatedStatisticsList(statistics); // 계산된 지표
 
 		return new StatisticsStatusDto(unCalculatedStatistics, calculatedStatistics);
+	}
+
+	@Transactional
+	public void approve(Long statisticsId, Long evaluationItemId) {
+		LocalDate endDate = LocalDate.now();
+		LocalDate startDate = endDate.withDayOfMonth(1);
+
+		//이미 동일한 항목에 대한 승인된 지표가 있는 경우
+		if (statisticsRepository.findByEvaluationItemIdAndApprovalStatusTrueAndDateBetween(evaluationItemId, startDate, endDate).isPresent()) {
+			throw new BusinessException(STATISTICS_ALREADY_EXISTS);
+		}
+
+		Statistics statistics = statisticsRepository.findById(statisticsId).orElseThrow(() -> new BusinessException(NOT_FOUND_STATISTICS));
+		statistics.approve();
 	}
 }

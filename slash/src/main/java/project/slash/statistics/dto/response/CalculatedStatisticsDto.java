@@ -8,6 +8,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class CalculatedStatisticsDto {
+	private Long statisticsId;
 	private Long evaluationItemId;
 	private String category;
 	private Boolean isAuto;

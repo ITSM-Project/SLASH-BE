@@ -3,6 +3,7 @@ package project.slash.statistics.controller;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,8 +39,7 @@ public class StatisticsController {
 	 * @return 월간 지표
 	 */
 	@GetMapping("/common/{contractId}/indicators/{year}/{month}")
-	public BaseResponse<?> getMonthlyIndicators(@PathVariable("contractId") Long contractId, @PathVariable int year,
-		@PathVariable int month) {
+	public BaseResponse<?> getMonthlyIndicators(@PathVariable Long contractId, @PathVariable int year, @PathVariable int month) {
 		MonthlyIndicatorsDto monthlyIndicators = statisticsService.getMonthlyIndicators(contractId, year, month);
 
 		return BaseResponse.ok(monthlyIndicators);
@@ -51,15 +51,26 @@ public class StatisticsController {
 	 * @param contractId 조회할 계약 아이디
 	 * @param year 조회할 년도
 	 * @param month 조회할 달
-	 *
 	 * @return 계산, 미계산 통계 지표 리스트
 	 */
 	@GetMapping("/contract-manager/statistics/status/{contractId}/{year}/{month}/{day}")
-	public BaseResponse<StatisticsStatusDto> getStatisticsStatus(@PathVariable("contractId") Long contractId, @PathVariable int year,
-		@PathVariable int month,
-		@PathVariable int day) {
+	public BaseResponse<StatisticsStatusDto> getStatisticsStatus(@PathVariable Long contractId, @PathVariable int year, @PathVariable int month, @PathVariable int day) {
 		StatisticsStatusDto statisticsStatus = statisticsService.getStatisticsStatus(contractId, year, month, day);
 
 		return BaseResponse.ok(statisticsStatus);
+	}
+
+	/**
+	 * 계산된 통계 승인하는 메서드입니다.
+	 *
+	 * @param statisticsId 승인할 통계 아이디
+	 * @param evaluationItemId 승인할 평가 항목 아이디
+	 * @return 성공 여부
+	 */
+	@PatchMapping("/contract-manager/{statisticsId}/approve/{evaluationItemId}")
+	public BaseResponse<Void> approve(@PathVariable Long statisticsId, @PathVariable Long evaluationItemId) {
+		statisticsService.approve(statisticsId, evaluationItemId);
+
+		return BaseResponse.ok();
 	}
 }
