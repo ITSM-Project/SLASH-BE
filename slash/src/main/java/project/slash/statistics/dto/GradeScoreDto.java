@@ -7,6 +7,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class GradeScoreDto {
 	private String grade;
-	private double score;
+	private int score;
 
 }
