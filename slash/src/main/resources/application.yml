@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ENC(UOkjJ+1ugeYB00/XVsN9CvEri1MngAL9Sh2wugwnhpWHbbOvK8TMUT67euCML9OhcVr4t3Dp6XC1gieXnDwO48sWqhkiWStkw63WJLnSb5GqjEJx9IVGK4ooVaZelOwmNvnvcRPyBAkZbwiROLrQ8/13dxhs6gXz0rMgXDHr8/J2zKLOxMCbZw==)
+    url: ENC(EZjb6rzyxGkg5wVj5iHoMAblkj5gwGKeJMqG8mLO6d6BQXFZ4EEGzFKm+SNMpRSmMIKZu9KRCNYrA1EvEu3Lvsk3ZmYnkVJ91686VNcM0U4FgorgzKOymCTd4Yv6uKOvl/y2GTK5mpnUf0K7uPnyZ8EuXMzCzg+7RFQCYAGxYjTrmfbKQr3dZBdQdiVZytL9)
     username: ENC(PhyaRJCJP89U3bl2A9njuA==)
     password: ENC(RqQ+m97Mi+ianfhwxg0JI4EOZk3cPdzh)
 #    url: ENC(N6G22iNIGwVJsc1B+dPUcKyr00EdPnbEHUNn85QtbCxyLitR6FcTDnr3QApRUOXwFP7RoZBF1R+ReKeEwllWPnz83Fim7Qwq4aEIz7y8ZXJjrfGNuLMZ4o4CF0gFL6iPf3nGRbZ+evU=)

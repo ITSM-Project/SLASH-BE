@@ -1,13 +1,11 @@
 package project.slash.taskrequest.repository;
 
-import static project.slash.taskrequest.model.QTaskRequest.*;
-import static project.slash.taskrequest.model.constant.RequestStatus.*;
-import static project.slash.user.model.QUser.*;
-
 import static project.slash.system.model.QEquipment.*;
 import static project.slash.system.model.QSystems.*;
-
+import static project.slash.taskrequest.model.QTaskRequest.*;
 import static project.slash.taskrequest.model.QTaskType.*;
+import static project.slash.taskrequest.model.constant.RequestStatus.*;
+import static project.slash.user.model.QUser.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -49,8 +47,6 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 	// 처리 상태 별 카운트 수
 	@Override
 	public List<StatusCountDto> findCountByStatus(int year, int month, String user) {
-		QTaskRequest taskRequest = QTaskRequest.taskRequest;
-
 		List<StatusCountDto> results = queryFactory
 			.select(Projections.constructor(StatusCountDto.class,
 				taskRequest.status,
@@ -68,9 +64,6 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 
 	@Override
 	public List<TaskTypeCountDto> findCountByTaskType(int year, int month, String user) {
-		QTaskType taskType = QTaskType.taskType;
-		QTaskRequest taskRequest = QTaskRequest.taskRequest;
-
 		List<TaskTypeCountDto> results = queryFactory
 			.select(Projections.constructor(TaskTypeCountDto.class,
 				taskType.type,
@@ -90,10 +83,6 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 
 	@Override
 	public List<SystemCountDto> findCountBySystem(int year, int month, String user) {
-		QSystems systems = QSystems.systems;
-		QEquipment equipment = QEquipment.equipment;
-		QTaskRequest taskRequest = QTaskRequest.taskRequest;
-
 		List<SystemCountDto> results = queryFactory
 			.select(Projections.constructor(SystemCountDto.class,
 				systems.name, taskRequest.count()))

@@ -4,7 +4,9 @@ import static com.querydsl.core.group.GroupBy.*;
 import static com.querydsl.core.types.Projections.*;
 import static project.slash.contract.model.QEvaluationItem.*;
 import static project.slash.contract.model.QServiceTarget.*;
+import static project.slash.statistics.model.QStatistics.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +16,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import project.slash.contract.dto.GradeDto;
 import project.slash.contract.dto.response.EvaluationItemDto;
+import project.slash.contract.model.EvaluationItem;
 
 public class EvaluationItemRepositoryCustomImpl implements EvaluationItemRepositoryCustom {
 	private final JPAQueryFactory queryFactory;
@@ -23,8 +26,8 @@ public class EvaluationItemRepositoryCustomImpl implements EvaluationItemReposit
 	}
 
 	@Override
-	public List<EvaluationItemDto> findAllEvaluationItems(Long contractId) {
-		return findEvaluationItems(evaluationItem.contract.id.eq(contractId));
+	public List<EvaluationItemDto> findAllEvaluationItems(Long contractId) { 	//활성화 된것만 찾기
+		return findEvaluationItems(evaluationItem.contract.id.eq(contractId).and(evaluationItem.isActive.isTrue()));
 	}
 
 	@Override
@@ -43,6 +46,17 @@ public class EvaluationItemRepositoryCustomImpl implements EvaluationItemReposit
 					.from(evaluationItem)
 					.where(evaluationItem.id.eq(evaluationItemId))
 			)).fetchOne();
+	}
+
+	@Override
+	public List<EvaluationItem> findUnCalculatedEvaluationItem(Long contractId, LocalDate beforeDate) {
+		return queryFactory
+			.selectFrom(evaluationItem)
+			.leftJoin(statistics).on(evaluationItem.id.eq(statistics.evaluationItem.id))
+			.where(statistics.id.isNull()
+				.and(evaluationItem.contract.id.eq(contractId))
+				.and(evaluationItem.createDate.loe(beforeDate)))
+			.fetch();
 	}
 
 	private List<EvaluationItemDto> findEvaluationItems(BooleanExpression condition) {
