@@ -29,9 +29,10 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
-import project.slash.statistics.dto.MonthlyDataDto;
-import project.slash.statistics.dto.MonthlyServiceStatisticsDto;
-import project.slash.statistics.dto.StatisticsDto;
+import project.slash.statistics.dto.response.MonthlyDataDto;
+import project.slash.statistics.dto.response.MonthlyServiceStatisticsDto;
+import project.slash.statistics.dto.response.MonthlyStatisticsDto;
+import project.slash.statistics.dto.response.StatisticsDto;
 import project.slash.statistics.dto.request.RequestStatisticsDto;
 import project.slash.statistics.dto.response.ResponseServiceTaskDto;
 import project.slash.taskrequest.model.constant.RequestStatus;
@@ -49,58 +50,32 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 	private EntityManager entityManager;
 
 	@Override
-	public List<MonthlyDataDto> getMonthlyData() {
-		StringTemplate yearMonth = Expressions.stringTemplate(
-			"DATE_FORMAT({0}, '%Y-%m')",
-			taskRequest.createTime);
-
-		LocalDate previousMonthDate = LocalDate.now().minusMonths(1);
-		String previousMonth = previousMonthDate.format(DateTimeFormatter.ofPattern("yyyy-MM"));
-
+	public List<MonthlyDataDto> getMonthlyData(LocalDate date) {
 		return queryFactory
 			.select(Projections.constructor(MonthlyDataDto.class,
-				yearMonth,
 				systems.name,
 				equipment.name,
 				taskRequest.count(),
 				systemIncident.incidentTime.sum(),
-				Expressions.numberTemplate(Integer.class, "DAY(LAST_DAY({0}))", taskRequest.createTime),
+				Expressions.numberTemplate(Integer.class, "DAY({0})", date),
 				systemIncident.count()
 			))
 			.from(taskRequest)
 			.leftJoin(equipment).on(taskRequest.equipment.id.eq(equipment.id))
 			.leftJoin(systems).on(equipment.systems.id.eq(systems.id))
 			.leftJoin(systemIncident).on(systemIncident.taskRequest.id.eq(taskRequest.id))
-			.leftJoin(taskType).on(taskRequest.taskType.id.eq(taskType.id))// 현재 년-월보다 이전 것만 필터링
-			.where(yearMonth.eq(previousMonth))
+			.leftJoin(taskType).on(taskRequest.taskType.id.eq(taskType.id))
+			.where(
+				taskRequest.createTime.year().eq(date.getYear())
+					.and(taskRequest.createTime.month().eq(date.getMonthValue()))
+					.and(taskRequest.createTime.dayOfMonth().loe(date.getDayOfMonth()))
+			)
 			.groupBy(equipment.name)
 			.orderBy(systems.name.asc(), equipment.name.asc())
 			.fetch();
 	}
 
-	@Override
-	public void saveMonthlyData(List<MonthlyServiceStatisticsDto> statsDtoList) {
-		String sql = "INSERT INTO statistics (`date`, service_type, grade, score, period, weighted_score, " +
-			"approval_status, total_downtime, request_count, evaluation_item_id, target_system, estimate,system_incident_count,due_on_time_count,target_equipment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)";
 
-		jdbcTemplate.batchUpdate(sql, statsDtoList, 50, (ps, dto) -> {
-			ps.setDate(1, java.sql.Date.valueOf(dto.getDate()));
-			ps.setString(2, dto.getServiceType());
-			ps.setString(3, dto.getGrade());
-			ps.setDouble(4, dto.getScore());
-			ps.setString(5, dto.getPeriod());
-			ps.setDouble(6, dto.getWeightedScore());
-			ps.setBoolean(7, dto.isApprovalStatus());
-			ps.setLong(8, dto.getTotalDowntime());
-			ps.setLong(9, dto.getRequestCount());
-			ps.setLong(10, dto.getEvaluationItemId());
-			ps.setString(11, dto.getTargetSystem());
-			ps.setDouble(12, dto.getEstimate());
-			ps.setLong(13, dto.getSystemIncidentCount());
-			ps.setLong(14, dto.getDueOnTimeCount());
-			ps.setString(15, dto.getTargetEquipment());
-		});
-	}
 
 	@Override
 	public List<StatisticsDto> getStatistics(String serviceType, String period, String targetSystem,
@@ -190,6 +165,30 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 			.where(taskRequest.createTime.between(startDate, endDate))
 			.where(evaluationItem.id.eq(requestStatisticsDto.getEvaluationItemId()))
 			.fetchOne(); // ResponseServiceTaskDto 타입으로 반환
+	}
+	@Override
+	public void saveMonthlyData(List<MonthlyStatisticsDto> statsDtoList) {
+		String sql = "INSERT INTO statistics (`date`, service_type, grade, score, period, weighted_score, " +
+			"approval_status, total_downtime, request_count, evaluation_item_id, target_system, estimate, system_incident_count, due_on_time_count, target_equipment, is_auto) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+		jdbcTemplate.batchUpdate(sql, statsDtoList, 50, (ps, dto) -> {
+			ps.setDate(1, java.sql.Date.valueOf(dto.getDate()));
+			ps.setString(2, dto.getServiceType());
+			ps.setString(3, dto.getGrade());
+			ps.setDouble(4, dto.getScore());
+			ps.setString(5, dto.getPeriod());
+			ps.setDouble(6, dto.getWeightedScore());
+			ps.setBoolean(7, dto.isApprovalStatus());
+			ps.setLong(8, dto.getTotalDowntime());
+			ps.setLong(9, dto.getRequestCount());
+			ps.setLong(10, dto.getEvaluationItemId());
+			ps.setString(11, dto.getTargetSystem());
+			ps.setDouble(12, dto.getEstimate());
+			ps.setLong(13, dto.getSystemIncidentCount());
+			ps.setLong(14, dto.getDueOnTimeCount());
+			ps.setString(15, dto.getTargetEquipment());
+			ps.setBoolean(16, dto.getIsAuto());
+		});
 	}
 
 }
