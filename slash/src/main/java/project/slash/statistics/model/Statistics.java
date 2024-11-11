@@ -63,5 +63,15 @@ public class Statistics {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "evaluation_item_id")
-	private EvaluationItem evaluationItems;
+	private EvaluationItem evaluationItem;
+
+	public void approve() {
+		this.approvalStatus = true;
+	}
+
+	public void update(String grade, double score, double weightedScore) {
+		this.grade = grade;
+		this.score = score;
+		this.weightedScore = weightedScore;
+	}
 }
