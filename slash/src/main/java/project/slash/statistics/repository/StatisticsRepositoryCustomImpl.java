@@ -10,7 +10,6 @@ import static project.slash.taskrequest.model.QTaskType.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,6 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.NumberTemplate;
-import com.querydsl.core.types.dsl.StringTemplate;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -30,13 +28,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import project.slash.statistics.dto.response.MonthlyDataDto;
-import project.slash.statistics.dto.response.MonthlyServiceStatisticsDto;
 import project.slash.statistics.dto.response.MonthlyStatisticsDto;
 import project.slash.statistics.dto.response.StatisticsDto;
-import project.slash.statistics.dto.request.RequestStatisticsDto;
-import project.slash.statistics.dto.MonthlyDataDto;
-import project.slash.statistics.dto.MonthlyServiceStatisticsDto;
-import project.slash.statistics.dto.StatisticsDto;
 import project.slash.statistics.dto.response.ResponseServiceTaskDto;
 import project.slash.taskrequest.model.constant.RequestStatus;
 

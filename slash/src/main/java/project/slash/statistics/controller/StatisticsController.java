@@ -15,9 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
-import project.slash.statistics.dto.MonthlyServiceStatisticsDto;
-import project.slash.statistics.dto.StatisticsDto;
 import project.slash.statistics.dto.request.RequestStatisticsDto;
+import project.slash.statistics.dto.response.MonthlyServiceStatisticsDto;
 import project.slash.statistics.dto.response.MonthlyStatisticsDto;
 import project.slash.statistics.dto.request.EditStatisticsDto;
 import project.slash.statistics.dto.response.MonthlyIndicatorsDto;

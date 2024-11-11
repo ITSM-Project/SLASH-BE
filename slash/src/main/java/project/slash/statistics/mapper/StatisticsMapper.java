@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import project.slash.statistics.dto.MonthlyServiceStatisticsDto;
 import project.slash.statistics.dto.response.CalculatedStatisticsDto;
+import project.slash.statistics.dto.response.MonthlyServiceStatisticsDto;
 import project.slash.statistics.model.Statistics;
 
 @Component
