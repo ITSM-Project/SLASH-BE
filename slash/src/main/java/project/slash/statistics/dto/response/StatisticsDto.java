@@ -1,4 +1,4 @@
-package project.slash.statistics.dto;
+package project.slash.statistics.dto.response;
 
 import java.time.LocalDate;
 

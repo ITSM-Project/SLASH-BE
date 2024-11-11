@@ -1,12 +1,11 @@
 package project.slash.statistics.mapper;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import project.slash.statistics.dto.MonthlyServiceStatisticsDto;
 import project.slash.statistics.dto.response.CalculatedStatisticsDto;
+import project.slash.statistics.dto.response.MonthlyServiceStatisticsDto;
 import project.slash.statistics.model.Statistics;
 
 @Component
@@ -38,6 +37,7 @@ public class StatisticsMapper {
 	public MonthlyServiceStatisticsDto toMonthlyServiceStatisticsDto(Statistics statistics) {
 		return MonthlyServiceStatisticsDto.builder()
 			.date(statistics.getDate())
+			.calculateTime(statistics.getCalculateTime())
 			.serviceType(statistics.getServiceType())
 			.targetEquipment(statistics.getTargetEquipment())
 			.grade(statistics.getGrade())

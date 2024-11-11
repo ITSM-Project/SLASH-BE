@@ -1,4 +1,4 @@
-package project.slash.contract.dto;
+package project.slash.contract.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
