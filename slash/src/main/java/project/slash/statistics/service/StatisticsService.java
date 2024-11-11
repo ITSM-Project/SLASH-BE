@@ -4,6 +4,7 @@ import static project.slash.contract.exception.EvaluationItemErrorCode.*;
 import static project.slash.statistics.exception.StatisticsErrorCode.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
@@ -370,8 +371,8 @@ public class StatisticsService {
 		return statisticsRepository.findById(statisticsId).orElseThrow(() -> new BusinessException(NOT_FOUND_STATISTICS));
 	}
 
-	public List<MonthlyServiceStatisticsDto> getStatistics(Long evaluationItemId, LocalDate date) {
-		List<Statistics> statistics = statisticsRepository.findByEvaluationItemIdAndDateAndApprovalStatusTrue(evaluationItemId, date);
+	public List<MonthlyServiceStatisticsDto> getStatistics(Long evaluationItemId, LocalDateTime date) {
+		List<Statistics> statistics = statisticsRepository.findByEvaluationItemIdAndCalculateTime(evaluationItemId, date);
 
 		return statisticsMapper.toCalculatedStatisticsDtos(statistics);
 	}
