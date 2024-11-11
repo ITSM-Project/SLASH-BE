@@ -74,10 +74,7 @@ public class Statistics {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "evaluation_item_id")
 
-	private EvaluationItem evaluationItems;
-
-	@Column(name = "is_auto")
-	private boolean isAuto;
+	private EvaluationItem evaluationItem;
 
 	public static Statistics fromResponseServiceTask(ResponseServiceTaskDto responseServiceTaskDto, LocalDate endDate,
 		double score, double weightedScore, String grade) {
@@ -94,7 +91,7 @@ public class Statistics {
 			.approvalStatus(false)
 			.dueOnTimeCount(responseServiceTaskDto.getDueOnTimeCount())
 			.estimate(score)
-			.evaluationItems(responseServiceTaskDto.getEvaluationItem())
+			.evaluationItem(responseServiceTaskDto.getEvaluationItem())
 			.totalDowntime(0)
 			.systemIncidentCount(0)
 			.isAuto(false)
