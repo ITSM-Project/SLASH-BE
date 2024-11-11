@@ -1,5 +1,6 @@
 package project.slash.contract.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,4 +12,6 @@ public interface ContractRepository extends JpaRepository<Contract, Long> , Cont
 	List<Contract> findAllByOrderByStartDateDesc();
 
 	Optional<Contract> findByIsTerminateFalse();
+
+	List<Contract> findByEndDate(LocalDate now);
 }

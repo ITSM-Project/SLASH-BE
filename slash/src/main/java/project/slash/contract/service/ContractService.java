@@ -110,7 +110,7 @@ public class ContractService {
 			throw new BusinessException(NOT_TERMINATE_CONTRACT);
 		}
 
-		contract.updateTerminateStatus();
+		contract.terminate();
 	}
 
 	public List<AllContractDto> showAllContract() {
