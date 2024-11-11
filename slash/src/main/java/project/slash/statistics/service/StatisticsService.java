@@ -3,6 +3,7 @@ package project.slash.statistics.service;
 import static project.slash.statistics.exception.StatisticsErrorCode.*;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +25,8 @@ import project.slash.statistics.dto.response.ResponseServiceTaskDto;
 import project.slash.contract.mapper.EvaluationItemMapper;
 import project.slash.contract.model.EvaluationItem;
 import project.slash.contract.model.TotalTarget;
-import project.slash.contract.repository.ContractRepository;
 import project.slash.contract.repository.TotalTargetRepository;
 import project.slash.contract.repository.evaluationItem.EvaluationItemRepository;
-import project.slash.statistics.dto.MonthlyDataDto;
-import project.slash.statistics.dto.MonthlyServiceStatisticsDto;
-import project.slash.statistics.dto.StatisticsDto;
 import project.slash.statistics.dto.request.EditStatisticsDto;
 import project.slash.statistics.dto.response.CalculatedStatisticsDto;
 import project.slash.statistics.dto.response.IndicatorExtraInfoDto;
@@ -177,9 +174,9 @@ public class StatisticsService {
 			.orElse(null);
 	}
 
-	public MonthlyIndicatorsDto getMonthlyIndicators(Long contractId, int year, int month) {
-		LocalDate startDate = LocalDate.of(year, month, 1);
-		LocalDate endDate = LocalDate.of(year, month, startDate.lengthOfMonth());
+	public MonthlyIndicatorsDto getMonthlyIndicators(Long contractId, YearMonth date) {
+		LocalDate startDate = date.atDay(1);
+		LocalDate endDate = date.atEndOfMonth();
 
 		List<Statistics> statistics = statisticsRepository.findByDateBetweenAndEvaluationItemContractIdAndApprovalStatusTrue(
 			startDate, endDate, contractId);
@@ -224,9 +221,8 @@ public class StatisticsService {
 			.toList();
 	}
 
-	public StatisticsStatusDto getStatisticsStatus(Long contractId, int year, int month, int day) {
-		LocalDate startDate = LocalDate.of(year, month, 1);
-		LocalDate endDate = LocalDate.of(year, month, day);
+	public StatisticsStatusDto getStatisticsStatus(Long contractId, LocalDate endDate) {
+		LocalDate startDate = endDate.withDayOfMonth(1);
 
 		List<EvaluationItem> unCalculatedEvaluationItem = evaluationItemRepository.findUnCalculatedEvaluationItem(contractId, endDate);
 		List<UnCalculatedStatisticsDto> unCalculatedStatistics = evaluationItemMapper.unCalculatedStatisticsList(unCalculatedEvaluationItem);	//미계산된 지표
@@ -259,5 +255,11 @@ public class StatisticsService {
 
 	private Statistics findStatistics(Long statisticsId) {
 		return statisticsRepository.findById(statisticsId).orElseThrow(() -> new BusinessException(NOT_FOUND_STATISTICS));
+	}
+
+	public List<MonthlyServiceStatisticsDto> getStatistics(Long evaluationItemId, LocalDate date) {
+		List<Statistics> statistics = statisticsRepository.findByEvaluationItemIdAndDateAndApprovalStatusTrue(evaluationItemId, date);
+
+		return statisticsMapper.toCalculatedStatisticsDtos(statistics);
 	}
 }
