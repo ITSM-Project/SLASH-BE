@@ -8,11 +8,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.Getter;
+
 import project.slash.contract.model.EvaluationItem;
 import project.slash.statistics.dto.response.ResponseServiceTaskDto;
 
@@ -22,15 +24,18 @@ import java.time.LocalDate;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
-@ToString
+@Getter
 public class Statistics {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "statistics_id")
 	private Long id;
+
 	private LocalDate date;
+
 	@Column(name = "target_system")
 	private String targetSystem;
+
 	@Column(name = "service_type")
 	private String serviceType;
 
@@ -38,7 +43,9 @@ public class Statistics {
 	private String targetEquipment;
 
 	private String grade;
+
 	private double score;
+
 	private String period;
 
 	@Column(name = "weighted_score")
@@ -61,12 +68,12 @@ public class Statistics {
 	@Column(name = "system_incident_count")
 	private long systemIncidentCount;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "evaluation_item_id")
-	private EvaluationItem evaluationItems;
-
 	@Column(name = "is_auto")
 	private boolean isAuto;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "evaluation_item_id")
+	private EvaluationItem evaluationItem;
 
 	public static Statistics fromResponseServiceTask(ResponseServiceTaskDto responseServiceTaskDto, LocalDate endDate,
 		double score, double weightedScore, String grade) {
@@ -83,10 +90,20 @@ public class Statistics {
 			.approvalStatus(false)
 			.dueOnTimeCount(responseServiceTaskDto.getDueOnTimeCount())
 			.estimate(score)
-			.evaluationItems(responseServiceTaskDto.getEvaluationItem())
+			.evaluationItem(responseServiceTaskDto.getEvaluationItem())
 			.totalDowntime(0)
 			.systemIncidentCount(0)
 			.isAuto(false)
 			.build();
+  }
+
+	public void approve() {
+		this.approvalStatus = true;
+	}
+
+	public void update(String grade, double score, double weightedScore) {
+		this.grade = grade;
+		this.score = score;
+		this.weightedScore = weightedScore;
 	}
 }
