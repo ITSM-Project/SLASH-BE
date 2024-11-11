@@ -2,8 +2,12 @@ package project.slash.statistics.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +16,6 @@ import project.slash.contract.model.EvaluationItem;
 import project.slash.contract.repository.contract.ContractRepository;
 import project.slash.contract.repository.evaluationItem.EvaluationItemRepository;
 import project.slash.statistics.dto.request.RequestStatisticsDto;
-import project.slash.statistics.repository.StatisticsRepository;
 
 @Slf4j
 @Service
@@ -20,26 +23,35 @@ import project.slash.statistics.repository.StatisticsRepository;
 public class StatisticsSchedulingService {
 	private static final String EVERY_LAST_DAY_OF_MONTH = "0 0 0 L * ?";	//매월의 마지막 달
 	private final StatisticsService statisticsService;
-	private final StatisticsRepository statisticsRepository;
 	private final EvaluationItemRepository evaluationItemRepository;
 	private final ContractRepository contractRepository;
+
+	private final Map<String, Consumer<RequestStatisticsDto>> statisticsActions = Map.of(
+		"서비스 가동률", statisticsService::createMonthlyStats,
+		"장애 적기처리율", statisticsService::getIncidentStatistics,
+		"서비스요청 적기처리율", statisticsService::createServiceTaskStatistics
+	);
+
+	@Scheduled(cron = EVERY_LAST_DAY_OF_MONTH)
 	public void calculateStatistics() {
 		LocalDate now = LocalDate.now();
-
 		log.info("통계 스케줄러 실행 {}", now);
 
-		List<Contract> allContract = contractRepository.findAll();
+		List<Contract> activeContracts = contractRepository.findByIsTerminateFalse();
 
-		for (Contract contract : allContract) {
+		for (Contract activeContract : activeContracts) {
 			List<EvaluationItem> unCalculatedEvaluationItem = evaluationItemRepository.findUnCalculatedEvaluationItem(
-				contract.getId(), now);
-
+				activeContract.getId(), now);
 			for (EvaluationItem evaluationItem : unCalculatedEvaluationItem) {
-				RequestStatisticsDto requestStatisticsDto = new RequestStatisticsDto(evaluationItem.getId(), now);
-
-				statisticsService.createServiceTaskStatistics(requestStatisticsDto);	//서비스 요청 적기처리율
-				statisticsService.getIncidentStatistics(requestStatisticsDto);
+				calculateStatisticsForItem(evaluationItem, now);
 			}
 		}
+	}
+
+	private void calculateStatisticsForItem(EvaluationItem evaluationItem, LocalDate now) {
+		RequestStatisticsDto requestStatisticsDto = new RequestStatisticsDto(evaluationItem.getId(), now);
+		Consumer<RequestStatisticsDto> action = statisticsActions.get(evaluationItem.getCategory());
+
+		action.accept(requestStatisticsDto);
 	}
 }

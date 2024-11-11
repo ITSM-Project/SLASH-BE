@@ -62,13 +62,13 @@ public class StatisticsService {
 	private final StatisticsMapper statisticsMapper;
 
 	@Transactional
-	public void createMonthlyStats(LocalDate date, long evaluationItemId) {
-		List<MonthlyStatisticsDto> monthlyStatisticsDtoList = calculateMonthlyStats(date, evaluationItemId);
+	public void createMonthlyStats(RequestStatisticsDto requestStatisticsDto) {
+		List<MonthlyStatisticsDto> monthlyStatisticsDtoList = calculateMonthlyStats(requestStatisticsDto.getDate(),
+			requestStatisticsDto.getEvaluationItemId());
 		MonthlyStatisticsDto monthlyStatisticsDto = getEntireStatistics(monthlyStatisticsDtoList);
 		monthlyStatisticsDtoList.add(monthlyStatisticsDto);
 
 		statisticsRepository.saveMonthlyData(monthlyStatisticsDtoList);
-
 	}
 
 	public MonthlyStatisticsDto getEntireStatistics(List<MonthlyStatisticsDto> monthlyStatisticsDtoList) {

@@ -53,7 +53,7 @@ class ContractRepositoryTest {
 	    contractRepository.save(contract);
 
 		//when
-		Contract result = contractRepository.findByIsTerminateFalse().get();
+		Contract result = contractRepository.findByIsTerminateFalse().get(1);
 
 		//then
 		assertThat(result).extracting("contractName", "startDate", "endDate")

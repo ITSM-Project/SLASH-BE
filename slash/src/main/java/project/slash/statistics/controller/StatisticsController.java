@@ -37,9 +37,8 @@ public class StatisticsController {
 	}
 
 	@PostMapping("/contract-manager/statistics")
-	public BaseResponse<?> addStatistics(@RequestBody RequestStatisticsDto selectedDateDto) {
-		statisticsService.createMonthlyStats(selectedDateDto.getDate(),
-			selectedDateDto.getEvaluationItemId());
+	public BaseResponse<?> addStatistics(@RequestBody RequestStatisticsDto requestStatisticsDto) {
+		statisticsService.createMonthlyStats(requestStatisticsDto);
 
 		return BaseResponse.ok();
 	}
