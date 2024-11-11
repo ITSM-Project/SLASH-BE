@@ -5,7 +5,6 @@ import static project.slash.statistics.exception.StatisticsErrorCode.*;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +18,9 @@ import project.slash.contract.dto.response.ContractDataDto;
 import project.slash.contract.model.ServiceTarget;
 import project.slash.contract.repository.ContractRepository;
 import project.slash.contract.repository.ServiceTargetRepository;
+import project.slash.contract.repository.evaluationItem.EvaluationItemRepository;
+import project.slash.statistics.dto.GradeScoreDto;
+import project.slash.statistics.dto.IncidentInfoDto;
 import project.slash.statistics.dto.response.EvaluatedDto;
 import project.slash.statistics.dto.response.MonthlyDataDto;
 import project.slash.statistics.dto.response.MonthlyServiceStatisticsDto;
@@ -30,7 +32,6 @@ import project.slash.contract.mapper.EvaluationItemMapper;
 import project.slash.contract.model.EvaluationItem;
 import project.slash.contract.model.TotalTarget;
 import project.slash.contract.repository.TotalTargetRepository;
-import project.slash.contract.repository.evaluationItem.EvaluationItemRepository;
 import project.slash.statistics.dto.request.EditStatisticsDto;
 import project.slash.statistics.dto.response.CalculatedStatisticsDto;
 import project.slash.statistics.dto.response.IndicatorExtraInfoDto;
@@ -41,6 +42,7 @@ import project.slash.statistics.dto.response.UnCalculatedStatisticsDto;
 import project.slash.statistics.mapper.StatisticsMapper;
 import project.slash.statistics.model.Statistics;
 import project.slash.statistics.repository.StatisticsRepository;
+import project.slash.taskrequest.repository.TaskRequestRepository;
 
 @Service
 @Transactional(readOnly = true)
@@ -51,8 +53,10 @@ public class StatisticsService {
 	private final StatisticsRepository statisticsRepository;
 	private final ContractRepository contractRepository;
 	private final ServiceTargetRepository serviceTargetRepository;
-	private final TotalTargetRepository totalTargetRepository;
+	private final TaskRequestRepository taskRequestRepository;
 	private final EvaluationItemRepository evaluationItemRepository;
+	private final TotalTargetRepository totalTargetRepository;
+
 
 	private final EvaluationItemMapper evaluationItemMapper;
 	private final StatisticsMapper statisticsMapper;
@@ -190,7 +194,49 @@ public class StatisticsService {
 	}
 
 
-	//서비스요청 통계 처리
+	@Transactional
+	public void getIncidentStatistics(RequestStatisticsDto requestStatisticsDto) {
+
+		// 장애 건수와 적기 처리 건수 계산
+		IncidentInfoDto incidentInfoDto = taskRequestRepository.getIncidentCount(
+			requestStatisticsDto.getEvaluationItemId(),
+			requestStatisticsDto.getDate());
+		long incidentCount = incidentInfoDto.getTotalOverdueCount();
+
+		// 점수와 등급 리스트
+		List<ServiceTarget> gradeList = serviceTargetRepository.getServiceTargetByEvaluationItem_Id(
+			requestStatisticsDto.getEvaluationItemId());
+
+		// 환산 점수와 등급
+		GradeScoreDto gradeScoreDto = getGradeAndScore(incidentCount, gradeList);
+		int weight = evaluationItemRepository.getReferenceById(requestStatisticsDto.getEvaluationItemId())
+			.getWeight();
+		int totalWeight = evaluationItemRepository.findTotalWeightByEvaluationItemId(
+			requestStatisticsDto.getEvaluationItemId());
+		double weightScore = getWeightedScore(gradeScoreDto.getScore(), weight, totalWeight);
+
+		// 저장
+		statisticsRepository.save(
+			Statistics.fromIncidentInfo(incidentInfoDto, requestStatisticsDto.getDate(), gradeScoreDto.getScore(),
+				weightScore, gradeScoreDto.getGrade(), gradeScoreDto.getScore(),
+				evaluationItemRepository.getReferenceById(requestStatisticsDto.getEvaluationItemId())));
+	}
+
+	public GradeScoreDto getGradeAndScore(long score, List<ServiceTarget> gradeList) {
+		return gradeList.stream()
+			.filter(serviceTarget -> isScoreInRange(score, serviceTarget))
+			.findFirst()
+			.map(serviceTarget -> new GradeScoreDto(serviceTarget.getGrade(), (int)serviceTarget.getScore()))
+			.orElseThrow(() -> new IllegalArgumentException("적절한 범위가 없습니다!, 점수: " + score));
+	}
+
+	private boolean isScoreInRange(long score, ServiceTarget serviceTarget) {
+		double min = serviceTarget.getMin();
+		double max = serviceTarget.getMax();
+		return (serviceTarget.isMinInclusive() ? score >= min : score > min) &&
+			(serviceTarget.isMaxInclusive() ? score <= max : score < max);
+  }
+
 	@Transactional
 	public void createServiceTaskStatistics(RequestStatisticsDto requestStatisticsDto) {
 		ResponseServiceTaskDto responseServiceTaskDto = statisticsRepository.getServiceTaskStatics(
