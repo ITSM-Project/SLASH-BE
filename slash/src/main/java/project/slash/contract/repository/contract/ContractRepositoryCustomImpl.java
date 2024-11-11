@@ -14,7 +14,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
-import project.slash.contract.dto.ContractDataDto;
+import project.slash.contract.dto.response.ContractDataDto;
 import project.slash.contract.dto.GradeDto;
 import project.slash.contract.dto.response.ContractDto;
 
@@ -25,10 +25,8 @@ public class ContractRepositoryCustomImpl implements ContractRepositoryCustom {
 		this.queryFactory = queryFactory;
 	}
 
-	// 카테고리별 지표 찾기
 	@Override
-	public List<ContractDataDto> findIndicatorByCategory(String category) {
-
+	public List<ContractDataDto> findContractByEvaluationItemId(long evaluationItemId, long contractId) {
 		return queryFactory
 			.select(Projections.constructor(ContractDataDto.class,
 				serviceTarget.grade,
@@ -41,16 +39,16 @@ public class ContractRepositoryCustomImpl implements ContractRepositoryCustom {
 				ExpressionUtils.as(
 					JPAExpressions.select(evaluationItem.weight.sum())
 						.from(evaluationItem)
-						.where(evaluationItem.contract.id.eq(contract.id)),
+						.where(evaluationItem.contract.id.eq(contractId)),
 					"weightTotal"
 				), evaluationItem.id,
 				evaluationItem.category))
-			.from(contract)
-			.leftJoin(evaluationItem)
-			.on(evaluationItem.contract.id.eq(contract.id))
+			.from(evaluationItem)
 			.leftJoin(serviceTarget)
 			.on(serviceTarget.evaluationItem.id.eq(evaluationItem.id))
-			.where(contract.isTerminate.isFalse().and(evaluationItem.category.eq(category)))
+			.where(evaluationItem.id.eq(evaluationItemId))
 			.fetch();
 	}
-}
+	}
+
+

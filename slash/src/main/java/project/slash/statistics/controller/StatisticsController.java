@@ -4,17 +4,20 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
-import project.slash.statistics.dto.MonthlyServiceStatisticsDto;
-import project.slash.statistics.dto.StatisticsDto;
+import project.slash.statistics.dto.request.RequestStatisticsDto;
+import project.slash.statistics.dto.response.MonthlyServiceStatisticsDto;
+import project.slash.statistics.dto.response.MonthlyStatisticsDto;
 import project.slash.statistics.dto.request.EditStatisticsDto;
 import project.slash.statistics.dto.response.MonthlyIndicatorsDto;
 import project.slash.statistics.dto.response.StatisticsStatusDto;
@@ -26,14 +29,21 @@ public class StatisticsController {
 	private final StatisticsService statisticsService;
 
 	@GetMapping("/common/statistics")
-	public BaseResponse<?> getStatistics(@RequestParam(value = "serviceType", required = false) String serviceType,
-		@RequestParam(value = "period", required = false) String period,
-		@RequestParam(value = "targetSystem", required = false) String targetSystem,
-		@RequestParam(value = "targetEquipment", required = false) String targetEquipment){
-		List<StatisticsDto> statistics = statisticsService.getStatistics(serviceType, period, targetSystem,targetEquipment);
-
-		return BaseResponse.ok(statistics);
+	public BaseResponse<?> getServiceUptimeStatistics(
+		@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate date,
+		@RequestParam("evaluationItemId") long evaluationItemId) {
+		List<MonthlyStatisticsDto> statisticsList = statisticsService.calculateMonthlyStats(date, evaluationItemId);
+		return BaseResponse.ok(statisticsList);
 	}
+
+	@PostMapping("/contract-manager/statistics")
+	public BaseResponse<?> addStatistics(@RequestBody RequestStatisticsDto selectedDateDto) {
+		statisticsService.createMonthlyStats(selectedDateDto.getDate(),
+			selectedDateDto.getEvaluationItemId());
+
+		return BaseResponse.ok();
+	}
+
 
 	/**
 	 * 월간 지표 조회하는 메서드입니다.

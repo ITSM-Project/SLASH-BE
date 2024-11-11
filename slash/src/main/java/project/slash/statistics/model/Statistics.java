@@ -105,7 +105,7 @@ public class Statistics {
 			.evaluationItem(evaluationItem)
 			.isAuto(false)
 			.build();
-  }
+	}
 
 	public static Statistics fromResponseServiceTask(ResponseServiceTaskDto responseServiceTaskDto, LocalDate endDate,
 		double score, double weightedScore, String grade) {
@@ -127,7 +127,7 @@ public class Statistics {
 			.systemIncidentCount(0)
 			.isAuto(false)
 			.build();
-  }
+	}
 
 	public void approve() {
 		this.approvalStatus = true;

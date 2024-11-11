@@ -1,9 +1,8 @@
 package project.slash.contract.repository.contract;
 
 import java.util.List;
-
-import project.slash.contract.dto.ContractDataDto;
+import project.slash.contract.dto.response.ContractDataDto;
 
 public interface ContractRepositoryCustom {
-	List<ContractDataDto> findIndicatorByCategory(String category);
+	List<ContractDataDto> findContractByEvaluationItemId(long evaluationItemId, long contractId);
 }
