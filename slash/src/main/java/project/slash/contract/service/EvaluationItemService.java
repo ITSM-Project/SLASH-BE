@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import project.slash.common.exception.BusinessException;
 import project.slash.contract.dto.GradeDto;
+import project.slash.contract.dto.response.EvaluationItemCategoryDto;
+import project.slash.contract.mapper.EvaluationItemMapper;
 import project.slash.contract.mapper.ServiceTargetMapper;
 import project.slash.contract.model.Contract;
 import project.slash.contract.model.EvaluationItem;
@@ -39,6 +41,7 @@ public class EvaluationItemService {
 
 	private final TaskTypeMapper taskTypeMapper;
 	private final ServiceTargetMapper serviceTargetMapper;
+	private final EvaluationItemMapper evaluationItemMapper;
 
 	@Transactional
 	public void createEvaluationItem(CreateEvaluationItemDto createEvaluationItemDto) {
@@ -80,7 +83,7 @@ public class EvaluationItemService {
 
 	public boolean checkModifiable(Long contractId) {
 		List<Long> evaluationItemIds = evaluationItemRepository.findIdsByContractId(contractId);
-		List<Statistics> statisticsList = statisticsRepository.findByEvaluationItems_IdIn(evaluationItemIds);
+		List<Statistics> statisticsList = statisticsRepository.findByEvaluationItem_IdIn(evaluationItemIds);
 
 		return statisticsList.isEmpty();
 	}
@@ -127,5 +130,11 @@ public class EvaluationItemService {
 	private void saveServiceTargets(List<GradeDto> targets, EvaluationItem evaluationItem) {
 		List<ServiceTarget> serviceTargets = serviceTargetMapper.toServiceTargetList(targets, evaluationItem);
 		serviceTargetRepository.saveAll(serviceTargets);
+	}
+
+	public List<EvaluationItemCategoryDto> getEvaluationItemCategory(Long contractId) {
+		List<EvaluationItem> evaluationItems = evaluationItemRepository.findByContractIdAndIsActiveTrue(contractId);
+
+		return evaluationItemMapper.toEvaluationItemCategoryDtos(evaluationItems);
 	}
 }

@@ -1,5 +1,7 @@
 package project.slash.contract.controller;
 
+import java.util.List;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
 import project.slash.contract.dto.request.CreateEvaluationItemDto;
+import project.slash.contract.dto.response.EvaluationItemCategoryDto;
 import project.slash.contract.dto.response.EvaluationItemDetailDto;
 import project.slash.contract.service.EvaluationItemService;
 
@@ -85,5 +88,19 @@ public class EvaluationItemController {
 		evaluationItemService.newEvaluationItem(evaluationItemId, evaluationItemDto);
 
 		return BaseResponse.ok();
+	}
+
+	/**
+	 * 서비스 평가 항목 이름 조회 메서드입니다.
+	 *
+	 * @param contractId 조회할 계약 아이디
+	 * @return 서비스 평가 항목 이름
+	 */
+	@GetMapping("/common/evaluation-item-category/{contractId}")
+	public BaseResponse<List<EvaluationItemCategoryDto>> getEvaluationItemCategory(@PathVariable Long contractId) {
+		List<EvaluationItemCategoryDto> evaluationItemCategories = evaluationItemService.getEvaluationItemCategory(
+			contractId);
+
+		return BaseResponse.ok(evaluationItemCategories);
 	}
 }
