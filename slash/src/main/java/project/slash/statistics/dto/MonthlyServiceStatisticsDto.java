@@ -30,4 +30,25 @@ public class MonthlyServiceStatisticsDto {
 	private double estimate;
 	private long systemIncidentCount;
 	private long dueOnTimeCount;
+
+	public MonthlyServiceStatisticsDto(LocalDate date, String serviceType, String targetEquipment, String grade,
+		double score, String period, double weightedScore, boolean approvalStatus, long totalDowntime,
+		long requestCount,
+		long evaluationItemId, String targetSystem, double estimate, long systemIncidentCount, long dueOnTimeCount) {
+		this.date = date;
+		this.serviceType = serviceType;
+		this.targetEquipment = targetEquipment;
+		this.grade = grade;
+		this.score = score;
+		this.period = period;
+		this.weightedScore = weightedScore;
+		this.approvalStatus = approvalStatus;
+		this.totalDowntime = totalDowntime;
+		this.requestCount = requestCount;
+		this.evaluationItemId = evaluationItemId;
+		this.targetSystem = targetSystem;
+		this.estimate = estimate;
+		this.systemIncidentCount = systemIncidentCount;
+		this.dueOnTimeCount = dueOnTimeCount;
+	}
 }
