@@ -11,10 +11,13 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import project.slash.security.auth.provider.JwtTokenProvider;
 
 @RequiredArgsConstructor
+@Slf4j
 public class JwtAuthenticationFilter extends GenericFilterBean {
 
 	private final JwtTokenProvider jwtTokenProvider;
@@ -28,17 +31,31 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 		IOException,
 		ServletException {
 
-		// 1. Request Header 에서 JWT 토큰 추출
+		HttpServletRequest httpRequest = (HttpServletRequest)request;
+
+		String requestURI = httpRequest.getRequestURI();
+
+		// // 로그인 요청 경로는 JWT 검증을 건너뜀
+		if ("/login".equals(requestURI)) {
+			chain.doFilter(request, response);
+			return;
+		}
+
 		String token = jwtTokenProvider.resolveToken((HttpServletRequest)request);
 
-		// 2. validateToken 으로 토큰 유효성 검사
-		if (token != null && jwtTokenProvider.validateToken(token)) {
-			// 토큰이 유효할 경우 토큰에서 Authentication 객체를 가지고 와서 SecurityContext 에 저장
+		try {
+			jwtTokenProvider.validateToken(token);
+
+			// 유효한 토큰일 경우 인증 객체 설정
 			Authentication authentication = jwtTokenProvider.getAuthentication(token);
 			SecurityContextHolder.getContext().setAuthentication(authentication);
+
+			chain.doFilter(request, response);
+		} catch (IllegalArgumentException e) {
+			log.error("JWT 검증 오류: {}", e.getMessage());
+			throw new IllegalArgumentException("Invalid JWT Token", e);
 		}
-		chain.doFilter(request, response);
-		
+
 	}
 
 }
