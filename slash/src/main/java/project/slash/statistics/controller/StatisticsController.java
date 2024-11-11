@@ -29,7 +29,7 @@ public class StatisticsController {
 	private final StatisticsService statisticsService;
 
 	@GetMapping("/common/statistics")
-	public BaseResponse<?> getStatistics(
+	public BaseResponse<?> getServiceUptimeStatistics(
 		@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate date,
 		@RequestParam("evaluationItemId") long evaluationItemId) {
 		List<MonthlyStatisticsDto> statisticsList = statisticsService.calculateMonthlyStats(date, evaluationItemId);
