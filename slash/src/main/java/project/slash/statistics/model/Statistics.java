@@ -73,7 +73,6 @@ public class Statistics {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "evaluation_item_id")
-
 	private EvaluationItem evaluationItem;
 
 	public static Statistics fromResponseServiceTask(ResponseServiceTaskDto responseServiceTaskDto, LocalDate endDate,

@@ -1,6 +1,7 @@
 package project.slash.statistics.controller;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
+import project.slash.statistics.dto.MonthlyServiceStatisticsDto;
+import project.slash.statistics.dto.StatisticsDto;
 import project.slash.statistics.dto.request.RequestStatisticsDto;
 import project.slash.statistics.dto.response.MonthlyStatisticsDto;
 import project.slash.statistics.dto.request.EditStatisticsDto;
@@ -47,13 +50,12 @@ public class StatisticsController {
 	 * 월간 지표 조회하는 메서드입니다.
 	 *
 	 * @param contractId 지표 조회할 계약서 아이디
-	 * @param year 조회할 년도
-	 * @param month 조회할 월
+	 * @param date 조회할 날짜
 	 * @return 월간 지표
 	 */
-	@GetMapping("/common/{contractId}/indicators/{year}/{month}")
-	public BaseResponse<?> getMonthlyIndicators(@PathVariable Long contractId, @PathVariable int year, @PathVariable int month) {
-		MonthlyIndicatorsDto monthlyIndicators = statisticsService.getMonthlyIndicators(contractId, year, month);
+	@GetMapping("/common/{contractId}/indicators")
+	public BaseResponse<?> getMonthlyIndicators(@PathVariable Long contractId, @RequestParam YearMonth date) {
+		MonthlyIndicatorsDto monthlyIndicators = statisticsService.getMonthlyIndicators(contractId, date);
 
 		return BaseResponse.ok(monthlyIndicators);
 	}
@@ -62,13 +64,12 @@ public class StatisticsController {
 	 * 계산, 미계산 통계 조회 메서드입니다.
 	 *
 	 * @param contractId 조회할 계약 아이디
-	 * @param year 조회할 년도
-	 * @param month 조회할 달
+	 * @param date 조회할 날짜
 	 * @return 계산, 미계산 통계 지표 리스트
 	 */
-	@GetMapping("/contract-manager/statistics/status/{contractId}/{year}/{month}/{day}")
-	public BaseResponse<StatisticsStatusDto> getStatisticsStatus(@PathVariable Long contractId, @PathVariable int year, @PathVariable int month, @PathVariable int day) {
-		StatisticsStatusDto statisticsStatus = statisticsService.getStatisticsStatus(contractId, year, month, day);
+	@GetMapping("/contract-manager/statistics/status/{contractId}")
+	public BaseResponse<StatisticsStatusDto> getStatisticsStatus(@PathVariable Long contractId, @RequestParam LocalDate date) {
+		StatisticsStatusDto statisticsStatus = statisticsService.getStatisticsStatus(contractId, date);
 
 		return BaseResponse.ok(statisticsStatus);
 	}
@@ -98,5 +99,20 @@ public class StatisticsController {
 		statisticsService.editStatistics(statisticsId, editStatisticsDto);
 
 		return BaseResponse.ok();
+	}
+
+	/**
+	 * 확정된 지표 결과 조회하는 메서드입니다.
+	 *
+	 * @param evaluationItemId 조회할 평가 항목 아이디
+	 * @param date TODO: LocalDateTime으로 변경 해야함
+	 * @return 확정된 지표 결과
+	 */
+	@GetMapping("/common/statistics/evaluation-item/{id}")
+	public BaseResponse<List<MonthlyServiceStatisticsDto>> getStatistics(@PathVariable("id") Long evaluationItemId, @RequestParam("date") LocalDate date) {
+		List<MonthlyServiceStatisticsDto> statistics = statisticsService.getStatistics(evaluationItemId,
+			date);
+
+		return BaseResponse.ok(statistics);
 	}
 }

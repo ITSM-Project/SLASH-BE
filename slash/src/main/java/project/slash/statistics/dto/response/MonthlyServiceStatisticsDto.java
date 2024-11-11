@@ -5,10 +5,12 @@ import java.time.LocalDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
+@Builder
 public class MonthlyServiceStatisticsDto {
 	@DateTimeFormat(pattern = "yyyy-MM")
 	private LocalDate date;
