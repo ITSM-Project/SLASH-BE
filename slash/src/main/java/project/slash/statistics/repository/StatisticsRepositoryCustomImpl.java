@@ -8,6 +8,7 @@ import static project.slash.systemincident.model.QSystemIncident.*;
 import static project.slash.taskrequest.model.QTaskRequest.*;
 import static project.slash.taskrequest.model.QTaskType.*;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
@@ -29,7 +29,6 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import project.slash.statistics.dto.response.MonthlyDataDto;
 import project.slash.statistics.dto.response.MonthlyStatisticsDto;
-import project.slash.statistics.dto.response.StatisticsDto;
 import project.slash.statistics.dto.response.ResponseServiceTaskDto;
 import project.slash.taskrequest.model.constant.RequestStatus;
 
@@ -128,28 +127,29 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 	}
 	@Override
 	public void saveMonthlyData(List<MonthlyStatisticsDto> statsDtoList) {
-		String sql = "INSERT INTO statistics (`date`, service_type, grade, score, period, weighted_score, " +
-			"approval_status, total_downtime, request_count, evaluation_item_id, target_system, estimate, system_incident_count, due_on_time_count, target_equipment, is_auto) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO statistics (`date`, calculate_time, service_type, grade, score, period, weighted_score, " +
+			"approval_status, total_downtime, request_count, evaluation_item_id, target_system, estimate, system_incident_count, due_on_time_count, target_equipment, is_auto) " +
+			"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 		jdbcTemplate.batchUpdate(sql, statsDtoList, 50, (ps, dto) -> {
-			ps.setDate(1, java.sql.Date.valueOf(dto.getDate()));
-			ps.setString(2, dto.getServiceType());
-			ps.setString(3, dto.getGrade());
-			ps.setDouble(4, dto.getScore());
-			ps.setString(5, dto.getPeriod());
-			ps.setDouble(6, dto.getWeightedScore());
-			ps.setBoolean(7, dto.isApprovalStatus());
-			ps.setLong(8, dto.getTotalDowntime());
-			ps.setLong(9, dto.getRequestCount());
-			ps.setLong(10, dto.getEvaluationItemId());
-			ps.setString(11, dto.getTargetSystem());
-			ps.setDouble(12, dto.getEstimate());
-			ps.setLong(13, dto.getSystemIncidentCount());
-			ps.setLong(14, dto.getDueOnTimeCount());
-			ps.setString(15, dto.getTargetEquipment());
-			ps.setBoolean(16, dto.getIsAuto());
+			ps.setDate(1, java.sql.Date.valueOf(dto.getDate()));                      // 첫 번째 필드 (date)
+			ps.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));               // 두 번째 필드 (calculateTime)
+			ps.setString(3, dto.getServiceType());                                    // 세 번째 필드 (service_type)
+			ps.setString(4, dto.getGrade());                                          // 네 번째 필드 (grade)
+			ps.setDouble(5, dto.getScore());                                          // 다섯 번째 필드 (score)
+			ps.setString(6, dto.getPeriod());                                         // 여섯 번째 필드 (period)
+			ps.setDouble(7, dto.getWeightedScore());                                  // 일곱 번째 필드 (weighted_score)
+			ps.setBoolean(8, dto.isApprovalStatus());                                 // 여덟 번째 필드 (approval_status)
+			ps.setLong(9, dto.getTotalDowntime());                                    // 아홉 번째 필드 (total_downtime)
+			ps.setLong(10, dto.getRequestCount());                                    // 열 번째 필드 (request_count)
+			ps.setLong(11, dto.getEvaluationItemId());                                // 열한 번째 필드 (evaluation_item_id)
+			ps.setString(12, dto.getTargetSystem());                                  // 열두 번째 필드 (target_system)
+			ps.setDouble(13, dto.getEstimate());                                      // 열세 번째 필드 (estimate)
+			ps.setLong(14, dto.getSystemIncidentCount());                             // 열네 번째 필드 (system_incident_count)
+			ps.setLong(15, dto.getDueOnTimeCount());                                  // 열다섯 번째 필드 (due_on_time_count)
+			ps.setString(16, dto.getTargetEquipment());                               // 열여섯 번째 필드 (target_equipment)
+			ps.setBoolean(17, dto.getIsAuto());                                       // 열일곱 번째 필드 (is_auto)
 		});
 	}
 
 }
-

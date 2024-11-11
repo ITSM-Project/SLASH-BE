@@ -114,7 +114,7 @@ public class StatisticsService {
 			"전체",
 			averageEstimate,
 			totalSystemIncidentCount,
-			0L,
+			-1,
 			true
 		);
 	}
@@ -139,7 +139,7 @@ public class StatisticsService {
 				date, contractDataDto.get(0).getCategory(), monthlyDataDto.getEquipmentName(), evaluatedDto.getGrade(), evaluatedDto.getScore(),
 				"월별", evaluatedDto.getWeightedScore(), false, monthlyDataDto.getTotalDownTime(),
 				monthlyDataDto.getRequestCount(), evaluatedDto.getEvaluationItemId(), monthlyDataDto.getSystemName(),
-				evaluatedDto.getScore(), monthlyDataDto.getSystemIncidentCount(), 0L, true
+				evaluatedDto.getScore(), monthlyDataDto.getSystemIncidentCount(), -1, true
 			));
 		}
 		return result;
