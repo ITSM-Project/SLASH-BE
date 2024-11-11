@@ -17,7 +17,7 @@ import project.slash.contract.mapper.ServiceTargetMapper;
 import project.slash.contract.model.Contract;
 import project.slash.contract.model.EvaluationItem;
 import project.slash.contract.model.ServiceTarget;
-import project.slash.contract.repository.ContractRepository;
+import project.slash.contract.repository.contract.ContractRepository;
 import project.slash.contract.dto.TaskTypeDto;
 import project.slash.contract.dto.request.CreateEvaluationItemDto;
 import project.slash.contract.dto.response.EvaluationItemDetailDto;

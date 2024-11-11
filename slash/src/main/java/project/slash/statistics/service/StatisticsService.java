@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 import project.slash.common.exception.BusinessException;
 import project.slash.contract.dto.response.ContractDataDto;
 import project.slash.contract.model.ServiceTarget;
-import project.slash.contract.repository.ContractRepository;
+import project.slash.contract.repository.contract.ContractRepository;
 import project.slash.contract.repository.ServiceTargetRepository;
 import project.slash.contract.repository.evaluationItem.EvaluationItemRepository;
 import project.slash.statistics.dto.GradeScoreDto;
@@ -62,13 +62,13 @@ public class StatisticsService {
 	private final StatisticsMapper statisticsMapper;
 
 	@Transactional
-	public void createMonthlyStats(LocalDate date, long evaluationItemId) {
-		List<MonthlyStatisticsDto> monthlyStatisticsDtoList = calculateMonthlyStats(date, evaluationItemId);
+	public void createMonthlyStats(RequestStatisticsDto requestStatisticsDto) {
+		List<MonthlyStatisticsDto> monthlyStatisticsDtoList = calculateMonthlyStats(requestStatisticsDto.getDate(),
+			requestStatisticsDto.getEvaluationItemId());
 		MonthlyStatisticsDto monthlyStatisticsDto = getEntireStatistics(monthlyStatisticsDtoList);
 		monthlyStatisticsDtoList.add(monthlyStatisticsDto);
 
 		statisticsRepository.saveMonthlyData(monthlyStatisticsDtoList);
-
 	}
 
 	public MonthlyStatisticsDto getEntireStatistics(List<MonthlyStatisticsDto> monthlyStatisticsDtoList) {

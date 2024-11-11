@@ -2,6 +2,7 @@ package project.slash.statistics.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,16 +17,20 @@ import project.slash.contract.model.EvaluationItem;
 import project.slash.statistics.dto.IncidentInfoDto;
 import lombok.Getter;
 
-import project.slash.contract.model.EvaluationItem;
 import project.slash.statistics.dto.response.ResponseServiceTaskDto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @Getter
+@EntityListeners(AuditingEntityListener.class)
 public class Statistics {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,6 +38,10 @@ public class Statistics {
 	private Long id;
 
 	private LocalDate date;
+
+	@CreatedDate
+	@Column(updatable = false)
+	private LocalDateTime calculateTime;
 
 	@Column(name = "target_system")
 	private String targetSystem;
@@ -69,9 +78,10 @@ public class Statistics {
 	@Column(name = "system_incident_count")
 	private long systemIncidentCount;
 
+	@Column(name = "is_auto")
 	private boolean isAuto;
-  
-  @ManyToOne(fetch = FetchType.LAZY)
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "evaluation_item_id")
 	private EvaluationItem evaluationItem;
 
@@ -95,7 +105,7 @@ public class Statistics {
 			.evaluationItem(evaluationItem)
 			.isAuto(false)
 			.build();
-  }
+	}
 
 	public static Statistics fromResponseServiceTask(ResponseServiceTaskDto responseServiceTaskDto, LocalDate endDate,
 		double score, double weightedScore, String grade) {
@@ -117,7 +127,7 @@ public class Statistics {
 			.systemIncidentCount(0)
 			.isAuto(false)
 			.build();
-  }
+	}
 
 	public void approve() {
 		this.approvalStatus = true;
