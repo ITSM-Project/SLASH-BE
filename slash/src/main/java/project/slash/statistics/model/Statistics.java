@@ -14,6 +14,10 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 import project.slash.contract.model.EvaluationItem;
 import project.slash.statistics.dto.IncidentInfoDto;
+import lombok.Getter;
+
+import project.slash.contract.model.EvaluationItem;
+import project.slash.statistics.dto.response.ResponseServiceTaskDto;
 
 import java.time.LocalDate;
 
@@ -21,14 +25,18 @@ import java.time.LocalDate;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
+@Getter
 public class Statistics {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "statistics_id")
 	private Long id;
+
 	private LocalDate date;
+
 	@Column(name = "target_system")
 	private String targetSystem;
+
 	@Column(name = "service_type")
 	private String serviceType;
 
@@ -36,7 +44,9 @@ public class Statistics {
 	private String targetEquipment;
 
 	private String grade;
+
 	private double score;
+
 	private String period;
 
 	@Column(name = "weighted_score")
@@ -60,10 +70,10 @@ public class Statistics {
 	private long systemIncidentCount;
 
 	private Boolean isAuto;
-
-	@ManyToOne(fetch = FetchType.LAZY)
+  
+  @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "evaluation_item_id")
-	private EvaluationItem evaluationItems;
+	private EvaluationItem evaluationItem;
 
 	public static Statistics fromIncidentInfo(IncidentInfoDto incidentInfoDto, LocalDate date, double score,
 		double weightedScore, String grade, double estimate, EvaluationItem evaluationItem) {
@@ -85,5 +95,37 @@ public class Statistics {
 			.evaluationItems(evaluationItem)
 			.isAuto(false)
 			.build();
+  }
+
+	public static Statistics fromResponseServiceTask(ResponseServiceTaskDto responseServiceTaskDto, LocalDate endDate,
+		double score, double weightedScore, String grade) {
+		return Statistics.builder()
+			.date(endDate)
+			.serviceType(responseServiceTaskDto.getEvaluationItem().getCategory())
+			.targetSystem("전체")
+			.targetEquipment("전체")
+			.grade(grade)
+			.score(score)
+			.period(responseServiceTaskDto.getEvaluationItem().getPeriod())
+			.weightedScore(weightedScore)
+			.requestCount(responseServiceTaskDto.getTaskRequest())
+			.approvalStatus(false)
+			.dueOnTimeCount(responseServiceTaskDto.getDueOnTimeCount())
+			.estimate(score)
+			.evaluationItem(responseServiceTaskDto.getEvaluationItem())
+			.totalDowntime(0)
+			.systemIncidentCount(0)
+			.isAuto(false)
+			.build();
+  }
+
+	public void approve() {
+		this.approvalStatus = true;
+	}
+
+	public void update(String grade, double score, double weightedScore) {
+		this.grade = grade;
+		this.score = score;
+		this.weightedScore = weightedScore;
 	}
 }

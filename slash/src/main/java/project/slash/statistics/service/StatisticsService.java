@@ -1,6 +1,9 @@
 package project.slash.statistics.service;
 
+import static project.slash.statistics.exception.StatisticsErrorCode.*;
+
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import project.slash.common.exception.BusinessException;
 import project.slash.contract.dto.ContractDataDto;
 import project.slash.contract.model.ServiceTarget;
 import project.slash.contract.repository.ContractRepository;
@@ -20,18 +24,41 @@ import project.slash.statistics.dto.MonthlyDataDto;
 import project.slash.statistics.dto.MonthlyServiceStatisticsDto;
 import project.slash.statistics.dto.StatisticsDto;
 import project.slash.statistics.dto.request.RequestStatisticsDto;
+import project.slash.statistics.dto.response.ResponseServiceTaskDto;
+import project.slash.statistics.dto.response.ResponseStatisticsDto;
+import project.slash.contract.mapper.EvaluationItemMapper;
+import project.slash.contract.model.EvaluationItem;
+import project.slash.contract.model.TotalTarget;
+import project.slash.contract.repository.TotalTargetRepository;
+import project.slash.contract.repository.evaluationItem.EvaluationItemRepository;
+import project.slash.statistics.dto.request.EditStatisticsDto;
+import project.slash.statistics.dto.response.CalculatedStatisticsDto;
+import project.slash.statistics.dto.response.IndicatorExtraInfoDto;
+import project.slash.statistics.dto.response.IndicatorDto;
+import project.slash.statistics.dto.response.MonthlyIndicatorsDto;
+import project.slash.statistics.dto.response.StatisticsStatusDto;
+import project.slash.statistics.dto.response.UnCalculatedStatisticsDto;
+import project.slash.statistics.mapper.StatisticsMapper;
 import project.slash.statistics.model.Statistics;
 import project.slash.statistics.repository.StatisticsRepository;
 import project.slash.taskrequest.repository.TaskRequestRepository;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class StatisticsService {
+	private static final int MINIMUM_STATISTICS_REQUIRED = 3;
+
 	private final StatisticsRepository statisticsRepository;
 	private final ContractRepository contractRepository;
 	private final ServiceTargetRepository serviceTargetRepository;
 	private final TaskRequestRepository taskRequestRepository;
 	private final EvaluationItemRepository evaluationItemRepository;
+	private final TotalTargetRepository totalTargetRepository;
+
+
+	private final EvaluationItemMapper evaluationItemMapper;
+	private final StatisticsMapper statisticsMapper;
 
 	public void createMonthlyStats(String serviceType) {
 		List<MonthlyServiceStatisticsDto> monthlyServiceStatisticsDtoList = calculateMonthlyStats(serviceType);
@@ -69,6 +96,7 @@ public class StatisticsService {
 					break;
 				}
 			}
+      
 			String yearMonthString = monthlyDataDto.getYearMonth();
 			LocalDate date = LocalDate.parse(yearMonthString + "-" + monthlyDataDto.getLastDay(),
 				DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -163,5 +191,138 @@ public class StatisticsService {
 		double max = serviceTarget.getMax();
 		return (serviceTarget.isMinInclusive() ? score >= min : score > min) &&
 			(serviceTarget.isMaxInclusive() ? score <= max : score < max);
+  }
+  
+	@Transactional
+	public void createServiceTaskStatistics(RequestStatisticsDto requestStatisticsDto) {
+		ResponseServiceTaskDto responseServiceTaskDto = statisticsRepository.getServiceTaskStatics(
+			requestStatisticsDto.getEvaluationItemId(), requestStatisticsDto.getDate());
+		double score = Math.round(
+			(double)responseServiceTaskDto.getDueOnTimeCount() / responseServiceTaskDto.getTaskRequest() * 10000)
+			/ 100.0;
+		double weightScore = Math.round(
+			score / responseServiceTaskDto.getTotalWeight() * responseServiceTaskDto.getEvaluationItem().getWeight()
+				* 100) / 100.0;
+		String grade = getGrade(responseServiceTaskDto.getEvaluationItem().getId(), score);
+		Statistics statistics = Statistics.fromResponseServiceTask(responseServiceTaskDto,
+			requestStatisticsDto.getDate(), score, weightScore, grade);
+		statisticsRepository.save(statistics);
+	}
+
+	//등급산출
+	public String getGrade(Long evaluationItemId, double score) {
+		return serviceTargetRepository.getServiceTargetByEvaluationItem_Id(
+				evaluationItemId)
+			.stream()
+			.filter(serviceTarget ->
+				(serviceTarget.isMinInclusive() ? score >= serviceTarget.getMin() : score > serviceTarget.getMin()) &&
+					(serviceTarget.isMaxInclusive() ? score <= serviceTarget.getMax() : score < serviceTarget.getMax())
+			)
+			.map(ServiceTarget::getGrade)  // 조건을 만족하는 ServiceTarget의 grade 값을 추출
+			.findFirst()
+			.orElse(null);
+	}
+
+
+	public ResponseStatisticsDto getServiceStatistics(Long evaluationItemId, LocalDate date) {
+		ResponseServiceTaskDto responseServiceTaskDto = statisticsRepository.getServiceTaskStatics(
+			evaluationItemId, date);
+		double score = Math.round(
+			(double)responseServiceTaskDto.getDueOnTimeCount() / responseServiceTaskDto.getTaskRequest() * 10000)
+			/ 100.0;
+		double weightScore = Math.round(
+			score / responseServiceTaskDto.getTotalWeight() * responseServiceTaskDto.getEvaluationItem().getWeight()
+				* 100) / 100.0;
+		String grade = getGrade(responseServiceTaskDto.getEvaluationItem().getId(), score);
+		return ResponseStatisticsDto.fromResponseServiceTask(responseServiceTaskDto, score, weightScore, grade);
+  }
+  
+	public MonthlyIndicatorsDto getMonthlyIndicators(Long contractId, YearMonth date) {
+		LocalDate startDate = date.atDay(1);
+		LocalDate endDate = date.atEndOfMonth();
+
+		List<Statistics> statistics = statisticsRepository.findByDateBetweenAndEvaluationItemContractIdAndApprovalStatusTrue(
+			startDate, endDate, contractId);
+
+		if(statistics.size() < MINIMUM_STATISTICS_REQUIRED) {
+			return new MonthlyIndicatorsDto();
+		}
+
+		return new MonthlyIndicatorsDto(getIndicatorExtraInfo(contractId, statistics),
+			getMonthlyIndicators(statistics));
+	}
+
+	private IndicatorExtraInfoDto getIndicatorExtraInfo(Long contractId, List<Statistics> statistics) {
+		double score = 0;
+		long requestCount = 0;
+		long incidentTime = 0;
+
+		for (Statistics statistic : statistics) {
+			score += statistic.getScore();
+			requestCount += statistic.getRequestCount() + statistic.getSystemIncidentCount();
+			incidentTime += statistic.getTotalDowntime();
+		}
+
+		return new IndicatorExtraInfoDto(findTotalTarget(contractId, score), requestCount, incidentTime);
+	}
+
+	public String findTotalTarget(Long contractId, double score) {
+		return totalTargetRepository.findByContractIdOrderByMinAsc(contractId).stream()
+			.filter(target ->
+				(target.isMinInclusive() ? score >= target.getMin() : score > target.getMin()) &&
+					(target.isMaxInclusive() ? score <= target.getMax() : score < target.getMax())
+			)
+			.map(TotalTarget::getGrade)
+			.findFirst()
+			.orElse(null);
+	}
+
+	private static List<IndicatorDto> getMonthlyIndicators(List<Statistics> statistics) {
+		return statistics.stream()
+			.filter(s -> s.getTargetSystem().equals("전체"))
+			.map(IndicatorDto::of)
+			.toList();
+	}
+
+	public StatisticsStatusDto getStatisticsStatus(Long contractId, LocalDate endDate) {
+		LocalDate startDate = endDate.withDayOfMonth(1);
+
+		List<EvaluationItem> unCalculatedEvaluationItem = evaluationItemRepository.findUnCalculatedEvaluationItem(contractId, endDate);
+		List<UnCalculatedStatisticsDto> unCalculatedStatistics = evaluationItemMapper.unCalculatedStatisticsList(unCalculatedEvaluationItem);	//미계산된 지표
+
+		List<Statistics> statistics = statisticsRepository.findByDateBetweenAndEvaluationItemContractId(startDate, endDate, contractId);
+		List<CalculatedStatisticsDto> calculatedStatistics = statisticsMapper.toCalculatedStatisticsList(statistics); // 계산된 지표
+
+		return new StatisticsStatusDto(unCalculatedStatistics, calculatedStatistics);
+	}
+
+	@Transactional
+	public void approve(Long statisticsId, Long evaluationItemId) {
+		LocalDate endDate = LocalDate.now();
+		LocalDate startDate = endDate.withDayOfMonth(1);
+
+		//이미 동일한 항목에 대한 승인된 지표가 있는 경우
+		if (statisticsRepository.findByEvaluationItemIdAndApprovalStatusTrueAndDateBetween(evaluationItemId, startDate, endDate).isPresent()) {
+			throw new BusinessException(STATISTICS_ALREADY_EXISTS);
+		}
+
+		Statistics statistics = findStatistics(statisticsId);
+		statistics.approve();
+	}
+
+	@Transactional
+	public void editStatistics(Long statisticsId, EditStatisticsDto editStatisticsDto) {
+		Statistics statistics = findStatistics(statisticsId);
+		statistics.update(editStatisticsDto.getGrade(), editStatisticsDto.getScore(), editStatisticsDto.getWeightedScore());
+	}
+
+	private Statistics findStatistics(Long statisticsId) {
+		return statisticsRepository.findById(statisticsId).orElseThrow(() -> new BusinessException(NOT_FOUND_STATISTICS));
+	}
+
+	public List<MonthlyServiceStatisticsDto> getStatistics(Long evaluationItemId, LocalDate date) {
+		List<Statistics> statistics = statisticsRepository.findByEvaluationItemIdAndDateAndApprovalStatusTrue(evaluationItemId, date);
+
+		return statisticsMapper.toCalculatedStatisticsDtos(statistics);
 	}
 }

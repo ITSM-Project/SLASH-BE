@@ -36,7 +36,7 @@ public class CreateEvaluationItemDto {
 	private String unit;
 
 	@Valid
-	private List<TaskTypeDto> taskTypes = new ArrayList<>();
+	private List<TaskTypeDto> taskTypes;
 
 	@Valid
 	@NotNull(message = "서비스 목표는 필수입니다.")

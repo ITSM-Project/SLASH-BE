@@ -17,7 +17,7 @@ public interface TaskTypeRepository extends JpaRepository<TaskType, Long>, TaskT
 		@Param("contractId") Long contractId
 	);
 
-	List<TaskType> findTaskTypesByEvaluationItemId(Long categoryId);
+	List<TaskType> findTaskTypesByEvaluationItemId(Long evaluationItemId);
 
 	List<TaskType> findDistinctByTypeNotNull();
 
