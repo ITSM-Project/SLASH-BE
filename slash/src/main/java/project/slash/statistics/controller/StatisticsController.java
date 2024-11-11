@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
+import project.slash.statistics.dto.MonthlyServiceStatisticsDto;
 import project.slash.statistics.dto.StatisticsDto;
 import project.slash.statistics.dto.request.EditStatisticsDto;
 import project.slash.statistics.dto.response.MonthlyIndicatorsDto;
@@ -87,5 +88,20 @@ public class StatisticsController {
 		statisticsService.editStatistics(statisticsId, editStatisticsDto);
 
 		return BaseResponse.ok();
+	}
+
+	/**
+	 * 확정된 지표 결과 조회하는 메서드입니다.
+	 *
+	 * @param evaluationItemId 조회할 평가 항목 아이디
+	 * @param date TODO: LocalDateTime으로 변경 해야함
+	 * @return 확정된 지표 결과
+	 */
+	@GetMapping("/common/statistics/evaluation-item/{id}")
+	public BaseResponse<List<MonthlyServiceStatisticsDto>> getStatistics(@PathVariable("id") Long evaluationItemId, @RequestParam("date") LocalDate date) {
+		List<MonthlyServiceStatisticsDto> statistics = statisticsService.getStatistics(evaluationItemId,
+			date);
+
+		return BaseResponse.ok(statistics);
 	}
 }

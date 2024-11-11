@@ -73,7 +73,6 @@ public class Statistics {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "evaluation_item_id")
-
 	private EvaluationItem evaluationItem;
 
 	public static Statistics fromResponseServiceTask(ResponseServiceTaskDto responseServiceTaskDto, LocalDate endDate,
@@ -106,5 +105,28 @@ public class Statistics {
 		this.grade = grade;
 		this.score = score;
 		this.weightedScore = weightedScore;
+	}
+
+	@Override
+	public String toString() {
+		return "Statistics{" +
+			"id=" + id +
+			", date=" + date +
+			", targetSystem='" + targetSystem + '\'' +
+			", serviceType='" + serviceType + '\'' +
+			", targetEquipment='" + targetEquipment + '\'' +
+			", grade='" + grade + '\'' +
+			", score=" + score +
+			", period='" + period + '\'' +
+			", weightedScore=" + weightedScore +
+			", approvalStatus=" + approvalStatus +
+			", totalDowntime=" + totalDowntime +
+			", requestCount=" + requestCount +
+			", dueOnTimeCount=" + dueOnTimeCount +
+			", estimate=" + estimate +
+			", systemIncidentCount=" + systemIncidentCount +
+			", isAuto=" + isAuto +
+			", evaluationItem=" + evaluationItem +
+			'}';
 	}
 }

@@ -256,4 +256,10 @@ public class StatisticsService {
 	private Statistics findStatistics(Long statisticsId) {
 		return statisticsRepository.findById(statisticsId).orElseThrow(() -> new BusinessException(NOT_FOUND_STATISTICS));
 	}
+
+	public List<MonthlyServiceStatisticsDto> getStatistics(Long evaluationItemId, LocalDate date) {
+		List<Statistics> statistics = statisticsRepository.findByEvaluationItemIdAndDateAndApprovalStatusTrue(evaluationItemId, date);
+
+		return statisticsMapper.toCalculatedStatisticsDtos(statistics);
+	}
 }
