@@ -335,10 +335,13 @@ public class StatisticsService {
 		LocalDate startDate = endDate.withDayOfMonth(1);
 
 		List<EvaluationItem> unCalculatedEvaluationItem = evaluationItemRepository.findUnCalculatedEvaluationItem(contractId, endDate);
-		List<UnCalculatedStatisticsDto> unCalculatedStatistics = evaluationItemMapper.unCalculatedStatisticsList(unCalculatedEvaluationItem);	//미계산된 지표
+		List<UnCalculatedStatisticsDto> unCalculatedStatistics = evaluationItemMapper.unCalculatedStatisticsList(unCalculatedEvaluationItem);	//미계산 된 지표
 
 		List<Statistics> statistics = statisticsRepository.findByDateBetweenAndEvaluationItemContractId(startDate, endDate, contractId);
-		List<CalculatedStatisticsDto> calculatedStatistics = statisticsMapper.toCalculatedStatisticsList(statistics); // 계산된 지표
+		List<CalculatedStatisticsDto> calculatedStatistics = statistics.stream()	//계산된 지표중 전체 통계만 조회
+			.filter(statistic -> "전체".equals(statistic.getTargetSystem()))
+			.map(statisticsMapper::toCalculatedStatistics)
+			.toList();
 
 		return new StatisticsStatusDto(unCalculatedStatistics, calculatedStatistics);
 	}
