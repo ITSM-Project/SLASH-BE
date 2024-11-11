@@ -13,7 +13,5 @@ public interface StatisticsRepositoryCustom {
 
 	void saveMonthlyData(List<MonthlyStatisticsDto> monthlyStatisticsDtoList);
 
-	List<StatisticsDto> getStatistics(String serviceType, String period, String targetSystem, String targetEquipment);
-
 	ResponseServiceTaskDto getServiceTaskStatics(Long evaluationItemId, LocalDate date);
 }

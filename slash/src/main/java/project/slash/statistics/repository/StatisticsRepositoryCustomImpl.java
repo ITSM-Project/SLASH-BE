@@ -73,42 +73,6 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 
 
 
-	@Override
-	public List<StatisticsDto> getStatistics(String serviceType, String period, String targetSystem,
-		String targetEquipment) {
-		BooleanBuilder builder = new BooleanBuilder();
-
-		// 매개변수가 null이 아닐 때만 조건 추가
-		if (serviceType != null) {
-			builder.and(statistics.serviceType.eq(serviceType));
-		}
-		if (period != null) {
-			builder.and(statistics.period.eq(period));
-		}
-		if (targetSystem != null) {
-			builder.and(statistics.targetSystem.eq(targetSystem));
-		}
-		if (targetEquipment != null) {
-			builder.and(statistics.targetEquipment.eq(targetEquipment));
-		}
-
-		// 쿼리 실행
-
-		return queryFactory
-			.select(Projections.constructor(StatisticsDto.class, // DTO로 변환
-				statistics.date,
-				statistics.serviceType,
-				statistics.grade,
-				statistics.score,
-				statistics.totalDowntime,
-				statistics.requestCount,
-				statistics.dueOnTimeCount,
-				statistics.targetSystem,
-				statistics.targetEquipment))
-			.from(statistics)
-			.where(builder)
-			.fetch();
-	}
 
 	@Override
 	public ResponseServiceTaskDto getServiceTaskStatics(Long evaluationItemId, LocalDate date) {
