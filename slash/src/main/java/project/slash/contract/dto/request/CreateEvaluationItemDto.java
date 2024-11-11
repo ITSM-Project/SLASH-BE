@@ -1,6 +1,5 @@
 package project.slash.contract.dto.request;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.validation.Valid;

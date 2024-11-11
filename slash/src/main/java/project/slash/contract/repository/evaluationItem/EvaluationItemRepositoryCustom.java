@@ -12,7 +12,7 @@ public interface EvaluationItemRepositoryCustom {
 
 	Optional<EvaluationItemDto> findEvaluationItem(Long evaluationItemId);
 
-	List<EvaluationItem> findUnCalculatedEvaluationItem(Long contractId, LocalDate beforeDate);
-
 	Integer findTotalWeightByEvaluationItemId(Long evaluationItemId);
+
+	List<EvaluationItem> findUnCalculatedEvaluationItem(Long contractId, LocalDate beforeDate);
 }

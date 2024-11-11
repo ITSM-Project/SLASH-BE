@@ -46,9 +46,9 @@ public class EvaluationItemRepositoryCustomImpl implements EvaluationItemReposit
 					.from(evaluationItem)
 					.where(evaluationItem.id.eq(evaluationItemId))
 			)).fetchOne();
-	}
-
-	@Override
+  }
+  
+  @Override
 	public List<EvaluationItem> findUnCalculatedEvaluationItem(Long contractId, LocalDate beforeDate) {
 		return queryFactory
 			.selectFrom(evaluationItem)

@@ -1,6 +1,7 @@
 package project.slash.statistics.dto.response;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -15,6 +16,7 @@ public class IndicatorDto {
 	private String category;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private LocalDate date;
+	private LocalDateTime calculateTime;
 	private boolean isAuto;
 	private String grade;
 	private double score;
@@ -25,6 +27,7 @@ public class IndicatorDto {
 			statistics.getEvaluationItem().getId(),
 			statistics.getEvaluationItem().getCategory(),
 			statistics.getDate(),
+			statistics.getCalculateTime(),
 			statistics.isAuto(),
 			statistics.getGrade(),
 			statistics.getScore(),
