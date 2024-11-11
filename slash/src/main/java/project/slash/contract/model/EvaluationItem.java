@@ -41,6 +41,9 @@ public class EvaluationItem {
 
 	private String unit;
 
+	@Column(name = "is_active")
+	private boolean isActive;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "contract_id")
 	private Contract contract;
@@ -54,6 +57,19 @@ public class EvaluationItem {
 			.purpose(createEvaluationItemDto.getPurpose())
 			.formula(createEvaluationItemDto.getFormula())
 			.unit(createEvaluationItemDto.getUnit())
+			.isActive(true)
 			.build();
+	}
+
+	public void update(CreateEvaluationItemDto newEvaluationItem) {
+		this.category = newEvaluationItem.getCategory();
+		this.weight = newEvaluationItem.getWeight();
+		this.period = newEvaluationItem.getPurpose();
+		this.formula = newEvaluationItem.getFormula();
+		this.unit = newEvaluationItem.getUnit();
+	}
+
+	public void deactivate() {
+		this.isActive = false;
 	}
 }

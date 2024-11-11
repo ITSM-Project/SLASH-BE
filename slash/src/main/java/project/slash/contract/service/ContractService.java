@@ -43,23 +43,17 @@ public class ContractService {
 	@Transactional
 	public Long createContract(ContractRequestDto contractRequestDto) {
 		Contract contract = contractRepository.save(contractMapper.toEntity(contractRequestDto));
+		saveTotalTargets(contractRequestDto.getTotalTargets(), contract);
 
-		List<TotalTarget> totalTargets = totalTargetMapper.toTotalTargetList(contractRequestDto.getTotalTargets(), contract);
-
-		totalTargetRepository.saveAll(totalTargets);
 		return contract.getId();
 	}
 
-	public ContractDetailDto showContractInfo(Long contractId) {
-		Contract contract = contractRepository.findById(contractId)
-			.orElseThrow(() -> new BusinessException(NOT_FOUND_CONTRACT));
-
-		List<GradeDto> totalTargets = totalTargetMapper.toGradeDtoList(
-			totalTargetRepository.findByContractId(contract.getId()));
+	public ContractDetailDto showAllContractInfo(Long contractId) {
+		ContractInfo contractInfo = getContractInfo(contractId);
 
 		List<EvaluationItemDetailDto> evaluationItemDetails = findEvaluationItemDetails(contractId);
 
-		return ContractDetailDto.of(contract, totalTargets, evaluationItemDetails);
+		return ContractDetailDto.of(contractInfo.contract(), contractInfo.totalTargets(), evaluationItemDetails);
 	}
 
 	private List<EvaluationItemDetailDto> findEvaluationItemDetails(Long contractId) {
@@ -69,9 +63,43 @@ public class ContractService {
 				List<TaskTypeDto> taskTypes = taskTypeMapper.toTaskTypeDtoList(
 					taskTypeRepository.findTaskTypesByEvaluationItemId(evaluationItem.getEvaluationItemId()));
 
-				return EvaluationItemDetailDto.from(evaluationItem, taskTypes);
+				return EvaluationItemDetailDto.createAll(evaluationItem, taskTypes);
 			})
 			.toList();
+	}
+
+	private ContractInfo getContractInfo(Long contractId) {
+		Contract contract = findContract(contractId);
+
+		List<GradeDto> totalTargets = totalTargetMapper.toGradeDtoList(
+			totalTargetRepository.findByContractIdAndIsActiveTrue(contract.getId()));
+
+		return new ContractInfo(contract, totalTargets);
+	}
+
+	@Transactional
+	public void updateTotalTarget(Long contractId, List<GradeDto> gradeDtos) {
+		Contract contract = findContract(contractId);
+
+		List<TotalTarget> totalTargets = findTotalTarget(contractId);
+		totalTargetRepository.deleteAll(totalTargets); //기존 평가 등급 삭제
+
+		List<TotalTarget> newTotalTargets = totalTargetMapper.toTotalTargetList(gradeDtos, contract);
+		totalTargetRepository.saveAll(newTotalTargets);    //새 평가 등급 추가
+	}
+
+	private List<TotalTarget> findTotalTarget(Long contractId) {
+		return totalTargetRepository.findByContractIdAndIsActiveTrue(contractId);
+	}
+
+	@Transactional
+	public void newTotalTarget(Long contractId, List<GradeDto> gradeDtos) {
+		Contract contract = findContract(contractId);
+		findTotalTarget(contractId).forEach(TotalTarget::deactivate);	//기존 등급 비활성화
+		saveTotalTargets(gradeDtos, contract);	//새로운 등급 추가
+	}
+
+	private record ContractInfo(Contract contract, List<GradeDto> totalTargets) {
 	}
 
 	@Transactional
@@ -91,14 +119,19 @@ public class ContractService {
 		return contractMapper.toAllContractDtoList(allContracts);
 	}
 
+	public List<ContractNameDto> showAllContractName() {
+		List<Contract> allContractNames = contractRepository.findAll();
+
+		return contractMapper.toAllContractNameList(allContractNames);
+	}
+
 	private Contract findContract(Long contractId) {
 		return contractRepository.findById(contractId)
 			.orElseThrow(() -> new BusinessException(NOT_FOUND_CONTRACT));
 	}
 
-	public List<ContractNameDto> showAllContractName() {
-		List<Contract> allContractNames = contractRepository.findAll();
-
-		return contractMapper.toAllContractNameList(allContractNames);
+	private void saveTotalTargets(List<GradeDto> gradeDtos, Contract contract) {
+		List<TotalTarget> totalTargets = totalTargetMapper.toTotalTargetList(gradeDtos, contract);
+		totalTargetRepository.saveAll(totalTargets);
 	}
 }

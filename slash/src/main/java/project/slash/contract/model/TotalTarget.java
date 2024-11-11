@@ -40,6 +40,9 @@ public class TotalTarget {
 	@Column(name = "max_inclusive")
 	private boolean maxInclusive;
 
+	@Column(name = "is_active")
+	private boolean isActive;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "contract_id")
 	private Contract contract;
@@ -52,6 +55,11 @@ public class TotalTarget {
 			.minInclusive(gradeDto.getMinInclusive())
 			.max(gradeDto.getMax())
 			.maxInclusive((gradeDto.getMaxInclusive()))
+			.isActive(true)
 			.build();
+	}
+
+	public void deactivate() {
+		this.isActive = false;
 	}
 }

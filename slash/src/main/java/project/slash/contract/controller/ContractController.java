@@ -6,12 +6,14 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
+import project.slash.contract.dto.GradeDto;
 import project.slash.contract.dto.request.ContractRequestDto;
 import project.slash.contract.dto.response.AllContractDto;
 import project.slash.contract.dto.response.ContractDetailDto;
@@ -44,8 +46,8 @@ public class ContractController {
 	 * @return 게약 내용
 	 */
 	@GetMapping("/common/contract/{contractId}")
-	public BaseResponse<ContractDetailDto> showContractInfo(@PathVariable("contractId") Long contractId) {
-		ContractDetailDto contractDetailDto = contractService.showContractInfo(contractId);
+	public BaseResponse<ContractDetailDto> showAllContractInfo(@PathVariable("contractId") Long contractId) {
+		ContractDetailDto contractDetailDto = contractService.showAllContractInfo(contractId);
 
 		return BaseResponse.ok(contractDetailDto);
 	}
@@ -85,5 +87,33 @@ public class ContractController {
 		List<ContractNameDto> contractNames = contractService.showAllContractName();
 
 		return BaseResponse.ok(contractNames);
+	}
+
+	/**
+	 * 종합 등급 수정하는 메서드입니다.
+	 *
+	 * @param contractId 수정할 계약 아이디
+	 * @param gradeDtos 수정할 종합 등급 정보
+	 * @return 성공 여부
+	 */
+	@PutMapping("/contract-manager/total-target/{contractId}")
+	public BaseResponse<Void> updateTotalTarget(@PathVariable("contractId") Long contractId, @RequestBody List<GradeDto> gradeDtos) {
+		contractService.updateTotalTarget(contractId, gradeDtos);
+
+		return BaseResponse.ok();
+	}
+
+	/**
+	 * 변경된 종합 등급 생성 메서드 입니다. (기존 등급 비활성화)
+	 *
+	 * @param contractId 수정할 계약 아이디
+	 * @param gradeDtos 수정할 종합 등급 정보
+	 * @return 성공 여부
+	 */
+	@PostMapping("/contract-manager/total-target/{contractId}")
+	public BaseResponse<Void> newTotalTarget(@PathVariable("contractId") Long contractId, @RequestBody List<GradeDto> gradeDtos) {
+		contractService.newTotalTarget(contractId, gradeDtos);
+
+		return BaseResponse.ok();
 	}
 }
