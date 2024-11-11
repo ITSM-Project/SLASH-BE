@@ -38,6 +38,17 @@ public class EvaluationItemRepositoryCustomImpl implements EvaluationItemReposit
 	}
 
 	@Override
+	public Integer findTotalWeightByEvaluationItemId(Long evaluationItemId) {
+		return queryFactory.select(evaluationItem.weight.sum())
+			.from(evaluationItem)
+			.where(evaluationItem.contract.id.eq(
+				queryFactory.select(evaluationItem.contract.id)
+					.from(evaluationItem)
+					.where(evaluationItem.id.eq(evaluationItemId))
+			)).fetchOne();
+  }
+  
+  @Override
 	public List<EvaluationItem> findUnCalculatedEvaluationItem(Long contractId, LocalDate beforeDate) {
 		return queryFactory
 			.selectFrom(evaluationItem)

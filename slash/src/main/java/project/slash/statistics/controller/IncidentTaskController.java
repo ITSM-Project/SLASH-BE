@@ -12,18 +12,18 @@ import project.slash.statistics.service.StatisticsService;
 
 @RestController
 @RequiredArgsConstructor
-public class ServiceStaticsController {
-
+public class IncidentTaskController {
 	private final StatisticsService statisticsService;
 
 	/**
-	 * @param requestStatisticsDto 통계낼 evaluationId와 Date 요청정보
-	 * @return 저장성공여부
+	 * 지정된 날의 해당 월의 1일부터 지정된 날까지 장애 적기 처리율을 저장하는 메서드 입니다.
+	 *
+	 * @return success:true
 	 */
-	@PostMapping("/contract-manager/service-statistic")
-	public BaseResponse<Void> createServiceStatics(
+	@PostMapping("/common/incident-statistics")
+	public BaseResponse<Void> addIncidentDueOnTimeRate(
 		@RequestBody @Valid RequestStatisticsDto requestStatisticsDto) {
-		statisticsService.createServiceTaskStatics(requestStatisticsDto);
+		statisticsService.getIncidentStatistics(requestStatisticsDto);
 		return BaseResponse.ok();
 	}
 }
