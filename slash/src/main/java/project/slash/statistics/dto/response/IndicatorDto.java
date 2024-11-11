@@ -16,6 +16,7 @@ public class IndicatorDto {
 	private String category;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private LocalDate date;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:MM:SS")
 	private LocalDateTime calculateTime;
 	private boolean isAuto;
 	private String grade;

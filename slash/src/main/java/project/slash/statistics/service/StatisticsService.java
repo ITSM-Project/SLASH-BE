@@ -302,15 +302,18 @@ public class StatisticsService {
 		long incidentTime = 0;
 
 		for (Statistics statistic : statistics) {
-			score += statistic.getScore();
-			requestCount += statistic.getRequestCount() + statistic.getSystemIncidentCount();
-			incidentTime += statistic.getTotalDowntime();
+			if(statistic.getTargetSystem().equals("전체")) {
+				score += statistic.getWeightedScore();
+				requestCount += statistic.getRequestCount() + statistic.getSystemIncidentCount();
+				incidentTime += statistic.getTotalDowntime();
+			}
 		}
 
 		return new IndicatorExtraInfoDto(findTotalTarget(contractId, score), requestCount, incidentTime);
 	}
 
 	public String findTotalTarget(Long contractId, double score) {
+		System.out.println("=======================" + score);
 		return totalTargetRepository.findByContractIdOrderByMinAsc(contractId).stream()
 			.filter(target ->
 				(target.isMinInclusive() ? score >= target.getMin() : score > target.getMin()) &&
