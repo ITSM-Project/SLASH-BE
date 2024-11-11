@@ -6,8 +6,10 @@ import static project.slash.system.model.QSystems.*;
 import static project.slash.systemincident.model.QSystemIncident.*;
 import static project.slash.taskrequest.model.QTaskRequest.*;
 import static project.slash.taskrequest.model.QTaskType.*;
+import static project.slash.contract.model.QEvaluationItem.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -18,13 +20,21 @@ import org.springframework.stereotype.Repository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.core.types.dsl.StringTemplate;
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import project.slash.statistics.dto.MonthlyDataDto;
 import project.slash.statistics.dto.MonthlyServiceStatisticsDto;
 import project.slash.statistics.dto.StatisticsDto;
+import project.slash.statistics.dto.request.RequestStatisticsDto;
+import project.slash.statistics.dto.response.ResponseServiceTaskDto;
+import project.slash.taskrequest.model.constant.RequestStatus;
 
 @Repository
 @RequiredArgsConstructor
@@ -34,6 +44,9 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
+
+	@Autowired
+	private EntityManager entityManager;
 
 	@Override
 	public List<MonthlyDataDto> getMonthlyData() {
@@ -125,5 +138,59 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 			.where(builder)
 			.fetch();
 	}
+
+	@Override
+	public ResponseServiceTaskDto getServiceTaskStatics(RequestStatisticsDto requestStatisticsDto) {
+
+		LocalDateTime startDate = requestStatisticsDto.getDate()
+			.withDayOfMonth(1)
+			.atTime(0, 0, 0);  // 시작일은 endDate의 첫 번째 날
+		LocalDateTime endDate = requestStatisticsDto.getDate().atTime(23, 59, 59);
+
+		// evaluationItemId의 contractId 가져오기
+		Long contractId = new JPAQuery<>(entityManager)
+			.select(evaluationItem.contract.id)
+			.from(evaluationItem)
+			.where(evaluationItem.id.eq(requestStatisticsDto.getEvaluationItemId()))
+			.fetchOne();
+
+		// totalWeight 서브쿼리
+		NumberExpression<Integer> totalWeightSubquery = Expressions.numberTemplate(
+			Integer.class,
+			"({0})",
+			JPAExpressions
+				.select(evaluationItem.weight.sum())  // contract_id에 대한 weight 합계 계산
+				.from(evaluationItem)
+				.where(evaluationItem.contract.id.eq(contractId))
+		);
+
+		//요청 완료 건수 서브 쿼리
+		NumberTemplate<Integer> dueOnTimeCountSubquery = Expressions.numberTemplate(
+			Integer.class,
+			"({0})",
+			JPAExpressions
+				.select(taskRequest.status.count())  // 완료된 요청을 카운트
+				.from(taskRequest)
+				.where(taskRequest.status.eq(RequestStatus.COMPLETED))
+				.where(taskRequest.createTime.between(startDate, endDate))
+				.where(taskRequest.taskType.evaluationItem.id.eq(requestStatisticsDto.getEvaluationItemId()))
+		);
+
+		return queryFactory
+			.select(Projections.constructor(
+				ResponseServiceTaskDto.class,
+				evaluationItem.as("evaluationItem"), // evaluationItemId
+				taskRequest.count().as("taskRequest"), // 전체 요청 수
+				totalWeightSubquery,
+				dueOnTimeCountSubquery
+			))
+			.from(taskRequest)
+			.leftJoin(taskRequest.taskType, taskType)
+			.leftJoin(taskType.evaluationItem, evaluationItem)
+			.where(taskRequest.createTime.between(startDate, endDate))
+			.where(evaluationItem.id.eq(requestStatisticsDto.getEvaluationItemId()))
+			.fetchOne(); // ResponseServiceTaskDto 타입으로 반환
+	}
+
 }
 
