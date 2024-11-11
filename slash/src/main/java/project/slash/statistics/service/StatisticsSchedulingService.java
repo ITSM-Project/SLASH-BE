@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import project.slash.contract.model.Contract;
@@ -25,12 +26,15 @@ public class StatisticsSchedulingService {
 	private final StatisticsService statisticsService;
 	private final EvaluationItemRepository evaluationItemRepository;
 	private final ContractRepository contractRepository;
-
-	private final Map<String, Consumer<RequestStatisticsDto>> statisticsActions = Map.of(
-		"서비스 가동률", statisticsService::createMonthlyStats,
-		"장애 적기처리율", statisticsService::getIncidentStatistics,
-		"서비스요청 적기처리율", statisticsService::createServiceTaskStatistics
-	);
+	private Map<String, Consumer<RequestStatisticsDto>> statisticsActions;
+	@PostConstruct
+	public void init() {
+		statisticsActions = Map.of(
+			"서비스 가동률", statisticsService::createMonthlyStats,
+			"장애 적기처리율", statisticsService::getIncidentStatistics,
+			"서비스요청 적기처리율", statisticsService::createServiceTaskStatistics
+		);
+	}
 
 	@Scheduled(cron = EVERY_LAST_DAY_OF_MONTH)
 	public void calculateStatistics() {
