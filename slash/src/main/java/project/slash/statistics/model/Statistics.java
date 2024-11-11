@@ -20,6 +20,7 @@ import project.slash.contract.model.EvaluationItem;
 import project.slash.statistics.dto.response.ResponseServiceTaskDto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -40,7 +41,7 @@ public class Statistics {
 
 	@CreatedDate
 	@Column(updatable = false)
-	private LocalDate createDate;
+	private LocalDateTime calculateTime;
 
 	@Column(name = "target_system")
 	private String targetSystem;

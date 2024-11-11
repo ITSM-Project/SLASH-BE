@@ -1,6 +1,7 @@
 package project.slash.contract.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.scheduling.annotation.Scheduled;
@@ -20,6 +21,12 @@ public class ContractSchedulingService {
 
 	@Scheduled(cron = EVERY_MIDNIGHT)
 	public void terminateContract() {
+		LocalDateTime now = LocalDateTime.now()
+			.withSecond(0)
+			.withNano(0);
+
+		log.info("계약 만료 스케줄러 실행 {}", now);
+
 		List<Contract> contractsEndingToday = contractRepository.findByEndDate(LocalDate.now());
 		contractsEndingToday.forEach(Contract::terminate);
 	}

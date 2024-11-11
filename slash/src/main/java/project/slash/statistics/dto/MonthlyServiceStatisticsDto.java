@@ -1,6 +1,7 @@
 package project.slash.statistics.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -14,6 +15,7 @@ import lombok.Getter;
 public class MonthlyServiceStatisticsDto {
 	@DateTimeFormat(pattern = "yyyy-MM")
 	private LocalDate date;
+	private LocalDateTime calculateTime;
 	private String serviceType;
 	private String targetEquipment;
 	private String grade;
