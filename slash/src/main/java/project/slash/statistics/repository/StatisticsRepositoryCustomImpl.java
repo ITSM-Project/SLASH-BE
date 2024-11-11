@@ -1,12 +1,12 @@
 package project.slash.statistics.repository;
 
+import static project.slash.contract.model.QEvaluationItem.*;
 import static project.slash.statistics.model.QStatistics.*;
 import static project.slash.system.model.QEquipment.*;
 import static project.slash.system.model.QSystems.*;
 import static project.slash.systemincident.model.QSystemIncident.*;
 import static project.slash.taskrequest.model.QTaskRequest.*;
 import static project.slash.taskrequest.model.QTaskType.*;
-import static project.slash.contract.model.QEvaluationItem.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

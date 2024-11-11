@@ -45,7 +45,6 @@ import project.slash.statistics.repository.StatisticsRepository;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class StatisticsService {
 	private static final int MINIMUM_STATISTICS_REQUIRED = 3;
 
