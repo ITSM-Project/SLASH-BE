@@ -24,6 +24,7 @@ public class StatisticsMapper {
 			statistics.getServiceType(),
 			statistics.isAuto(),
 			statistics.getDate(),
+			statistics.getCalculateTime(),
 			statistics.isApprovalStatus()
 		);
 	}
