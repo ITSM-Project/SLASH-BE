@@ -22,8 +22,8 @@ public class IndicatorDto {
 
 	public static IndicatorDto of(Statistics statistics) {
 		return new IndicatorDto(
-			statistics.getEvaluationItems().getId(),
-			statistics.getEvaluationItems().getCategory(),
+			statistics.getEvaluationItem().getId(),
+			statistics.getEvaluationItem().getCategory(),
 			statistics.getDate(),
 			statistics.isAuto(),
 			statistics.getGrade(),
