@@ -314,7 +314,6 @@ public class StatisticsService {
 	}
 
 	public String findTotalTarget(Long contractId, double score) {
-		System.out.println("=======================" + score);
 		return totalTargetRepository.findByContractIdOrderByMinAsc(contractId).stream()
 			.filter(target ->
 				(target.isMinInclusive() ? score >= target.getMin() : score > target.getMin()) &&
