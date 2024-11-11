@@ -137,4 +137,12 @@ public class EvaluationItemService {
 
 		return evaluationItemMapper.toEvaluationItemCategoryDtos(evaluationItems);
 	}
+
+	@Transactional
+	public void deleteEvaluationItem(Long evaluationItemId) {
+		EvaluationItem evaluationItem = evaluationItemRepository.findById(evaluationItemId)
+			.orElseThrow(() -> new BusinessException(NOT_FOUND_ITEMS));
+
+		evaluationItem.deactivate();
+	}
 }

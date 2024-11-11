@@ -2,6 +2,7 @@ package project.slash.contract.controller;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -102,5 +103,18 @@ public class EvaluationItemController {
 			contractId);
 
 		return BaseResponse.ok(evaluationItemCategories);
+	}
+
+	/**
+	 * 서비스 평가 항목 삭제 메서드입니다.
+	 *
+	 * @param evaluationItemId 삭제할 서비스 평가 항목 아이디
+	 * @return 성공 여부
+	 */
+	@DeleteMapping("/contract-manager/evaluation-item/{id}")
+	public BaseResponse<Void> deleteEvaluationItem(@PathVariable("id") Long evaluationItemId) {
+		evaluationItemService.deleteEvaluationItem(evaluationItemId);
+
+		return BaseResponse.ok();
 	}
 }
