@@ -37,7 +37,7 @@ public class StatisticsSchedulingService {
 			for (EvaluationItem evaluationItem : unCalculatedEvaluationItem) {
 				RequestStatisticsDto requestStatisticsDto = new RequestStatisticsDto(evaluationItem.getId(), now);
 
-				statisticsService.createServiceTaskStatics(requestStatisticsDto);	//서비스 요청 적기처리율
+				statisticsService.createServiceTaskStatistics(requestStatisticsDto);	//서비스 요청 적기처리율
 			}
 		}
 	}

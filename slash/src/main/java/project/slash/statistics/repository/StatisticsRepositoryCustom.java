@@ -1,5 +1,6 @@
 package project.slash.statistics.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import project.slash.statistics.dto.MonthlyDataDto;

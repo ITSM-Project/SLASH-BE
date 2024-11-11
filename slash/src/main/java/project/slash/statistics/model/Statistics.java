@@ -17,7 +17,6 @@ import project.slash.contract.model.EvaluationItem;
 import project.slash.statistics.dto.IncidentInfoDto;
 import lombok.Getter;
 
-import project.slash.contract.model.EvaluationItem;
 import project.slash.statistics.dto.response.ResponseServiceTaskDto;
 
 import java.time.LocalDate;
@@ -102,7 +101,7 @@ public class Statistics {
 			.systemIncidentCount(incidentInfoDto.getTotalIncidentCount())
 			.dueOnTimeCount(incidentInfoDto.getTotalIncidentCount() - incidentInfoDto.getTotalOverdueCount())
 			.estimate(estimate)
-			.evaluationItems(evaluationItem)
+			.evaluationItem(evaluationItem)
 			.isAuto(false)
 			.build();
   }

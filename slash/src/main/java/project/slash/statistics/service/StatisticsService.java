@@ -30,7 +30,6 @@ import project.slash.contract.mapper.EvaluationItemMapper;
 import project.slash.contract.model.EvaluationItem;
 import project.slash.contract.model.TotalTarget;
 import project.slash.contract.repository.TotalTargetRepository;
-import project.slash.contract.repository.evaluationItem.EvaluationItemRepository;
 import project.slash.statistics.dto.request.EditStatisticsDto;
 import project.slash.statistics.dto.response.CalculatedStatisticsDto;
 import project.slash.statistics.dto.response.IndicatorExtraInfoDto;
@@ -156,7 +155,7 @@ public class StatisticsService {
 		// 장애 건수와 적기 처리 건수 계산
 		IncidentInfoDto incidentInfoDto = taskRequestRepository.getIncidentCount(
 			requestStatisticsDto.getEvaluationItemId(),
-			requestStatisticsDto.getEndDate());
+			requestStatisticsDto.getDate());
 		long incidentCount = incidentInfoDto.getTotalOverdueCount();
 
 		// 점수와 등급 리스트
@@ -173,7 +172,7 @@ public class StatisticsService {
 
 		// 저장
 		statisticsRepository.save(
-			Statistics.fromIncidentInfo(incidentInfoDto, requestStatisticsDto.getEndDate(), gradeScoreDto.getScore(),
+			Statistics.fromIncidentInfo(incidentInfoDto, requestStatisticsDto.getDate(), gradeScoreDto.getScore(),
 				weightScore, gradeScoreDto.getGrade(), gradeScoreDto.getScore(),
 				evaluationItemRepository.getReferenceById(requestStatisticsDto.getEvaluationItemId())));
 	}
