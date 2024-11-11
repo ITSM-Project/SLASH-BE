@@ -8,12 +8,22 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import lombok.Getter;
+
 import project.slash.contract.model.EvaluationItem;
+import project.slash.statistics.dto.response.ResponseServiceTaskDto;
 
 import java.time.LocalDate;
 
 @Entity
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
 @Getter
 public class Statistics {
 	@Id
@@ -63,7 +73,33 @@ public class Statistics {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "evaluation_item_id")
-	private EvaluationItem evaluationItem;
+
+	private EvaluationItem evaluationItems;
+
+	@Column(name = "is_auto")
+	private boolean isAuto;
+
+	public static Statistics fromResponseServiceTask(ResponseServiceTaskDto responseServiceTaskDto, LocalDate endDate,
+		double score, double weightedScore, String grade) {
+		return Statistics.builder()
+			.date(endDate)
+			.serviceType(responseServiceTaskDto.getEvaluationItem().getCategory())
+			.targetSystem("전체")
+			.targetEquipment("전체")
+			.grade(grade)
+			.score(score)
+			.period(responseServiceTaskDto.getEvaluationItem().getPeriod())
+			.weightedScore(weightedScore)
+			.requestCount(responseServiceTaskDto.getTaskRequest())
+			.approvalStatus(false)
+			.dueOnTimeCount(responseServiceTaskDto.getDueOnTimeCount())
+			.estimate(score)
+			.evaluationItems(responseServiceTaskDto.getEvaluationItem())
+			.totalDowntime(0)
+			.systemIncidentCount(0)
+			.isAuto(false)
+			.build();
+  }
 
 	public void approve() {
 		this.approvalStatus = true;
