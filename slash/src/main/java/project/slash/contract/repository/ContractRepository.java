@@ -14,4 +14,5 @@ public interface ContractRepository extends JpaRepository<Contract, Long> , Cont
 	Optional<Contract> findByIsTerminateFalse();
 
 	List<Contract> findByEndDate(LocalDate now);
+
 }

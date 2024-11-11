@@ -69,7 +69,7 @@ public class Statistics {
 	@Column(name = "system_incident_count")
 	private long systemIncidentCount;
 
-	private Boolean isAuto;
+	private boolean isAuto;
   
   @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "evaluation_item_id")
@@ -92,7 +92,7 @@ public class Statistics {
 			.systemIncidentCount(incidentInfoDto.getTotalIncidentCount())
 			.dueOnTimeCount(incidentInfoDto.getTotalIncidentCount() - incidentInfoDto.getTotalOverdueCount())
 			.estimate(estimate)
-			.evaluationItems(evaluationItem)
+			.evaluationItem(evaluationItem)
 			.isAuto(false)
 			.build();
   }

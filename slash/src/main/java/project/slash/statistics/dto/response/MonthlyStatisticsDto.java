@@ -1,17 +1,19 @@
-package project.slash.statistics.dto;
+package project.slash.statistics.dto.response;
 
 import java.time.LocalDate;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
-@Builder
-public class MonthlyServiceStatisticsDto {
+@NoArgsConstructor
+@Data
+public class MonthlyStatisticsDto {
 	@DateTimeFormat(pattern = "yyyy-MM")
 	private LocalDate date;
 	private String serviceType;
@@ -28,4 +30,5 @@ public class MonthlyServiceStatisticsDto {
 	private double estimate;
 	private long systemIncidentCount;
 	private long dueOnTimeCount;
+	private Boolean isAuto;
 }
