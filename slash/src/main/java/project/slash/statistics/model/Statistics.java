@@ -8,11 +8,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import project.slash.contract.model.EvaluationItem;
+import project.slash.statistics.dto.IncidentInfoDto;
 import lombok.Getter;
 
 import project.slash.contract.model.EvaluationItem;
@@ -68,12 +69,33 @@ public class Statistics {
 	@Column(name = "system_incident_count")
 	private long systemIncidentCount;
 
-	@Column(name = "is_auto")
-	private boolean isAuto;
-
-	@ManyToOne(fetch = FetchType.LAZY)
+	private Boolean isAuto;
+  
+  @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "evaluation_item_id")
 	private EvaluationItem evaluationItem;
+
+	public static Statistics fromIncidentInfo(IncidentInfoDto incidentInfoDto, LocalDate date, double score,
+		double weightedScore, String grade, double estimate, EvaluationItem evaluationItem) {
+		return Statistics.builder()
+			.targetSystem("전체")
+			.targetEquipment("전체")
+			.serviceType("장애 적기처리율")
+			.date(date)
+			.approvalStatus(false)
+			.grade(grade)
+			.score(score)
+			.period("월별")
+			.totalDowntime(0)
+			.weightedScore(weightedScore)
+			.requestCount(incidentInfoDto.getTotalIncidentCount())
+			.systemIncidentCount(incidentInfoDto.getTotalIncidentCount())
+			.dueOnTimeCount(incidentInfoDto.getTotalIncidentCount() - incidentInfoDto.getTotalOverdueCount())
+			.estimate(estimate)
+			.evaluationItems(evaluationItem)
+			.isAuto(false)
+			.build();
+  }
 
 	public static Statistics fromResponseServiceTask(ResponseServiceTaskDto responseServiceTaskDto, LocalDate endDate,
 		double score, double weightedScore, String grade) {
