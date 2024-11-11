@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import project.slash.contract.model.Contract;
-import project.slash.contract.repository.ContractRepository;
+import project.slash.contract.repository.contract.ContractRepository;
 
 @Slf4j
 @Service

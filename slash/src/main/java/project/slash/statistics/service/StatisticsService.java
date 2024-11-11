@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 import project.slash.common.exception.BusinessException;
 import project.slash.contract.dto.ContractDataDto;
 import project.slash.contract.model.ServiceTarget;
-import project.slash.contract.repository.ContractRepository;
+import project.slash.contract.repository.contract.ContractRepository;
 import project.slash.contract.repository.ServiceTargetRepository;
 import project.slash.contract.repository.evaluationItem.EvaluationItemRepository;
 import project.slash.statistics.dto.GradeScoreDto;

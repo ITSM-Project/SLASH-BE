@@ -1,4 +1,4 @@
-package project.slash.contract.repository;
+package project.slash.contract.repository.contract;
 
 import static project.slash.contract.model.QContract.*;
 import static project.slash.contract.model.QEvaluationItem.*;
@@ -23,28 +23,6 @@ public class ContractRepositoryCustomImpl implements ContractRepositoryCustom {
 
 	public ContractRepositoryCustomImpl(JPAQueryFactory queryFactory) {
 		this.queryFactory = queryFactory;
-	}
-	@Override
-	public Optional<ContractDto> findContractById(Long contractId) {
-		return queryFactory
-			.from(contract)
-			.leftJoin(totalTarget)
-			.on(totalTarget.contract.id.eq(contract.id))
-			.where(contract.id.eq(contractId))
-			.transform(GroupBy.groupBy(contract.id)
-				.list(Projections.constructor(ContractDto.class,
-					contract.contractName,
-					contract.startDate,
-					contract.endDate,
-					contract.isTerminate,
-					GroupBy.list(Projections.fields(GradeDto.class,
-						totalTarget.grade,
-						totalTarget.min,
-						totalTarget.max,
-						totalTarget.minInclusive,
-						totalTarget.maxInclusive)))))
-			.stream()
-			.findFirst();
 	}
 
 	// 카테고리별 지표 찾기

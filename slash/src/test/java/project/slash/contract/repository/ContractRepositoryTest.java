@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import project.slash.contract.model.Contract;
+import project.slash.contract.repository.contract.ContractRepository;
 
 @SpringBootTest
 @ActiveProfiles("test")

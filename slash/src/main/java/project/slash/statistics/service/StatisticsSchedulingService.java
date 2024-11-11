@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import project.slash.contract.model.Contract;
 import project.slash.contract.model.EvaluationItem;
-import project.slash.contract.repository.ContractRepository;
+import project.slash.contract.repository.contract.ContractRepository;
 import project.slash.contract.repository.evaluationItem.EvaluationItemRepository;
 import project.slash.statistics.dto.request.RequestStatisticsDto;
 import project.slash.statistics.repository.StatisticsRepository;
@@ -38,6 +38,7 @@ public class StatisticsSchedulingService {
 				RequestStatisticsDto requestStatisticsDto = new RequestStatisticsDto(evaluationItem.getId(), now);
 
 				statisticsService.createServiceTaskStatistics(requestStatisticsDto);	//서비스 요청 적기처리율
+				statisticsService.getIncidentStatistics(requestStatisticsDto);
 			}
 		}
 	}

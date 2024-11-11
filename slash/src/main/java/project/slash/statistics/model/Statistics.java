@@ -78,9 +78,10 @@ public class Statistics {
 	@Column(name = "system_incident_count")
 	private long systemIncidentCount;
 
-	private Boolean isAuto;
-  
-  @ManyToOne(fetch = FetchType.LAZY)
+	@Column(name = "is_auto")
+	private boolean isAuto;
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "evaluation_item_id")
 	private EvaluationItem evaluationItem;
 
