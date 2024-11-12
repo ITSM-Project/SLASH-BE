@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <style>
+        @font-face {
+            font-family: 'NanumGothic';
+        }
+
+        * {
+            font-family: 'NanumGothic', sans-serif;
+        }
+
+        body {
+            width: 100%;
+            margin: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            table-layout: fixed;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            color: #333;
+            font-weight: bold;
+            padding: 12px 8px;
+            border: 1px solid #dee2e6;
+            font-size: 12px;
+            word-break: break-word;
+            white-space: normal;
+            vertical-align: middle;
+            height: auto;
+            line-height: 1.2;
+            text-align: center; /* 중앙 정렬 추가 */
+        }
+
+        td {
+            padding: 10px 8px;
+            border: 1px solid #dee2e6;
+            text-align: center; /* 중앙 정렬 추가 */
+            font-size: 12px;
+            word-break: break-word;
+            white-space: normal;
+            vertical-align: middle;
+            height: auto;
+            min-height: 30px;
+            line-height: 1.2;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* 평가기준 테이블 스타일 */
+        .criteria-info {
+            margin-bottom: 30px;
+        }
+
+        .criteria-table {
+            margin-bottom: 15px;
+        }
+
+        .criteria-info th {
+            background-color: #f0f0f0;
+            text-align: center; /* 중앙 정렬 추가 */
+        }
+
+        .criteria-info td {
+            text-align: center; /* 중앙 정렬 추가 */
+        }
+
+        .service-level {
+            margin-top: 20px;
+        }
+
+        .service-level-table th,
+        .service-level-table td {
+            text-align: center; /* 중앙 정렬 추가 */
+        }
+
+        /* 테이블 헤더 (thead)와 데이터 셀 모두에 적용되는 공통 스타일 */
+        thead th, tbody td {
+            word-break: break-all;
+            white-space: normal;
+            text-align: center; /* 중앙 정렬 추가 */
+            padding: 8px 6px;
+        }
+
+        /* 산출식만 왼쪽 정렬 유지하고 싶다면 */
+        .criteria-table td[colspan="4"] {
+            text-align: left;
+        }
+
+        /* 필요한 경우 특정 열의 너비 조정 */
+        table th:nth-child(1),
+        table td:nth-child(1) {
+            width: 12%;
+        }
+        table th:nth-child(2),
+        table td:nth-child(2) {
+            width: 10%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="title">지표 측정 결과</div>
+    <div class="subtitle" th:text="'평가 항목: ' + ${header.serviceType}"></div>
+    <div class="subtitle" th:text="'측정 시간: ' + ${#temporals.format(header.calculateTime, 'yyyy-MM-dd HH:mm')}"></div>
+
+    <!-- 평가 기준 정보 -->
+    <div class="criteria-info">
+        <div class="title">서비스 평가 항목</div>
+        <table class="criteria-table">
+            <tr>
+                <th width="15%">카테고리</th>
+                <th width="10%">가중치</th>
+                <th width="10%">주기</th>
+                <th width="50%">목적</th>
+                <th width="15%">지동 계산 여부</th>
+            </tr>
+            <tr>
+                <td th:text="${evaluationItem.category}">카테고리</td>
+                <td th:text="${evaluationItem.weight}">가중치</td>
+                <td th:text="${evaluationItem.period}">주기</td>
+                <td th:text="${evaluationItem.purpose}">목적</td>
+                <td th:text="${evaluationItem.isAuto}">자동 계산 여부</td>
+            </tr>
+            <tr>
+                <th width="20%"> 측정 단위</th>
+                <th colspan="4" width="85%">산출식</th>
+            </tr>
+            <tr>
+                <td th:text="${evaluationItem.unit}">측정 단위</td>
+                <td th:text="${evaluationItem.formula}" colspan="4" width="85%">산출식</td>
+            </tr>
+        </table>
+
+        <!-- 서비스 등급 기준 -->
+        <div class="service-level">
+            <div class="title">서비스 목표</div>
+            <table class="service-level-table">
+                <tr>
+                    <th width="20%">등급</th>
+                    <th width="40%">최소값</th>
+                    <th width="40%">최대값</th>
+                </tr>
+                <tr th:each="target : ${evaluationItem.serviceTargets}">
+                    <td th:text="${target.grade}">A</td>
+                    <td th:text="${target.min + ' ' + (target.minInclusive ? '이상' : '초과')}">0 이상</td>
+                    <td th:text="${target.max + ' ' + (target.maxInclusive ? '이하' : '미만')}">0 이하</td>
+                </tr>
+            </table>
+        </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>측정 장비</th>
+            <th>측정 날짜</th>
+            <th>주기</th>
+            <th>장애 건수</th>
+            <th>장애 시간</th>
+            <th>요청 건수</th>
+            <th>적기 처리 건수</th>
+            <th>측정치</th>
+            <th>점수</th>
+            <th>가중치 적용 점수</th>
+            <th>등급</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="stat : ${statistics}">
+            <td th:text="${stat.targetSystem}"></td>
+            <td th:text="${#temporals.format(stat.calculateTime, 'yyyy-MM-dd')}"></td>
+            <td th:text="${stat.period}"></td>
+            <td th:text="${stat.systemIncidentCount}"></td>
+            <td th:text="${stat.totalDowntime}"></td>
+            <td th:text="${stat.requestCount}"></td>
+            <td th:text="${stat.dueOnTimeCount}"></td>
+            <td th:text="${#numbers.formatDecimal(stat.estimate, 1, 2)}"></td>
+            <td th:text="${#numbers.formatDecimal(stat.score, 1, 2)}"></td>
+            <td th:text="${#numbers.formatDecimal(stat.weightedScore, 1, 2)}"></td>
+            <td th:text="${stat.grade}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
