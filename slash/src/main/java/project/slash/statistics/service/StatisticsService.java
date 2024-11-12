@@ -194,7 +194,6 @@ public class StatisticsService {
 
 	}
 
-
 	@Transactional
 	public void getIncidentStatistics(RequestStatisticsDto requestStatisticsDto) {
 
@@ -283,19 +282,22 @@ public class StatisticsService {
   }
 
 	public MonthlyIndicatorsDto getMonthlyIndicators(Long contractId, YearMonth date) {
+		String targetSystem = "전체";
 		LocalDate startDate = date.atDay(1);
 		LocalDate endDate = date.atEndOfMonth();
 
-		List<Statistics> statistics = statisticsRepository.findByDateBetweenAndEvaluationItemContractIdAndApprovalStatusTrue(
-			startDate, endDate, contractId);
+		List<Statistics> statistics = statisticsRepository
+			.findByDateBetweenAndEvaluationItemContractIdAndApprovalStatusTrueAndTargetSystem(startDate, endDate,
+				contractId, targetSystem);
 
-		if(statistics.size() < MINIMUM_STATISTICS_REQUIRED) {
+		if (statistics.size() < MINIMUM_STATISTICS_REQUIRED) {
 			return new MonthlyIndicatorsDto();
 		}
 
 		return new MonthlyIndicatorsDto(getIndicatorExtraInfo(contractId, statistics),
-			getMonthlyIndicators(statistics));
+			statisticsMapper.toMonthlyIndicators(statistics));
 	}
+
 
 	private IndicatorExtraInfoDto getIndicatorExtraInfo(Long contractId, List<Statistics> statistics) {
 		double score = 0;
@@ -303,11 +305,9 @@ public class StatisticsService {
 		long incidentTime = 0;
 
 		for (Statistics statistic : statistics) {
-			if(statistic.getTargetSystem().equals("전체")) {
-				score += statistic.getWeightedScore();
-				requestCount += statistic.getRequestCount() + statistic.getSystemIncidentCount();
-				incidentTime += statistic.getTotalDowntime();
-			}
+			score += statistic.getWeightedScore();
+			requestCount += statistic.getRequestCount() + statistic.getSystemIncidentCount();
+			incidentTime += statistic.getTotalDowntime();
 		}
 
 		return new IndicatorExtraInfoDto(findTotalTarget(contractId, score), requestCount, incidentTime);
@@ -324,13 +324,6 @@ public class StatisticsService {
 			.orElse(null);
 	}
 
-	private static List<IndicatorDto> getMonthlyIndicators(List<Statistics> statistics) {
-		return statistics.stream()
-			.filter(s -> s.getTargetSystem().equals("전체"))
-			.map(IndicatorDto::of)
-			.toList();
-	}
-
 	public StatisticsStatusDto getStatisticsStatus(Long contractId, LocalDate endDate) {
 		LocalDate startDate = endDate.withDayOfMonth(1);
 
@@ -339,7 +332,7 @@ public class StatisticsService {
 
 		List<Statistics> statistics = statisticsRepository.findByDateBetweenAndEvaluationItemContractId(startDate, endDate, contractId);
 		List<CalculatedStatisticsDto> calculatedStatistics = statistics.stream()	//계산된 지표중 전체 통계만 조회
-			.filter(statistic -> "전체".equals(statistic.getTargetSystem()))
+			.filter(statistic -> statistic.getTargetSystem().equals("전체"))
 			.map(statisticsMapper::toCalculatedStatistics)
 			.toList();
 

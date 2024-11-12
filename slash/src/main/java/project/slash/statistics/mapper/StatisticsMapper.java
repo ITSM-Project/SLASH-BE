@@ -5,18 +5,12 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import project.slash.statistics.dto.response.CalculatedStatisticsDto;
+import project.slash.statistics.dto.response.IndicatorDto;
 import project.slash.statistics.dto.response.MonthlyServiceStatisticsDto;
 import project.slash.statistics.model.Statistics;
 
 @Component
 public class StatisticsMapper {
-
-	public List<CalculatedStatisticsDto> toCalculatedStatisticsList(List<Statistics> statistics) {
-		return statistics.stream()
-			.map(this::toCalculatedStatistics)
-			.toList();
-	}
-
 	public CalculatedStatisticsDto toCalculatedStatistics(Statistics statistics) {
 		return new CalculatedStatisticsDto(
 			statistics.getId(),
@@ -53,5 +47,11 @@ public class StatisticsMapper {
 			.systemIncidentCount(statistics.getSystemIncidentCount())
 			.dueOnTimeCount(statistics.getDueOnTimeCount())
 			.build();
+	}
+
+	public List<IndicatorDto> toMonthlyIndicators(List<Statistics> statistics) {
+		return statistics.stream()
+			.map(IndicatorDto::of)
+			.toList();
 	}
 }
