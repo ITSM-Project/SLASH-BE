@@ -18,6 +18,7 @@ import project.slash.contract.dto.response.ContractDetailDto;
 import project.slash.contract.dto.response.ContractNameDto;
 import project.slash.contract.dto.response.EvaluationItemDetailDto;
 import project.slash.contract.mapper.ContractMapper;
+import project.slash.contract.mapper.EvaluationItemMapper;
 import project.slash.contract.mapper.TotalTargetMapper;
 import project.slash.contract.model.Contract;
 import project.slash.contract.model.TotalTarget;
@@ -39,6 +40,7 @@ public class ContractService {
 	private final ContractMapper contractMapper;
 	private final TotalTargetMapper totalTargetMapper;
 	private final TaskTypeMapper taskTypeMapper;
+	private final EvaluationItemMapper evaluationItemMapper;
 
 	@Transactional
 	public Long createContract(ContractRequestDto contractRequestDto) {
@@ -53,7 +55,7 @@ public class ContractService {
 
 		List<EvaluationItemDetailDto> evaluationItemDetails = findEvaluationItemDetails(contractId);
 
-		return ContractDetailDto.of(contractInfo.contract(), contractInfo.totalTargets(), evaluationItemDetails);
+		return contractMapper.toContractDetailDto(contractInfo.contract(), contractInfo.totalTargets(), evaluationItemDetails);
 	}
 
 	private List<EvaluationItemDetailDto> findEvaluationItemDetails(Long contractId) {
@@ -63,7 +65,7 @@ public class ContractService {
 				List<TaskTypeDto> taskTypes = taskTypeMapper.toTaskTypeDtoList(
 					taskTypeRepository.findTaskTypesByEvaluationItemId(evaluationItem.getEvaluationItemId()));
 
-				return EvaluationItemDetailDto.createAll(evaluationItem, taskTypes);
+				return evaluationItemMapper.toEvaluationItemDetailDto(evaluationItem, taskTypes);
 			})
 			.toList();
 	}

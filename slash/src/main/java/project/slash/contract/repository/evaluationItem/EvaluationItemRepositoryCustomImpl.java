@@ -51,15 +51,12 @@ public class EvaluationItemRepositoryCustomImpl implements EvaluationItemReposit
   
   @Override
 	public List<EvaluationItem> findUnCalculatedEvaluationItem(Long contractId, LocalDate endDate) {
-	  LocalDate startDate = endDate.withDayOfMonth(1);
-
 	  return queryFactory
 		  .selectFrom(evaluationItem)
 		  .where(evaluationItem.id.notIn(
 			  JPAExpressions.select(statistics.evaluationItem.id)
 				  .from(statistics)
-				  .where(statistics.calculateTime.between(startDate.atStartOfDay(), endDate.atTime(23, 59, 59))
-				  )
+				  .where(statistics.calculateTime.eq(endDate))
 		  ))
 		  .fetch();
 	}

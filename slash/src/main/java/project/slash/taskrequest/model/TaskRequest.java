@@ -62,18 +62,6 @@ public class TaskRequest extends BaseTimeEntity {
 	@JoinColumn(name = "equipment_id")
 	private Equipment equipment;
 
-	public static TaskRequest from(TaskRequestDto taskRequestDto, TaskType taskType, User requester,
-		Equipment equipment) {
-		return TaskRequest.builder()
-			.title(taskRequestDto.getTitle())
-			.content(taskRequestDto.getContent())
-			.status(RequestStatus.REGISTERED)
-			.taskType(taskType)
-			.requester(requester)
-			.equipment(equipment)
-			.build();
-	}
-
 	public boolean isDeletable() {
 		return status == RequestStatus.REGISTERED;
 	}

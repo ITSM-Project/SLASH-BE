@@ -20,7 +20,6 @@ public class UserController {
 	 *
 	 * @return 토큰 정보
 	 */
-
 	@PostMapping("/login")
 	public BaseResponse<JwtTokenDto> login(@RequestBody LoginRequestDto userLoginRequestDto) {
 		String userId = userLoginRequestDto.getId();

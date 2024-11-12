@@ -16,7 +16,6 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 
-	// 테스트용 데이터 자동 생성
 	@PostConstruct
 	public void initCustomsData() {
 		if (userRepository.findAll().isEmpty()) {

@@ -28,6 +28,7 @@ import project.slash.taskrequest.dto.response.StatusCountDto;
 import project.slash.taskrequest.dto.response.SystemCountDto;
 import project.slash.taskrequest.dto.response.TaskRequestOfManagerDto;
 import project.slash.taskrequest.dto.response.TaskTypeCountDto;
+import project.slash.taskrequest.mapper.TaskRequestMapper;
 import project.slash.taskrequest.model.TaskRequest;
 import project.slash.taskrequest.model.TaskType;
 import project.slash.taskrequest.model.constant.RequestStatus;
@@ -46,13 +47,15 @@ public class TaskRequestService {
 	private final UserRepository userRepository;
 	private final SystemIncidentRepository systemIncidentRepository;
 
+	private final TaskRequestMapper taskRequestMapper;
+
 	@Transactional
 	public void createRequest(TaskRequestDto taskRequestDto, String userId) {    //요청 생성
 		TaskType taskType = findTaskType(taskRequestDto.getTaskDetail(), taskRequestDto.isServiceRelevance(), taskRequestDto.getContractId());
 		Equipment equipment = findEquipment(taskRequestDto.getEquipmentName());
 
 		User requester = userRepository.findById(userId).orElseThrow(() -> new BusinessException(NOT_FOUND_USER));
-		TaskRequest taskRequest = TaskRequest.from(taskRequestDto, taskType, requester, equipment);
+		TaskRequest taskRequest = taskRequestMapper.toEntity(taskRequestDto, taskType, requester, equipment);
 
 		taskRequestRepository.save(taskRequest);
 	}
@@ -70,7 +73,7 @@ public class TaskRequestService {
 	public RequestDetailDto showRequestDetail(Long requestId) {	//요청 조회
 		TaskRequest taskRequest = findRequest(requestId);
 
-		return RequestDetailDto.from(taskRequest);
+		return taskRequestMapper.toRequestDetailDto(taskRequest);
 	}
 
 	@Transactional
@@ -182,6 +185,5 @@ public class TaskRequestService {
 			SystemIncident systemIncident = SystemIncident.create(duration, taskRequest);
 			systemIncidentRepository.save(systemIncident);
 		}
-
 	}
 }

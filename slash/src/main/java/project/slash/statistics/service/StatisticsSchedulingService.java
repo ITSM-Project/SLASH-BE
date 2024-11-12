@@ -26,6 +26,7 @@ public class StatisticsSchedulingService {
 	private final EvaluationItemRepository evaluationItemRepository;
 	private final ContractRepository contractRepository;
 	private Map<String, Consumer<RequestStatisticsDto>> statisticsActions;
+
 	@PostConstruct
 	public void init() {
 		statisticsActions = Map.of(

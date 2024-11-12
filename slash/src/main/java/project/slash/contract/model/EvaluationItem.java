@@ -58,19 +58,6 @@ public class EvaluationItem {
 	@JoinColumn(name = "contract_id")
 	private Contract contract;
 
-	public static EvaluationItem from(CreateEvaluationItemDto createEvaluationItemDto, Contract contract) {
-		return EvaluationItem.builder()
-			.contract(contract)
-			.category(createEvaluationItemDto.getCategory())
-			.weight(createEvaluationItemDto.getWeight())
-			.period(createEvaluationItemDto.getPeriod())
-			.purpose(createEvaluationItemDto.getPurpose())
-			.formula(createEvaluationItemDto.getFormula())
-			.unit(createEvaluationItemDto.getUnit())
-			.isActive(true)
-			.build();
-	}
-
 	public void update(CreateEvaluationItemDto newEvaluationItem) {
 		this.category = newEvaluationItem.getCategory();
 		this.weight = newEvaluationItem.getWeight();

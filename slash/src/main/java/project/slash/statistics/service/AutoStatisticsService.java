@@ -26,6 +26,7 @@ import project.slash.statistics.dto.response.MonthlyDataDto;
 import project.slash.statistics.dto.response.MonthlyStatisticsDto;
 import project.slash.statistics.dto.response.ResponseServiceTaskDto;
 import project.slash.statistics.dto.response.ResponseStatisticsDto;
+import project.slash.statistics.mapper.StatisticsMapper;
 import project.slash.statistics.model.Statistics;
 import project.slash.statistics.repository.StatisticsRepository;
 import project.slash.taskrequest.repository.TaskRequestRepository;
@@ -40,6 +41,8 @@ public class AutoStatisticsService {
 	private final TaskRequestRepository taskRequestRepository;
 	private final StatisticsRepository statisticsRepository;
 	private final EvaluationItemRepository evaluationItemRepository;
+
+	private final StatisticsMapper statisticsMapper;
 
 	@Transactional
 	public void createMonthlyStats(RequestStatisticsDto requestStatisticsDto) {
@@ -197,7 +200,7 @@ public class AutoStatisticsService {
 
 		// 저장
 		statisticsRepository.save(
-			Statistics.fromIncidentInfo(incidentInfoDto, requestStatisticsDto.getDate(), gradeScoreDto.getScore(),
+			statisticsMapper.toEntityFromIncidentInfo(incidentInfoDto, requestStatisticsDto.getDate(), gradeScoreDto.getScore(),
 				weightScore, gradeScoreDto.getGrade(), gradeScoreDto.getScore(),
 				evaluationItemRepository.getReferenceById(requestStatisticsDto.getEvaluationItemId())));
 	}
@@ -228,7 +231,7 @@ public class AutoStatisticsService {
 			score / responseServiceTaskDto.getTotalWeight() * responseServiceTaskDto.getEvaluationItem().getWeight()
 				* 100) / 100.0;
 		String grade = getGrade(responseServiceTaskDto.getEvaluationItem().getId(), score);
-		Statistics statistics = Statistics.fromResponseServiceTask(responseServiceTaskDto,
+		Statistics statistics = statisticsMapper.toEntityFromResponseServiceTask(responseServiceTaskDto,
 			requestStatisticsDto.getDate(), score, weightScore, grade);
 		statisticsRepository.save(statistics);
 	}
