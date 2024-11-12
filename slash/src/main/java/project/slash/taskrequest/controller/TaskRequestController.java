@@ -147,7 +147,7 @@ public class TaskRequestController {
 
 	@PatchMapping("/request-manager/request/complete")
 	public BaseResponse<Void> completeRequest(@RequestParam("requestId") long requestId,
-		@Login String managerId) {
+		@RequestParam("managerId") String managerId) {
 		taskRequestService.completeRequest(requestId, managerId);
 		return BaseResponse.ok();
 	}
