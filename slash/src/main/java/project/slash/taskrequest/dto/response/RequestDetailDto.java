@@ -27,6 +27,7 @@ public class RequestDetailDto {
 	private String content;
 	private String requester;
 	private String manager;
+	private String managerId;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime requestTime;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
@@ -45,6 +46,7 @@ public class RequestDetailDto {
 			.content(taskRequest.getContent())
 			.requester(taskRequest.getRequester().getName())
 			.manager(taskRequest.getManager() != null ? taskRequest.getManager().getName() : "미할당")
+			.managerId(taskRequest.getManager().getId())
 			.requestTime(taskRequest.getCreateTime())
 			.endTime(taskRequest.getUpdateTime())
 			.build();
