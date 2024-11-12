@@ -90,7 +90,7 @@ public class StatisticsController {
 	 */
 	@GetMapping("/common/statistics/evaluation-item/{id}")
 	public BaseResponse<List<MonthlyServiceStatisticsDto>> getStatistics(@PathVariable("id") Long evaluationItemId,
-		@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime calculateTime) {
+		@RequestParam("date") LocalDate calculateTime) {
 		List<MonthlyServiceStatisticsDto> statistics = statisticsService.getStatistics(evaluationItemId, calculateTime);
 
 		return BaseResponse.ok(statistics);

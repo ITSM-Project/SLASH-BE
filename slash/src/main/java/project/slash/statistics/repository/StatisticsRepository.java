@@ -16,8 +16,7 @@ public interface StatisticsRepository extends JpaRepository<Statistics, Long>, S
 
 	Optional<Statistics> findByEvaluationItemIdAndApprovalStatusTrueAndDateBetween(Long evaluationItemId, LocalDate startDate, LocalDate endDate);
 
-	List<Statistics> findByEvaluationItemIdAndCalculateTime(Long evaluationItem_id, LocalDateTime calculateTime);
+	List<Statistics> findByEvaluationItemIdAndCalculateTime(Long evaluationItem_id, LocalDate calculateTime);
 
-	List<Statistics> findByDateBetweenAndEvaluationItemContractIdAndApprovalStatusTrueAndTargetSystem(LocalDate startDate, LocalDate endDate, Long contractId,
-		String targetSystem);
+	List<Statistics> findByDateBetweenAndEvaluationItemContractIdAndApprovalStatusTrueAndTargetSystem(LocalDate startDate, LocalDate endDate, Long contractId, String targetSystem);
 }

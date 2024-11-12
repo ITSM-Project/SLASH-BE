@@ -15,8 +15,7 @@ import lombok.Getter;
 public class MonthlyServiceStatisticsDto {
 	@DateTimeFormat(pattern = "yyyy-MM")
 	private LocalDate date;
-	@DateTimeFormat(pattern = "yyyy-MM-DD HH:mm:ss")
-	private LocalDateTime calculateTime;
+	private LocalDate calculateTime;
 	private String serviceType;
 	private String targetEquipment;
 	private String grade;

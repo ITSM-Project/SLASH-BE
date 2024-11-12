@@ -3,7 +3,6 @@ package project.slash.statistics.service;
 import static project.slash.statistics.exception.StatisticsErrorCode.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.List;
 
@@ -70,7 +69,7 @@ public class StatisticsService {
 			incidentTime += statistic.getTotalDowntime();
 		}
 
-		return new IndicatorExtraInfoDto(findTotalTarget(contractId, score), requestCount, incidentTime);
+		return new IndicatorExtraInfoDto(findTotalTarget(contractId, score), score, requestCount, incidentTime);
 	}
 
 	public String findTotalTarget(Long contractId, double score) {
@@ -123,7 +122,7 @@ public class StatisticsService {
 		return statisticsRepository.findById(statisticsId).orElseThrow(() -> new BusinessException(NOT_FOUND_STATISTICS));
 	}
 
-	public List<MonthlyServiceStatisticsDto> getStatistics(Long evaluationItemId, LocalDateTime date) {
+	public List<MonthlyServiceStatisticsDto> getStatistics(Long evaluationItemId, LocalDate date) {
 		List<Statistics> statistics = statisticsRepository.findByEvaluationItemIdAndCalculateTime(evaluationItemId, date);
 
 		return statisticsMapper.toCalculatedStatisticsDtos(statistics);
