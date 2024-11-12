@@ -32,6 +32,8 @@ import project.slash.statistics.repository.StatisticsRepository;
 @RequiredArgsConstructor
 public class StatisticsService {
 	private static final int MINIMUM_STATISTICS_REQUIRED = 3;
+	private static final String TOTAL = "전체";
+
 
 	private final StatisticsRepository statisticsRepository;
 	private final EvaluationItemRepository evaluationItemRepository;
@@ -41,13 +43,12 @@ public class StatisticsService {
 	private final StatisticsMapper statisticsMapper;
 
 	public MonthlyIndicatorsDto getMonthlyIndicators(Long contractId, YearMonth date) {
-		String targetSystem = "전체";
 		LocalDate startDate = date.atDay(1);
 		LocalDate endDate = date.atEndOfMonth();
 
 		List<Statistics> statistics = statisticsRepository
 			.findByDateBetweenAndEvaluationItemContractIdAndApprovalStatusTrueAndTargetSystem(startDate, endDate,
-				contractId, targetSystem);
+				contractId, TOTAL);
 
 		if (statistics.size() < MINIMUM_STATISTICS_REQUIRED) {
 			return new MonthlyIndicatorsDto();
@@ -65,8 +66,10 @@ public class StatisticsService {
 
 		for (Statistics statistic : statistics) {
 			score += statistic.getWeightedScore();
-			requestCount += statistic.getRequestCount() + statistic.getSystemIncidentCount();
-			incidentTime += statistic.getTotalDowntime();
+			if(statistic.getServiceType().equals("서비스 가동률")) {
+				requestCount = statistic.getRequestCount();
+				incidentTime = statistic.getTotalDowntime();
+			}
 		}
 
 		return new IndicatorExtraInfoDto(findTotalTarget(contractId, score), score, requestCount, incidentTime);
@@ -91,7 +94,7 @@ public class StatisticsService {
 
 		List<Statistics> statistics = statisticsRepository.findByDateBetweenAndEvaluationItemContractId(startDate, endDate, contractId);
 		List<CalculatedStatisticsDto> calculatedStatistics = statistics.stream()	//계산된 지표중 전체 통계만 조회
-			.filter(statistic -> statistic.getTargetSystem().equals("전체"))
+			.filter(statistic -> statistic.getTargetSystem().equals(TOTAL))
 			.map(statisticsMapper::toCalculatedStatistics)
 			.toList();
 
