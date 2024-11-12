@@ -16,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import project.slash.common.exception.BusinessException;
 import project.slash.system.model.Equipment;
 import project.slash.system.repository.EquipmentRepository;
+import project.slash.systemincident.model.SystemIncident;
+import project.slash.systemincident.repository.SystemIncidentRepository;
 import project.slash.taskrequest.dto.request.RequestManagementDto;
 import project.slash.taskrequest.dto.request.TaskRequestDto;
 import project.slash.taskrequest.dto.request.UpdateTaskRequestManagerDto;
@@ -42,6 +44,7 @@ public class TaskRequestService {
 	private final TaskRequestRepository taskRequestRepository;
 	private final EquipmentRepository equipmentRepository;
 	private final UserRepository userRepository;
+	private final SystemIncidentRepository systemIncidentRepository;
 
 	@Transactional
 	public void createRequest(TaskRequestDto taskRequestDto, String userId) {    //요청 생성
@@ -169,7 +172,16 @@ public class TaskRequestService {
 	}
 
 	@Transactional
-	public void completeRequest(long requestId, String managerId) {
-		taskRequestRepository.updateDueOnTime(requestId, managerId, COMPLETED);
+	public void completeRequest(long requestId, String rManagerId) {
+		TaskRequest taskRequest = taskRequestRepository.findById(requestId)
+			.orElseThrow(() -> new BusinessException(NOT_FOUND_REQUEST));
+
+		taskRequestRepository.updateDueOnTime(requestId, rManagerId, COMPLETED);
+		if (taskRequest.getTaskType().getType().equals("장애 요청")) {
+			Long duration = taskRequestRepository.getDuration(requestId);
+			SystemIncident systemIncident = SystemIncident.create(duration, taskRequest);
+			systemIncidentRepository.save(systemIncident);
+		}
+
 	}
 }
