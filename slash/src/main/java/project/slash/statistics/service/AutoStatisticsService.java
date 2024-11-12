@@ -73,10 +73,10 @@ public class AutoStatisticsService {
 			totalEstimate += monthlyStatisticsDto.getEstimate();
 		}
 
-		double averageScore = Math.round((totalScore / monthlyStatisticsDtoList.size())*100.0)/ 100.0;
-		double averageWeightedScore = Math.round((totalWeightedScore / monthlyStatisticsDtoList.size())*100.0)/ 100.0;
-		double averageEstimate = Math.round((totalEstimate / monthlyStatisticsDtoList.size())*100.0)/ 100.0;
-
+		double averageScore = Math.round((totalScore / monthlyStatisticsDtoList.size()) * 100.0) / 100.0;
+		double averageWeightedScore =
+			Math.round((totalWeightedScore / monthlyStatisticsDtoList.size()) * 100.0) / 100.0;
+		double averageEstimate = Math.round((totalEstimate / monthlyStatisticsDtoList.size()) * 100.0) / 100.0;
 
 		List<ContractDataDto> contractDataDto = getContractDataDto(evaluationItemId);
 		// 등급 계산
@@ -114,12 +114,13 @@ public class AutoStatisticsService {
 	// 자동 계산 로직
 	public List<MonthlyStatisticsDto> calculateMonthlyStats(LocalDate date, long evaluationItemId) {
 		List<MonthlyDataDto> monthlyData = statisticsRepository.getMonthlyData(date);
-		List<ContractDataDto> contractDataDto=getContractDataDto(evaluationItemId);
+		List<ContractDataDto> contractDataDto = getContractDataDto(evaluationItemId);
 		List<MonthlyStatisticsDto> result = new ArrayList<>();
 		for (MonthlyDataDto monthlyDataDto : monthlyData) {
 			EvaluatedDto evaluatedDto = calculateScoreAndEvaluate(monthlyDataDto, contractDataDto);
 			result.add(new MonthlyStatisticsDto(
-				date, contractDataDto.get(0).getCategory(), monthlyDataDto.getEquipmentName(), evaluatedDto.getGrade(), evaluatedDto.getScore(),
+				date, contractDataDto.get(0).getCategory(), monthlyDataDto.getEquipmentName(), evaluatedDto.getGrade(),
+				evaluatedDto.getScore(),
 				"월별", evaluatedDto.getWeightedScore(), false, monthlyDataDto.getTotalDownTime(),
 				monthlyDataDto.getRequestCount(), evaluatedDto.getEvaluationItemId(), monthlyDataDto.getSystemName(),
 				evaluatedDto.getScore(), monthlyDataDto.getSystemIncidentCount(), 0L, true
@@ -195,7 +196,7 @@ public class AutoStatisticsService {
 			.getWeight();
 		int totalWeight = evaluationItemRepository.findTotalWeightByEvaluationItemId(
 			requestStatisticsDto.getEvaluationItemId());
-		double weightScore = getWeightedScore(gradeScoreDto.getScore(), weight, totalWeight);
+		double weightScore = getWeightedScore(weight, totalWeight, gradeScoreDto.getScore());
 
 		// 저장
 		statisticsRepository.save(
