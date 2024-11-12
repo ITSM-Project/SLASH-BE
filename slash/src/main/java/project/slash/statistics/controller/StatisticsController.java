@@ -1,6 +1,7 @@
 package project.slash.statistics.controller;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.List;
 
@@ -100,16 +101,16 @@ public class StatisticsController {
 	}
 
 	/**
-	 * 확정된 지표 결과 조회하는 메서드입니다.
+	 * 지표 결과 조회하는 메서드입니다.
 	 *
 	 * @param evaluationItemId 조회할 평가 항목 아이디
-	 * @param date TODO: LocalDateTime으로 변경 해야함
+	 * @param calculateTime 계산된 시간
 	 * @return 확정된 지표 결과
 	 */
 	@GetMapping("/common/statistics/evaluation-item/{id}")
-	public BaseResponse<List<MonthlyServiceStatisticsDto>> getStatistics(@PathVariable("id") Long evaluationItemId, @RequestParam("date") LocalDate date) {
-		List<MonthlyServiceStatisticsDto> statistics = statisticsService.getStatistics(evaluationItemId,
-			date);
+	public BaseResponse<List<MonthlyServiceStatisticsDto>> getStatistics(@PathVariable("id") Long evaluationItemId,
+		@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime calculateTime) {
+		List<MonthlyServiceStatisticsDto> statistics = statisticsService.getStatistics(evaluationItemId, calculateTime);
 
 		return BaseResponse.ok(statistics);
 	}

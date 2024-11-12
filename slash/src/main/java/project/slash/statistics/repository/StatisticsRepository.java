@@ -1,6 +1,7 @@
 package project.slash.statistics.repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,5 +18,5 @@ public interface StatisticsRepository extends JpaRepository<Statistics, Long>, S
 
 	Optional<Statistics> findByEvaluationItemIdAndApprovalStatusTrueAndDateBetween(Long evaluationItemId, LocalDate startDate, LocalDate endDate);
 
-	List<Statistics> findByEvaluationItemIdAndDateAndApprovalStatusTrue(Long evaluationItemId, LocalDate date);
+	List<Statistics> findByEvaluationItemIdAndCalculateTime(Long evaluationItem_id, LocalDateTime calculateTime);
 }

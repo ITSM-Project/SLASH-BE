@@ -12,6 +12,7 @@ import java.util.Optional;
 
 import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import project.slash.contract.dto.GradeDto;
@@ -49,14 +50,18 @@ public class EvaluationItemRepositoryCustomImpl implements EvaluationItemReposit
   }
   
   @Override
-	public List<EvaluationItem> findUnCalculatedEvaluationItem(Long contractId, LocalDate beforeDate) {
-		return queryFactory
-			.selectFrom(evaluationItem)
-			.leftJoin(statistics).on(evaluationItem.id.eq(statistics.evaluationItem.id))
-			.where(statistics.id.isNull()
-				.and(evaluationItem.contract.id.eq(contractId))
-				.and(evaluationItem.createDate.loe(beforeDate)))
-			.fetch();
+	public List<EvaluationItem> findUnCalculatedEvaluationItem(Long contractId, LocalDate endDate) {
+	  LocalDate startDate = endDate.withDayOfMonth(1);
+
+	  return queryFactory
+		  .selectFrom(evaluationItem)
+		  .where(evaluationItem.id.notIn(
+			  JPAExpressions.select(statistics.evaluationItem.id)
+				  .from(statistics)
+				  .where(statistics.calculateTime.between(startDate.atStartOfDay(), endDate.atTime(23, 59, 59))
+				  )
+		  ))
+		  .fetch();
 	}
 
 	private List<EvaluationItemDto> findEvaluationItems(BooleanExpression condition) {
