@@ -10,8 +10,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import project.slash.statistics.model.Statistics;
 
 public interface StatisticsRepository extends JpaRepository<Statistics, Long>, StatisticsRepositoryCustom {
-	List<Statistics> findByDateBetweenAndEvaluationItemContractIdAndApprovalStatusTrue(LocalDate startDate, LocalDate endDate, Long contractId);
-
 	List<Statistics> findByDateBetweenAndEvaluationItemContractId(LocalDate startDate, LocalDate endDate, Long contractId);
 
 	List<Statistics> findByEvaluationItem_IdIn(List<Long> evaluationItemIds);
@@ -19,4 +17,7 @@ public interface StatisticsRepository extends JpaRepository<Statistics, Long>, S
 	Optional<Statistics> findByEvaluationItemIdAndApprovalStatusTrueAndDateBetween(Long evaluationItemId, LocalDate startDate, LocalDate endDate);
 
 	List<Statistics> findByEvaluationItemIdAndCalculateTime(Long evaluationItem_id, LocalDateTime calculateTime);
+
+	List<Statistics> findByDateBetweenAndEvaluationItemContractIdAndApprovalStatusTrueAndTargetSystem(LocalDate startDate, LocalDate endDate, Long contractId,
+		String targetSystem);
 }
