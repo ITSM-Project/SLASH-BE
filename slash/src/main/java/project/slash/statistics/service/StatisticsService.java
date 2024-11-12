@@ -131,4 +131,12 @@ public class StatisticsService {
 
 		return statisticsMapper.toCalculatedStatisticsDtos(statistics);
 	}
+
+	@Transactional
+	public void deleteStatistics(Long evaluationItemId, LocalDate calculateTime) {
+		List<Statistics> statistics = statisticsRepository.findByEvaluationItemIdAndCalculateTime(
+			evaluationItemId, calculateTime);
+
+		statisticsRepository.deleteAll(statistics);
+	}
 }

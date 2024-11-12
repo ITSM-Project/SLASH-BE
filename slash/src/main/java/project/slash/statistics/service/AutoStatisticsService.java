@@ -97,7 +97,7 @@ public class AutoStatisticsService {
 			"전체",
 			averageEstimate,
 			totalSystemIncidentCount,
-			0L,
+			-1,
 			true
 		);
 	}
@@ -123,7 +123,7 @@ public class AutoStatisticsService {
 				evaluatedDto.getScore(),
 				"월별", evaluatedDto.getWeightedScore(), false, monthlyDataDto.getTotalDownTime(),
 				monthlyDataDto.getRequestCount(), evaluatedDto.getEvaluationItemId(), monthlyDataDto.getSystemName(),
-				evaluatedDto.getScore(), monthlyDataDto.getSystemIncidentCount(), 0L, true
+				evaluatedDto.getScore(), monthlyDataDto.getSystemIncidentCount(), -1, true
 			));
 		}
 		return result;
