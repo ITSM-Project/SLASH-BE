@@ -19,7 +19,7 @@ public class TaskTypeMapper {
 
 	public List<TaskType> toTaskTypeList(List<TaskTypeDto> taskTypeDtos, EvaluationItem evaluationItem) {
 		return taskTypeDtos.stream()
-			.map(taskTypeDto -> TaskType.from(taskTypeDto, evaluationItem))
+			.map(taskTypeDto -> toEntity(taskTypeDto, evaluationItem))
 			.toList();
 	}
 
@@ -27,5 +27,16 @@ public class TaskTypeMapper {
 		return new TaskTypeDto(taskType.getType(),
 			taskType.getTaskDetail(), taskType.getDeadline(), taskType.isServiceRelevance(),
 			taskType.isInclusionStatus());
+	}
+
+	public TaskType toEntity(TaskTypeDto taskTypeDto, EvaluationItem evaluationItem) {
+		return TaskType.builder()
+			.type(taskTypeDto.getType())
+			.taskDetail(taskTypeDto.getTaskDetail())
+			.deadline(taskTypeDto.getDeadline())
+			.serviceRelevance(taskTypeDto.isServiceRelevance())
+			.inclusionStatus(taskTypeDto.isInclusionStatus())
+			.evaluationItem(evaluationItem)
+			.build();
 	}
 }
