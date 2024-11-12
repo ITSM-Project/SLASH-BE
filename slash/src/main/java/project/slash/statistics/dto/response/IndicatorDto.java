@@ -22,17 +22,4 @@ public class IndicatorDto {
 	private String grade;
 	private double score;
 	private String targetSystem;
-
-	public static IndicatorDto of(Statistics statistics) {
-		return new IndicatorDto(
-			statistics.getEvaluationItem().getId(),
-			statistics.getEvaluationItem().getCategory(),
-			statistics.getDate(),
-			statistics.getCalculateTime(),
-			statistics.isAuto(),
-			statistics.getGrade(),
-			statistics.getScore(),
-			statistics.getTargetSystem()
-		);
-	}
 }

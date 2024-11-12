@@ -71,9 +71,6 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 			.fetch();
 	}
 
-
-
-
 	@Override
 	public ResponseServiceTaskDto getServiceTaskStatics(Long evaluationItemId, LocalDate date) {
 
@@ -150,6 +147,4 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 			ps.setBoolean(16, dto.getIsAuto());
 		});
 	}
-
 }
-

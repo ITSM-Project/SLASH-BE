@@ -14,10 +14,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import project.slash.contract.model.EvaluationItem;
-import project.slash.statistics.dto.IncidentInfoDto;
 import lombok.Getter;
 
-import project.slash.statistics.dto.response.ResponseServiceTaskDto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -84,50 +82,6 @@ public class Statistics {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "evaluation_item_id")
 	private EvaluationItem evaluationItem;
-
-	public static Statistics fromIncidentInfo(IncidentInfoDto incidentInfoDto, LocalDate date, double score,
-		double weightedScore, String grade, double estimate, EvaluationItem evaluationItem) {
-		return Statistics.builder()
-			.targetSystem("전체")
-			.targetEquipment("전체")
-			.serviceType("장애 적기처리율")
-			.date(date)
-			.approvalStatus(false)
-			.grade(grade)
-			.score(score)
-			.period("월별")
-			.totalDowntime(-1)
-			.weightedScore(weightedScore)
-			.requestCount(incidentInfoDto.getTotalIncidentCount())
-			.systemIncidentCount(incidentInfoDto.getTotalIncidentCount())
-			.dueOnTimeCount(incidentInfoDto.getTotalIncidentCount() - incidentInfoDto.getTotalOverdueCount())
-			.estimate(estimate)
-			.evaluationItem(evaluationItem)
-			.isAuto(true)
-			.build();
-	}
-
-	public static Statistics fromResponseServiceTask(ResponseServiceTaskDto responseServiceTaskDto, LocalDate endDate,
-		double score, double weightedScore, String grade) {
-		return Statistics.builder()
-			.date(endDate)
-			.serviceType(responseServiceTaskDto.getEvaluationItem().getCategory())
-			.targetSystem("전체")
-			.targetEquipment("전체")
-			.grade(grade)
-			.score(score)
-			.period(responseServiceTaskDto.getEvaluationItem().getPeriod())
-			.weightedScore(weightedScore)
-			.requestCount(responseServiceTaskDto.getTaskRequest())
-			.approvalStatus(false)
-			.dueOnTimeCount(responseServiceTaskDto.getDueOnTimeCount())
-			.estimate(score)
-			.evaluationItem(responseServiceTaskDto.getEvaluationItem())
-			.totalDowntime(-1)
-			.systemIncidentCount(-1)
-			.isAuto(false)
-			.build();
-	}
 
 	public void approve() {
 		this.approvalStatus = true;
