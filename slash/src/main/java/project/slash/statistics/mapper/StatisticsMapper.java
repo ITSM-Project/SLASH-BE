@@ -35,6 +35,7 @@ public class StatisticsMapper {
 
 	public MonthlyServiceStatisticsDto toMonthlyServiceStatisticsDto(Statistics statistics) {
 		return MonthlyServiceStatisticsDto.builder()
+			.statisticsId(statistics.getId())
 			.date(statistics.getDate())
 			.calculateTime(statistics.getCalculateTime())
 			.serviceType(statistics.getServiceType())
