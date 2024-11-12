@@ -123,8 +123,8 @@ public class Statistics {
 			.dueOnTimeCount(responseServiceTaskDto.getDueOnTimeCount())
 			.estimate(score)
 			.evaluationItem(responseServiceTaskDto.getEvaluationItem())
-			.totalDowntime(0)
-			.systemIncidentCount(0)
+			.totalDowntime(-1)
+			.systemIncidentCount(-1)
 			.isAuto(false)
 			.build();
 	}
