@@ -30,26 +30,4 @@ public class MonthlyServiceStatisticsDto {
 	private double estimate;
 	private long systemIncidentCount;
 	private long dueOnTimeCount;
-
-	@Override
-	public String toString() {
-		return "MonthlyServiceStatisticsDto{" +
-			"date=" + date +
-			", calculateTime=" + calculateTime +
-			", serviceType='" + serviceType + '\'' +
-			", targetEquipment='" + targetEquipment + '\'' +
-			", grade='" + grade + '\'' +
-			", score=" + score +
-			", period='" + period + '\'' +
-			", weightedScore=" + weightedScore +
-			", approvalStatus=" + approvalStatus +
-			", totalDowntime=" + totalDowntime +
-			", requestCount=" + requestCount +
-			", evaluationItemId=" + evaluationItemId +
-			", targetSystem='" + targetSystem + '\'' +
-			", estimate=" + estimate +
-			", systemIncidentCount=" + systemIncidentCount +
-			", dueOnTimeCount=" + dueOnTimeCount +
-			'}';
-	}
 }
