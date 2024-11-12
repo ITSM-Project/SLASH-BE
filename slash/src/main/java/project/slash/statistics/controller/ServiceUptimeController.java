@@ -14,24 +14,24 @@ import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
 import project.slash.statistics.dto.request.RequestStatisticsDto;
 import project.slash.statistics.dto.response.MonthlyStatisticsDto;
-import project.slash.statistics.service.StatisticsService;
+import project.slash.statistics.service.AutoStatisticsService;
 
 @RequiredArgsConstructor
 @RestController
 public class ServiceUptimeController {
-	private final StatisticsService statisticsService;
+	private final AutoStatisticsService autoStatisticsService;
 
 	@GetMapping("/common/statistics")
 	public BaseResponse<?> getServiceUptimeStatistics(
 		@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate date,
 		@RequestParam("evaluationItemId") long evaluationItemId) {
-		List<MonthlyStatisticsDto> statisticsList = statisticsService.calculateMonthlyStats(date, evaluationItemId);
+		List<MonthlyStatisticsDto> statisticsList = autoStatisticsService.calculateMonthlyStats(date, evaluationItemId);
 		return BaseResponse.ok(statisticsList);
 	}
 
 	@PostMapping("/contract-manager/statistics")
 	public BaseResponse<?> addStatistics(@RequestBody RequestStatisticsDto requestStatisticsDto) {
-		statisticsService.createMonthlyStats(requestStatisticsDto);
+		autoStatisticsService.createMonthlyStats(requestStatisticsDto);
 
 		return BaseResponse.ok();
 	}

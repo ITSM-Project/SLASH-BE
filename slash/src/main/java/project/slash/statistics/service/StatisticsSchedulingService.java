@@ -7,7 +7,6 @@ import java.util.function.Consumer;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -23,16 +22,16 @@ import project.slash.statistics.dto.request.RequestStatisticsDto;
 @RequiredArgsConstructor
 public class StatisticsSchedulingService {
 	private static final String EVERY_LAST_DAY_OF_MONTH = "0 0 0 L * ?";	//매월의 마지막 달
-	private final StatisticsService statisticsService;
+	private final AutoStatisticsService autoStatisticsService;
 	private final EvaluationItemRepository evaluationItemRepository;
 	private final ContractRepository contractRepository;
 	private Map<String, Consumer<RequestStatisticsDto>> statisticsActions;
 	@PostConstruct
 	public void init() {
 		statisticsActions = Map.of(
-			"서비스 가동률", statisticsService::createMonthlyStats,
-			"장애 적기처리율", statisticsService::getIncidentStatistics,
-			"서비스요청 적기처리율", statisticsService::createServiceTaskStatistics
+			"서비스 가동률", autoStatisticsService::createMonthlyStats,
+			"장애 적기처리율", autoStatisticsService::getIncidentStatistics,
+			"서비스요청 적기처리율", autoStatisticsService::createServiceTaskStatistics
 		);
 	}
 
