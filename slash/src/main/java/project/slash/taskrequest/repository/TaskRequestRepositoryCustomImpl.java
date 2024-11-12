@@ -27,13 +27,13 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 import project.slash.statistics.dto.IncidentInfoDto;
-import project.slash.system.model.QEquipment;
 import project.slash.system.model.QSystems;
 import project.slash.taskrequest.dto.request.RequestManagementDto;
 import project.slash.taskrequest.dto.response.StatusCountDto;
 import project.slash.taskrequest.dto.response.SystemCountDto;
 import project.slash.taskrequest.dto.response.TaskRequestOfManagerDto;
 import project.slash.taskrequest.dto.response.TaskTypeCountDto;
+
 import project.slash.taskrequest.model.QTaskRequest;
 import project.slash.taskrequest.model.QTaskType;
 import project.slash.taskrequest.model.constant.RequestStatus;
@@ -254,5 +254,16 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 
 		return new IncidentInfoDto(totalCount, offTimeCount);
 
+	}
+
+	@Override
+	public Long getDuration(Long requestId) {
+		return queryFactory
+			.select(Expressions.numberTemplate(Long.class,
+				"TIMESTAMPDIFF(MINUTE, {0}, {1})",
+				taskRequest.createTime, taskRequest.updateTime))
+			.from(taskRequest)
+			.where(taskRequest.id.eq(requestId))
+			.fetchOne();
 	}
 }
