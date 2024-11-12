@@ -43,8 +43,6 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 		}
 
 		String token = jwtTokenProvider.resolveToken((HttpServletRequest)request);
-		System.out.println(requestURI);
-		System.out.println(token);
 		try {
 			jwtTokenProvider.validateToken(token);
 
