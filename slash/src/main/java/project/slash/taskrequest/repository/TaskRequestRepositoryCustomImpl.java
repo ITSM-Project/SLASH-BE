@@ -1,16 +1,16 @@
 package project.slash.taskrequest.repository;
 
+import static project.slash.system.model.QEquipment.*;
+import static project.slash.system.model.QSystems.*;
 import static project.slash.taskrequest.model.QTaskRequest.*;
+import static project.slash.taskrequest.model.QTaskType.*;
 import static project.slash.taskrequest.model.constant.RequestStatus.*;
 import static project.slash.user.model.QUser.*;
 
-import static project.slash.system.model.QEquipment.*;
-import static project.slash.system.model.QSystems.*;
-
-import static project.slash.taskrequest.model.QTaskType.*;
-
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -19,12 +19,14 @@ import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
+import project.slash.statistics.dto.IncidentInfoDto;
 import project.slash.system.model.QEquipment;
 import project.slash.system.model.QSystems;
 import project.slash.taskrequest.dto.request.RequestManagementDto;
@@ -45,8 +47,6 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 	// 처리 상태 별 카운트 수
 	@Override
 	public List<StatusCountDto> findCountByStatus(int year, int month, String user) {
-		QTaskRequest taskRequest = QTaskRequest.taskRequest;
-
 		List<StatusCountDto> results = queryFactory
 			.select(Projections.constructor(StatusCountDto.class,
 				taskRequest.status,
@@ -64,9 +64,6 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 
 	@Override
 	public List<TaskTypeCountDto> findCountByTaskType(int year, int month, String user) {
-		QTaskType taskType = QTaskType.taskType;
-		QTaskRequest taskRequest = QTaskRequest.taskRequest;
-
 		List<TaskTypeCountDto> results = queryFactory
 			.select(Projections.constructor(TaskTypeCountDto.class,
 				taskType.type,
@@ -86,10 +83,6 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 
 	@Override
 	public List<SystemCountDto> findCountBySystem(int year, int month, String user) {
-		QSystems systems = QSystems.systems;
-		QEquipment equipment = QEquipment.equipment;
-		QTaskRequest taskRequest = QTaskRequest.taskRequest;
-
 		List<SystemCountDto> results = queryFactory
 			.select(Projections.constructor(SystemCountDto.class,
 				systems.name, taskRequest.count()))
@@ -199,7 +192,7 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 	}
 
 	@Override
-	public void updateDueOnTime(Long requestId,String managerId,RequestStatus status) {
+	public void updateDueOnTime(Long requestId, String managerId, RequestStatus status) {
 		LocalDateTime currentTime = LocalDateTime.now();
 
 		Integer deadline = queryFactory
@@ -223,20 +216,43 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 					.then(true)
 					.otherwise(false))
 			.set(taskRequest.updateTime, currentTime)
-			.set(taskRequest.status,status)
+			.set(taskRequest.status, status)
 			.where(taskRequest.id.eq(requestId)
 				.and(taskRequest.manager.id.eq(managerId)))
 			.execute();
 	}
 
 	@Override
-	public Long getDuration(Long requestId) {
-		return queryFactory
-			.select(Expressions.numberTemplate(Long.class,
-				"TIMESTAMPDIFF(MINUTE, {0}, {1})",
-				taskRequest.createTime, taskRequest.updateTime))
+	public IncidentInfoDto getIncidentCount(Long evaluationItemId, LocalDate endDate) {
+
+		LocalDate startDate = endDate.withDayOfMonth(1);
+
+		List<Tuple> result = queryFactory
+			.select(taskRequest.dueOnTime, taskRequest.count())
 			.from(taskRequest)
-			.where(taskRequest.id.eq(requestId))
-			.fetchOne();
+			.leftJoin(taskType)
+			.on(taskType.id.eq(taskRequest.taskType.id))
+			.where(taskType.evaluationItem.id.eq(evaluationItemId)
+				.and(taskType.type.eq("장애 요청"))
+				.and(taskRequest.createTime.between(startDate.atStartOfDay(), endDate.atTime(23, 59, 59)))
+			)
+			.groupBy(taskRequest.dueOnTime)
+			.fetch();
+
+		long totalCount = 0;
+		long offTimeCount = 0;
+
+		for (Tuple tuple : result) {
+			Boolean dueOnTime = tuple.get(taskRequest.dueOnTime);
+			long count = Optional.ofNullable(tuple.get(taskRequest.count())).orElse(0L);
+
+			totalCount += count;
+			if (Boolean.FALSE.equals(dueOnTime)) {
+				offTimeCount = count;
+			}
+		}
+
+		return new IncidentInfoDto(totalCount, offTimeCount);
+
 	}
 }
