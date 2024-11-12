@@ -13,13 +13,13 @@ import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
 import project.slash.statistics.dto.request.RequestStatisticsDto;
 import project.slash.statistics.dto.response.ResponseStatisticsDto;
-import project.slash.statistics.service.StatisticsService;
+import project.slash.statistics.service.AutoStatisticsService;
 
 @RestController
 @RequiredArgsConstructor
 public class ServiceStatisticsController {
 
-	private final StatisticsService statisticsService;
+	private final AutoStatisticsService autoStatisticsService;
 
 	/**
 	 * 서비스 적기 처리율 통계 생성 메서드입니다.
@@ -30,7 +30,7 @@ public class ServiceStatisticsController {
 	@PostMapping("/contract-manager/service-statistic")
 	public BaseResponse<Void> createServiceStatics(
 		@RequestBody @Valid RequestStatisticsDto requestStatisticsDto) {
-		statisticsService.createServiceTaskStatistics(requestStatisticsDto);
+		autoStatisticsService.createServiceTaskStatistics(requestStatisticsDto);
 		return BaseResponse.ok();
 	}
 
@@ -45,7 +45,7 @@ public class ServiceStatisticsController {
 	public BaseResponse<ResponseStatisticsDto> getServiceStatics(@RequestParam("evaluationId") Long evaluationId,
 		@RequestParam("date")
 		LocalDate date) {
-		ResponseStatisticsDto responseStatisticsDto = statisticsService.getServiceStatistics(evaluationId, date);
+		ResponseStatisticsDto responseStatisticsDto = autoStatisticsService.getServiceStatistics(evaluationId, date);
 		return BaseResponse.ok(responseStatisticsDto);
 	}
 }

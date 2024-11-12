@@ -16,9 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
-import project.slash.statistics.dto.request.RequestStatisticsDto;
 import project.slash.statistics.dto.response.MonthlyServiceStatisticsDto;
-import project.slash.statistics.dto.response.MonthlyStatisticsDto;
 import project.slash.statistics.dto.request.EditStatisticsDto;
 import project.slash.statistics.dto.response.MonthlyIndicatorsDto;
 import project.slash.statistics.dto.response.StatisticsStatusDto;
@@ -28,22 +26,6 @@ import project.slash.statistics.service.StatisticsService;
 @RequiredArgsConstructor
 public class StatisticsController {
 	private final StatisticsService statisticsService;
-
-	@GetMapping("/common/statistics")
-	public BaseResponse<?> getServiceUptimeStatistics(
-		@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate date,
-		@RequestParam("evaluationItemId") long evaluationItemId) {
-		List<MonthlyStatisticsDto> statisticsList = statisticsService.calculateMonthlyStats(date, evaluationItemId);
-		return BaseResponse.ok(statisticsList);
-	}
-
-	@PostMapping("/contract-manager/statistics")
-	public BaseResponse<?> addStatistics(@RequestBody RequestStatisticsDto requestStatisticsDto) {
-		statisticsService.createMonthlyStats(requestStatisticsDto);
-
-		return BaseResponse.ok();
-	}
-
 
 	/**
 	 * 월간 지표 조회하는 메서드입니다.
