@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import project.slash.contract.model.Contract;
+import project.slash.contract.repository.contract.ContractRepository;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -52,10 +53,10 @@ class ContractRepositoryTest {
 	    contractRepository.save(contract);
 
 		//when
-		Contract result = contractRepository.findByIsTerminateFalse().get();
+		Contract result = contractRepository.findByIsTerminateFalse().get(0);
 
 		//then
-		assertThat(result).extracting("companyName", "startDate", "endDate")
+		assertThat(result).extracting("contractName", "startDate", "endDate")
 			.containsExactly("테스트 회사",
 				LocalDate.of(2024, 10, 12),
 				LocalDate.of(2025, 10, 11));
@@ -63,7 +64,7 @@ class ContractRepositoryTest {
 
 	private static Contract createContract(LocalDate startDate, LocalDate endDate, boolean isTerminate) {
 		return Contract.builder()
-			.companyName("테스트 회사")
+			.contractName("테스트 회사")
 			.startDate(startDate)
 			.endDate(endDate)
 			.isTerminate(isTerminate)

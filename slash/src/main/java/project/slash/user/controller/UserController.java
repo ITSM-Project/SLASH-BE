@@ -15,6 +15,12 @@ import project.slash.security.auth.dto.LoginRequestDto;
 public class UserController {
 	private final AuthService authService;
 
+	/**
+	 * 로그인 하는 메서드 입니다.
+	 *
+	 * @return 토큰 정보
+	 */
+
 	@PostMapping("/login")
 	public BaseResponse<JwtTokenDto> login(@RequestBody LoginRequestDto userLoginRequestDto) {
 		String userId = userLoginRequestDto.getId();
