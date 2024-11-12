@@ -1,11 +1,10 @@
 package project.slash.statistics.controller;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.List;
 
-import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -94,5 +93,20 @@ public class StatisticsController {
 		List<MonthlyServiceStatisticsDto> statistics = statisticsService.getStatistics(evaluationItemId, calculateTime);
 
 		return BaseResponse.ok(statistics);
+	}
+
+	/**
+	 * 계산된 통계 삭제하는 메서드입니다.
+	 *
+	 * @param evaluationItemId 삭제할 항목
+	 * @param calculateTime 계산된 시간
+	 * @return 성공 여부
+	 */
+	@DeleteMapping("/contract-manager/statistics/{id}")
+	public BaseResponse<Void> deleteCalculateStatistics(@PathVariable("id") Long evaluationItemId,
+		@RequestParam("date") LocalDate calculateTime) {
+		statisticsService.deleteStatistics(evaluationItemId, calculateTime);
+
+		return BaseResponse.ok();
 	}
 }
