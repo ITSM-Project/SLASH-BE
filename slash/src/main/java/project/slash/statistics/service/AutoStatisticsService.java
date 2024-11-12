@@ -246,7 +246,6 @@ public class AutoStatisticsService {
 			.orElse(null);
 	}
 
-
 	public ResponseStatisticsDto getServiceStatistics(Long evaluationItemId, LocalDate date) {
 		ResponseServiceTaskDto responseServiceTaskDto = statisticsRepository.getServiceTaskStatics(
 			evaluationItemId, date);

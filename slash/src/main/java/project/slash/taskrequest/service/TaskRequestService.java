@@ -182,6 +182,5 @@ public class TaskRequestService {
 			SystemIncident systemIncident = SystemIncident.create(duration, taskRequest);
 			systemIncidentRepository.save(systemIncident);
 		}
-
 	}
 }

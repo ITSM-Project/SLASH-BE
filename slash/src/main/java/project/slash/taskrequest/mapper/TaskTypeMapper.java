@@ -13,7 +13,7 @@ public class TaskTypeMapper {
 	public List<TaskTypeDto> toTaskTypeDtoList(List<TaskType> taskTypes) {
 		return taskTypes
 			.stream()
-			.map(TaskTypeDto::from)
+			.map(this::toTaskTypeDto)
 			.toList();
 	}
 
@@ -21,5 +21,11 @@ public class TaskTypeMapper {
 		return taskTypeDtos.stream()
 			.map(taskTypeDto -> TaskType.from(taskTypeDto, evaluationItem))
 			.toList();
+	}
+
+	public TaskTypeDto toTaskTypeDto(TaskType taskType) {
+		return new TaskTypeDto(taskType.getType(),
+			taskType.getTaskDetail(), taskType.getDeadline(), taskType.isServiceRelevance(),
+			taskType.isInclusionStatus());
 	}
 }
