@@ -105,7 +105,8 @@ public class StatisticsService {
 		LocalDate startDate = endDate.withDayOfMonth(1);
 
 		//이미 동일한 항목에 대한 승인된 지표가 있는 경우
-		if (statisticsRepository.findByEvaluationItemIdAndApprovalStatusTrueAndDateBetween(evaluationItemId, startDate, endDate).isPresent()) {
+		if (statisticsRepository.findByEvaluationItemIdAndApprovalStatusTrueAndDateBetween(evaluationItemId, startDate,
+			endDate).isPresent()) {
 			throw new BusinessException(STATISTICS_ALREADY_EXISTS);
 		}
 
