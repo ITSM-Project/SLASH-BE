@@ -15,8 +15,7 @@ import project.slash.security.auth.provider.JwtTokenProvider;
 public class AuthServiceImpl implements AuthService {
 	private final AuthenticationManagerBuilder authenticationManagerBuilder;
 	private final JwtTokenProvider jwtTokenProvider;
-
-	@Transactional
+	
 	public JwtTokenDto login(String userId, String password) {
 		// 1. Login Id/PW 를 기반으로 Authentication 객체 생성
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userId,

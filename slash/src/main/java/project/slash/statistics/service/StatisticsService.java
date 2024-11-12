@@ -4,6 +4,7 @@ import static project.slash.contract.exception.EvaluationItemErrorCode.*;
 import static project.slash.statistics.exception.StatisticsErrorCode.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
@@ -300,9 +301,11 @@ public class StatisticsService {
 		long incidentTime = 0;
 
 		for (Statistics statistic : statistics) {
-			score += statistic.getScore();
-			requestCount += statistic.getRequestCount() + statistic.getSystemIncidentCount();
-			incidentTime += statistic.getTotalDowntime();
+			if(statistic.getTargetSystem().equals("전체")) {
+				score += statistic.getWeightedScore();
+				requestCount += statistic.getRequestCount() + statistic.getSystemIncidentCount();
+				incidentTime += statistic.getTotalDowntime();
+			}
 		}
 
 		return new IndicatorExtraInfoDto(findTotalTarget(contractId, score), requestCount, incidentTime);
@@ -329,15 +332,14 @@ public class StatisticsService {
 	public StatisticsStatusDto getStatisticsStatus(Long contractId, LocalDate endDate) {
 		LocalDate startDate = endDate.withDayOfMonth(1);
 
-		List<EvaluationItem> unCalculatedEvaluationItem = evaluationItemRepository.findUnCalculatedEvaluationItem(
-			contractId, endDate);
-		List<UnCalculatedStatisticsDto> unCalculatedStatistics = evaluationItemMapper.unCalculatedStatisticsList(
-			unCalculatedEvaluationItem);    //미계산된 지표
+		List<EvaluationItem> unCalculatedEvaluationItem = evaluationItemRepository.findUnCalculatedEvaluationItem(contractId, endDate);
+		List<UnCalculatedStatisticsDto> unCalculatedStatistics = evaluationItemMapper.unCalculatedStatisticsList(unCalculatedEvaluationItem);	//미계산 된 지표
 
-		List<Statistics> statistics = statisticsRepository.findByDateBetweenAndEvaluationItemContractId(startDate,
-			endDate, contractId);
-		List<CalculatedStatisticsDto> calculatedStatistics = statisticsMapper.toCalculatedStatisticsList(
-			statistics); // 계산된 지표
+		List<Statistics> statistics = statisticsRepository.findByDateBetweenAndEvaluationItemContractId(startDate, endDate, contractId);
+		List<CalculatedStatisticsDto> calculatedStatistics = statistics.stream()	//계산된 지표중 전체 통계만 조회
+			.filter(statistic -> "전체".equals(statistic.getTargetSystem()))
+			.map(statisticsMapper::toCalculatedStatistics)
+			.toList();
 
 		return new StatisticsStatusDto(unCalculatedStatistics, calculatedStatistics);
 	}
@@ -369,9 +371,8 @@ public class StatisticsService {
 			.orElseThrow(() -> new BusinessException(NOT_FOUND_STATISTICS));
 	}
 
-	public List<MonthlyServiceStatisticsDto> getStatistics(Long evaluationItemId, LocalDate date) {
-		List<Statistics> statistics = statisticsRepository.findByEvaluationItemIdAndDateAndApprovalStatusTrue(
-			evaluationItemId, date);
+	public List<MonthlyServiceStatisticsDto> getStatistics(Long evaluationItemId, LocalDateTime date) {
+		List<Statistics> statistics = statisticsRepository.findByEvaluationItemIdAndCalculateTime(evaluationItemId, date);
 
 		return statisticsMapper.toCalculatedStatisticsDtos(statistics);
 	}

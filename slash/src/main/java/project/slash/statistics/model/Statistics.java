@@ -96,14 +96,14 @@ public class Statistics {
 			.grade(grade)
 			.score(score)
 			.period("월별")
-			.totalDowntime(0)
+			.totalDowntime(-1)
 			.weightedScore(weightedScore)
 			.requestCount(incidentInfoDto.getTotalIncidentCount())
 			.systemIncidentCount(incidentInfoDto.getTotalIncidentCount())
 			.dueOnTimeCount(incidentInfoDto.getTotalIncidentCount() - incidentInfoDto.getTotalOverdueCount())
 			.estimate(estimate)
 			.evaluationItem(evaluationItem)
-			.isAuto(false)
+			.isAuto(true)
 			.build();
 	}
 
@@ -123,8 +123,8 @@ public class Statistics {
 			.dueOnTimeCount(responseServiceTaskDto.getDueOnTimeCount())
 			.estimate(score)
 			.evaluationItem(responseServiceTaskDto.getEvaluationItem())
-			.totalDowntime(0)
-			.systemIncidentCount(0)
+			.totalDowntime(-1)
+			.systemIncidentCount(-1)
 			.isAuto(false)
 			.build();
 	}

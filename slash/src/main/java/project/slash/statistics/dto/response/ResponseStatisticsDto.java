@@ -40,8 +40,8 @@ public class ResponseStatisticsDto {
 			.requestCount(responseServiceTaskDto.getTaskRequest())
 			.dueOnTimeCount(responseServiceTaskDto.getDueOnTimeCount())
 			.estimate(score)
-			.totalDowntime(0)
-			.systemIncidentCount(0)
+			.totalDowntime(-1)
+			.systemIncidentCount(-1)
 			.evaluationItemId(responseServiceTaskDto.getEvaluationItem().getId())
 			.build();
 	}
