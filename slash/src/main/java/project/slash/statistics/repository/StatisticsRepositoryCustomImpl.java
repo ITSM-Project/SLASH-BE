@@ -103,7 +103,7 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 			JPAExpressions
 				.select(taskRequest.status.count())  // 완료된 요청을 카운트
 				.from(taskRequest)
-				.where(taskRequest.status.eq(RequestStatus.COMPLETED))
+				.where(taskRequest.dueOnTime.eq(true))
 				.where(taskRequest.createTime.between(startDate, endDate))
 				.where(taskRequest.taskType.evaluationItem.id.eq(evaluationItemId))
 		);
