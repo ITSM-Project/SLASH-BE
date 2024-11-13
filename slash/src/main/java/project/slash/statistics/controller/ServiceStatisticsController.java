@@ -37,15 +37,15 @@ public class ServiceStatisticsController {
 	/**
 	 * 서비스 적기 처리율 통계 조회 메서드 입니다.
 	 *
-	 * @param evaluationId 조회할 아이디
+	 * @param evaluationItemId 조회할 아이디
 	 * @param date 조회 날짜
 	 * @return 해당시점 통계 정보
 	 */
-	@GetMapping("/common/service-statistic")
-	public BaseResponse<ResponseStatisticsDto> getServiceStatics(@RequestParam("evaluationId") Long evaluationId,
+	@GetMapping("/common/service-statistics")
+	public BaseResponse<ResponseStatisticsDto> getServiceStatics(@RequestParam("evaluationItemId") Long evaluationItemId,
 		@RequestParam("date")
 		LocalDate date) {
-		ResponseStatisticsDto responseStatisticsDto = autoStatisticsService.getServiceStatistics(evaluationId, date);
+		ResponseStatisticsDto responseStatisticsDto = autoStatisticsService.getServiceStatistics(evaluationItemId, date);
 		return BaseResponse.ok(responseStatisticsDto);
 	}
 }
