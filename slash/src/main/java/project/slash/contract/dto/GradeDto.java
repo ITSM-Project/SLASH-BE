@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.slash.contract.model.TotalTarget;
 
 @Getter
 @Builder
@@ -32,14 +31,4 @@ public class GradeDto {
 
 	@NotNull(message = "최대단위 포함여부는 필수입니다.")
 	private Boolean maxInclusive;
-
-	public static GradeDto createOf(TotalTarget target){
-		return GradeDto.builder()
-			.grade(target.getGrade())
-			.min(target.getMin())
-			.max(target.getMax())
-			.minInclusive(target.isMinInclusive())
-			.maxInclusive(target.isMaxInclusive())
-			.build();
-	}
 }

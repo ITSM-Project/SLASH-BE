@@ -13,13 +13,13 @@ import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
 import project.slash.statistics.dto.request.RequestStatisticsDto;
 import project.slash.statistics.dto.response.ResponseStatisticsDto;
-import project.slash.statistics.service.StatisticsService;
+import project.slash.statistics.service.AutoStatisticsService;
 
 @RestController
 @RequiredArgsConstructor
 public class ServiceStatisticsController {
 
-	private final StatisticsService statisticsService;
+	private final AutoStatisticsService autoStatisticsService;
 
 	/**
 	 * 서비스 적기 처리율 통계 생성 메서드입니다.
@@ -30,22 +30,22 @@ public class ServiceStatisticsController {
 	@PostMapping("/contract-manager/service-statistic")
 	public BaseResponse<Void> createServiceStatics(
 		@RequestBody @Valid RequestStatisticsDto requestStatisticsDto) {
-		statisticsService.createServiceTaskStatistics(requestStatisticsDto);
+		autoStatisticsService.createServiceTaskStatistics(requestStatisticsDto);
 		return BaseResponse.ok();
 	}
 
 	/**
 	 * 서비스 적기 처리율 통계 조회 메서드 입니다.
 	 *
-	 * @param evaluationId 조회할 아이디
+	 * @param evaluationItemId 조회할 아이디
 	 * @param date 조회 날짜
 	 * @return 해당시점 통계 정보
 	 */
-	@GetMapping("/common/service-statistic")
-	public BaseResponse<ResponseStatisticsDto> getServiceStatics(@RequestParam("evaluationId") Long evaluationId,
+	@GetMapping("/common/service-statistics")
+	public BaseResponse<ResponseStatisticsDto> getServiceStatics(@RequestParam("evaluationItemId") Long evaluationItemId,
 		@RequestParam("date")
 		LocalDate date) {
-		ResponseStatisticsDto responseStatisticsDto = statisticsService.getServiceStatistics(evaluationId, date);
+		ResponseStatisticsDto responseStatisticsDto = autoStatisticsService.getServiceStatistics(evaluationItemId, date);
 		return BaseResponse.ok(responseStatisticsDto);
 	}
 }

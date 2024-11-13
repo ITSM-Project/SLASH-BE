@@ -16,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import project.slash.common.exception.BusinessException;
 import project.slash.system.model.Equipment;
 import project.slash.system.repository.EquipmentRepository;
+import project.slash.systemincident.model.SystemIncident;
+import project.slash.systemincident.repository.SystemIncidentRepository;
 import project.slash.taskrequest.dto.request.RequestManagementDto;
 import project.slash.taskrequest.dto.request.TaskRequestDto;
 import project.slash.taskrequest.dto.request.UpdateTaskRequestManagerDto;
@@ -26,6 +28,7 @@ import project.slash.taskrequest.dto.response.StatusCountDto;
 import project.slash.taskrequest.dto.response.SystemCountDto;
 import project.slash.taskrequest.dto.response.TaskRequestOfManagerDto;
 import project.slash.taskrequest.dto.response.TaskTypeCountDto;
+import project.slash.taskrequest.mapper.TaskRequestMapper;
 import project.slash.taskrequest.model.TaskRequest;
 import project.slash.taskrequest.model.TaskType;
 import project.slash.taskrequest.model.constant.RequestStatus;
@@ -42,6 +45,9 @@ public class TaskRequestService {
 	private final TaskRequestRepository taskRequestRepository;
 	private final EquipmentRepository equipmentRepository;
 	private final UserRepository userRepository;
+	private final SystemIncidentRepository systemIncidentRepository;
+
+	private final TaskRequestMapper taskRequestMapper;
 
 	@Transactional
 	public void createRequest(TaskRequestDto taskRequestDto, String userId) {    //요청 생성
@@ -49,7 +55,7 @@ public class TaskRequestService {
 		Equipment equipment = findEquipment(taskRequestDto.getEquipmentName());
 
 		User requester = userRepository.findById(userId).orElseThrow(() -> new BusinessException(NOT_FOUND_USER));
-		TaskRequest taskRequest = TaskRequest.from(taskRequestDto, taskType, requester, equipment);
+		TaskRequest taskRequest = taskRequestMapper.toEntity(taskRequestDto, taskType, requester, equipment);
 
 		taskRequestRepository.save(taskRequest);
 	}
@@ -67,7 +73,7 @@ public class TaskRequestService {
 	public RequestDetailDto showRequestDetail(Long requestId) {	//요청 조회
 		TaskRequest taskRequest = findRequest(requestId);
 
-		return RequestDetailDto.from(taskRequest);
+		return taskRequestMapper.toRequestDetailDto(taskRequest);
 	}
 
 	@Transactional
@@ -169,7 +175,15 @@ public class TaskRequestService {
 	}
 
 	@Transactional
-	public void completeRequest(long requestId, String managerId) {
-		taskRequestRepository.updateDueOnTime(requestId, managerId, COMPLETED);
+	public void completeRequest(long requestId, String rManagerId) {
+		TaskRequest taskRequest = taskRequestRepository.findById(requestId)
+			.orElseThrow(() -> new BusinessException(NOT_FOUND_REQUEST));
+
+		taskRequestRepository.updateDueOnTime(requestId, rManagerId, COMPLETED);
+		if (taskRequest.getTaskType().getType().equals("장애 요청")) {
+			Long duration = taskRequestRepository.getDuration(requestId);
+			SystemIncident systemIncident = SystemIncident.create(duration, taskRequest);
+			systemIncidentRepository.save(systemIncident);
+		}
 	}
 }

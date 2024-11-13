@@ -32,4 +32,6 @@ public interface TaskRequestRepositoryCustom {
 
 	IncidentInfoDto getIncidentCount(Long evaluationItemId, LocalDate endDate);
 
+	Long getDuration(Long requestId);
+
 }

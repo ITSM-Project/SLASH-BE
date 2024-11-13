@@ -45,15 +45,4 @@ public class TaskType {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "evaluation_item_id")
 	private EvaluationItem evaluationItem;
-
-	public static TaskType from(TaskTypeDto taskTypeDto, EvaluationItem evaluationItem) {
-		return TaskType.builder()
-			.type(taskTypeDto.getType())
-			.taskDetail(taskTypeDto.getTaskDetail())
-			.deadline(taskTypeDto.getDeadline())
-			.serviceRelevance(taskTypeDto.isServiceRelevance())
-			.inclusionStatus(taskTypeDto.isInclusionStatus())
-			.evaluationItem(evaluationItem)
-			.build();
-	}
 }

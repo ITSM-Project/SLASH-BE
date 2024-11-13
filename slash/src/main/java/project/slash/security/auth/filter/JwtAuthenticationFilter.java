@@ -32,17 +32,17 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 		ServletException {
 
 		HttpServletRequest httpRequest = (HttpServletRequest)request;
+		HttpServletResponse httpResponse = (HttpServletResponse)response;
 
 		String requestURI = httpRequest.getRequestURI();
 
-		// // 로그인 요청 경로는 JWT 검증을 건너뜀
+		// 로그인 요청 경로는 JWT 검증을 건너뜀
 		if ("/login".equals(requestURI)) {
 			chain.doFilter(request, response);
 			return;
 		}
 
 		String token = jwtTokenProvider.resolveToken((HttpServletRequest)request);
-
 		try {
 			jwtTokenProvider.validateToken(token);
 
@@ -53,7 +53,8 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 			chain.doFilter(request, response);
 		} catch (IllegalArgumentException e) {
 			log.error("JWT 검증 오류: {}", e.getMessage());
-			throw new IllegalArgumentException("Invalid JWT Token", e);
+			httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			httpResponse.getWriter().write("Invalid JWT Token");
 		}
 
 	}

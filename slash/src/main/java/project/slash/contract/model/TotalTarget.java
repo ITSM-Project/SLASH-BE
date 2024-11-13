@@ -14,7 +14,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.slash.contract.dto.GradeDto;
 
 @Entity
 @Getter
@@ -46,18 +45,6 @@ public class TotalTarget {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "contract_id")
 	private Contract contract;
-
-	public static TotalTarget from(GradeDto gradeDto, Contract contract) {
-		return TotalTarget.builder()
-			.contract(contract)
-			.grade(gradeDto.getGrade())
-			.min(gradeDto.getMin())
-			.minInclusive(gradeDto.getMinInclusive())
-			.max(gradeDto.getMax())
-			.maxInclusive((gradeDto.getMaxInclusive()))
-			.isActive(true)
-			.build();
-	}
 
 	public void deactivate() {
 		this.isActive = false;

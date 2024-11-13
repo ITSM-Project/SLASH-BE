@@ -1,7 +1,15 @@
 spring:
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    cache: false  # 개발 시에는 false로 설정하여 실시간 반영
+    servlet:
+      content-type: text/html
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ENC(bq4b43WTebEClGFmzwIdA9Qy1SXWK74Pkk/9Uu53MbeMLVfXfYl3RICGW2+KahjwKey7bm9BK13j7ZHUPmSF6CoFHgIc9lIfhjVKCr0UPMr9yaA3TVhG7MWspnrCL9mHZROpsTDaK1xDdjZxDaULLE0qjMwMjiYHiRnhGYVvcT1C3gf07gaoJGZCztIzMR1N9CSxTIII/hCJA00Yw/Jtog==)
+    url: ENC(Fyk575JGvKP+BPP2Rw4ks5P+KHPIioWouWI4P76Pd9bLV3dXGaIonfp11iRkLl1T13NU6S/DnGFoFLj7I1v8CUxwUFwGtoV5MtKtUYJakfdV6fm3Jn3HZv7gD4LNVbVa82fv2ACesUfBwRGWkk6F1i2UU0iibw3e9JceJRYtGAIxM76dADdEW//fFMMZH5VVRX1QvrvW0a0=)
     username: ENC(PhyaRJCJP89U3bl2A9njuA==)
     password: ENC(RqQ+m97Mi+ianfhwxg0JI4EOZk3cPdzh)
   jpa:

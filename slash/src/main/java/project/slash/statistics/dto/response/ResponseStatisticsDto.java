@@ -1,5 +1,7 @@
 package project.slash.statistics.dto.response;
 
+import java.time.LocalDate;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AllArgsConstructor;
@@ -26,6 +28,7 @@ public class ResponseStatisticsDto {
 	private double estimate;
 	private long systemIncidentCount;
 	private Long evaluationItemId;
+	private LocalDate date;
 
 	public static ResponseStatisticsDto fromResponseServiceTask(ResponseServiceTaskDto responseServiceTaskDto,
 		double score, double weightedScore, String grade) {
@@ -40,8 +43,8 @@ public class ResponseStatisticsDto {
 			.requestCount(responseServiceTaskDto.getTaskRequest())
 			.dueOnTimeCount(responseServiceTaskDto.getDueOnTimeCount())
 			.estimate(score)
-			.totalDowntime(0)
-			.systemIncidentCount(0)
+			.totalDowntime(-1)
+			.systemIncidentCount(-1)
 			.evaluationItemId(responseServiceTaskDto.getEvaluationItem().getId())
 			.build();
 	}

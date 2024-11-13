@@ -64,7 +64,7 @@ public class EvaluationItemService {
 	}
 
 	private void saveEvaluationItem(CreateEvaluationItemDto createEvaluationItemDto, Contract contract) {
-		EvaluationItem evaluationItem = EvaluationItem.from(createEvaluationItemDto, contract);
+		EvaluationItem evaluationItem = evaluationItemMapper.toEntity(createEvaluationItemDto, contract);
 		evaluationItemRepository.save(evaluationItem);	//서비스 평가 항목 생성
 
 		saveServiceTargets(createEvaluationItemDto.getServiceTargets(), evaluationItem);	//서비스 목표 저장
@@ -78,7 +78,7 @@ public class EvaluationItemService {
 		List<TaskTypeDto> taskTypes = taskTypeMapper.toTaskTypeDtoList(
 			taskTypeRepository.findTaskTypesByEvaluationItemId(evaluationItemId));
 
-		return EvaluationItemDetailDto.createAll(evaluationItemDto, taskTypes);
+		return evaluationItemMapper.toEvaluationItemDetailDto(evaluationItemDto, taskTypes);
 	}
 
 	public boolean checkModifiable(Long contractId) {
