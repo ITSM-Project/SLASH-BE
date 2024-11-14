@@ -19,10 +19,8 @@ public class RequestManagementDto {
 	private String type;
 	private String taskDetail;
 	private Long id;
-	private Long contractId;
 	private String requesterName;
 	private String managerName;
-	private String managerId;
 	private LocalDateTime createTime;
 	private LocalDateTime updateTime;
 
