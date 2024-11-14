@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class IndicatorExtraInfoDto {
-	private String grade;
-	private double score;
+public class WeightedScore {
+	private String category;
+	private double weightedScore;
 }

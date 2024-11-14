@@ -12,7 +12,6 @@ public class CalculatedStatisticsDto {
 	private Long evaluationItemId;
 	private String category;
 	private Boolean isAuto;
-	private LocalDate calculateRange;
-	private LocalDate calculatedDate;
+	private LocalDate date;
 	private Boolean isApprove;
 }

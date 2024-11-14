@@ -41,7 +41,6 @@ public class TaskRequestController {
 	@PostMapping("/user/request")
 	public BaseResponse<Void> createRequest(@Login String userId, @RequestBody @Valid TaskRequestDto taskRequestDto) {
 		taskRequestService.createRequest(taskRequestDto, userId);
-
 		return BaseResponse.ok();
 	}
 

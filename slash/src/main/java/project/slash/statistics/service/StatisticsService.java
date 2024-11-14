@@ -3,8 +3,11 @@ package project.slash.statistics.service;
 import static project.slash.statistics.exception.StatisticsErrorCode.*;
 
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +26,8 @@ import project.slash.statistics.dto.response.IndicatorExtraInfoDto;
 import project.slash.statistics.dto.response.MonthlyIndicatorsDto;
 import project.slash.statistics.dto.response.StatisticsStatusDto;
 import project.slash.statistics.dto.response.UnCalculatedStatisticsDto;
+import project.slash.statistics.dto.response.WeightedScore;
+import project.slash.statistics.dto.response.YearWeightedScore;
 import project.slash.statistics.mapper.StatisticsMapper;
 import project.slash.statistics.model.Statistics;
 import project.slash.statistics.repository.StatisticsRepository;
@@ -34,7 +39,6 @@ public class StatisticsService {
 	private static final int MINIMUM_STATISTICS_REQUIRED = 3;
 	private static final String TOTAL = "전체";
 
-
 	private final StatisticsRepository statisticsRepository;
 	private final EvaluationItemRepository evaluationItemRepository;
 	private final TotalTargetRepository totalTargetRepository;
@@ -42,13 +46,8 @@ public class StatisticsService {
 	private final EvaluationItemMapper evaluationItemMapper;
 	private final StatisticsMapper statisticsMapper;
 
-	public MonthlyIndicatorsDto getMonthlyIndicators(Long contractId, YearMonth date) {
-		LocalDate startDate = date.atDay(1);
-		LocalDate endDate = date.atEndOfMonth();
-
-		List<Statistics> statistics = statisticsRepository
-			.findByDateBetweenAndEvaluationItemContractIdAndApprovalStatusTrueAndTargetSystem(startDate, endDate,
-				contractId, TOTAL);
+	public MonthlyIndicatorsDto getMonthlyIndicators(Long contractId, YearMonth yearMonth) {
+		List<Statistics> statistics = getStatisticsByMonth(contractId, yearMonth);
 
 		if (statistics.size() < MINIMUM_STATISTICS_REQUIRED) {
 			return new MonthlyIndicatorsDto();
@@ -58,21 +57,19 @@ public class StatisticsService {
 			statisticsMapper.toMonthlyIndicators(statistics));
 	}
 
+	public List<MonthlyIndicatorsDto> getYearIndicators(Long contractId, Year year) {
+		return IntStream.rangeClosed(1, 12)
+			.mapToObj(month ->
+				getMonthlyIndicators(contractId, YearMonth.of(year.getValue(), month)))
+			.toList();
+	}
 
 	private IndicatorExtraInfoDto getIndicatorExtraInfo(Long contractId, List<Statistics> statistics) {
-		double score = 0;
-		long requestCount = 0;
-		long incidentTime = 0;
+		double totalScore = statistics.stream()
+			.mapToDouble(Statistics::getWeightedScore)
+			.sum();
 
-		for (Statistics statistic : statistics) {
-			score += statistic.getWeightedScore();
-			if(statistic.getServiceType().equals("서비스 가동률")) {
-				requestCount = statistic.getRequestCount();
-				incidentTime = statistic.getTotalDowntime();
-			}
-		}
-
-		return new IndicatorExtraInfoDto(findTotalTarget(contractId, score), score, requestCount, incidentTime);
+		return new IndicatorExtraInfoDto(findTotalTarget(contractId, totalScore), totalScore);
 	}
 
 	public String findTotalTarget(Long contractId, double score) {
@@ -86,13 +83,13 @@ public class StatisticsService {
 			.orElse(null);
 	}
 
-	public StatisticsStatusDto getStatisticsStatus(Long contractId, LocalDate endDate) {
-		LocalDate startDate = endDate.withDayOfMonth(1);
+	public StatisticsStatusDto getStatisticsStatus(Long contractId, YearMonth yearMonth) {
+		LocalDate date = yearMonth.atEndOfMonth();
 
-		List<EvaluationItem> unCalculatedEvaluationItem = evaluationItemRepository.findUnCalculatedEvaluationItem(contractId, endDate);
+		List<EvaluationItem> unCalculatedEvaluationItem = evaluationItemRepository.findUnCalculatedEvaluationItem(contractId, date);
 		List<UnCalculatedStatisticsDto> unCalculatedStatistics = evaluationItemMapper.unCalculatedStatisticsList(unCalculatedEvaluationItem);	//미계산 된 지표
 
-		List<Statistics> statistics = statisticsRepository.findByDateBetweenAndEvaluationItemContractId(startDate, endDate, contractId);
+		List<Statistics> statistics = statisticsRepository.findByDateAndEvaluationItemContractId(date, contractId);
 		List<CalculatedStatisticsDto> calculatedStatistics = statistics.stream()	//계산된 지표중 전체 통계만 조회
 			.filter(statistic -> statistic.getTargetSystem().equals(TOTAL))
 			.map(statisticsMapper::toCalculatedStatistics)
@@ -127,16 +124,45 @@ public class StatisticsService {
 	}
 
 	public List<MonthlyServiceStatisticsDto> getStatistics(Long evaluationItemId, LocalDate date) {
-		List<Statistics> statistics = statisticsRepository.findByEvaluationItemIdAndCalculateTime(evaluationItemId, date);
+		List<Statistics> statistics = statisticsRepository.findByEvaluationItemIdAndDate(evaluationItemId, date);
 
 		return statisticsMapper.toCalculatedStatisticsDtos(statistics);
 	}
 
 	@Transactional
-	public void deleteStatistics(Long evaluationItemId, LocalDate calculateTime) {
-		List<Statistics> statistics = statisticsRepository.findByEvaluationItemIdAndCalculateTime(
-			evaluationItemId, calculateTime);
+	public void deleteStatistics(Long evaluationItemId, LocalDate date) {
+		List<Statistics> statistics = statisticsRepository.findByEvaluationItemIdAndDate(evaluationItemId, date);
 
 		statisticsRepository.deleteAll(statistics);
+	}
+
+	public List<YearWeightedScore> getWeightedScore(Long contractId, Year year) {
+		List<YearWeightedScore> yearWeightedScores = new ArrayList<>();
+
+		for (int month = 1; month <= 12; month++) {
+			List<Statistics> statistics = getStatisticsByMonth(contractId, YearMonth.of(year.getValue(), month));
+
+			if (statistics.size() >= MINIMUM_STATISTICS_REQUIRED) {
+				YearWeightedScore weightedScore = getWeightedScore(statistics, yearWeightedScores, month);
+				yearWeightedScores.add(weightedScore);
+			}
+		}
+
+		return yearWeightedScores;
+	}
+
+	private YearWeightedScore getWeightedScore(List<Statistics> statistics, List<YearWeightedScore> yearWeightedScores, int month) {
+		List<WeightedScore> weightedScores = statistics.stream()
+			.map(statistic -> new WeightedScore(statistic.getServiceType(), statistic.getWeightedScore()))
+			.toList();
+
+		return new YearWeightedScore(month, weightedScores);
+	}
+
+	private List<Statistics> getStatisticsByMonth(Long contractId, YearMonth yearMonth) {
+		LocalDate date = yearMonth.atEndOfMonth();
+
+		return statisticsRepository.findByDateAndEvaluationItemContractIdAndApprovalStatusTrueAndTargetSystem(date,
+			contractId, TOTAL);
 	}
 }
