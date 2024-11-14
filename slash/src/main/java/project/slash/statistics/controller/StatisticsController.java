@@ -19,6 +19,7 @@ import project.slash.statistics.dto.response.MonthlyServiceStatisticsDto;
 import project.slash.statistics.dto.request.EditStatisticsDto;
 import project.slash.statistics.dto.response.MonthlyIndicatorsDto;
 import project.slash.statistics.dto.response.StatisticsStatusDto;
+import project.slash.statistics.dto.response.YearWeightedScore;
 import project.slash.statistics.service.StatisticsService;
 
 @RestController
@@ -40,11 +41,32 @@ public class StatisticsController {
 		return BaseResponse.ok(monthlyIndicators);
 	}
 
+	/**
+	 * 연간 지표 조회하는 메서드입니다.
+	 *
+	 * @param contractId 지표 조회할 계약서 아이디
+	 * @param date 조회할 날짜
+	 * @return 연간 지표
+	 */
 	@GetMapping("/common/{contractId}/year-indicators")
 	public BaseResponse<List<MonthlyIndicatorsDto>> getYearIndicators(@PathVariable Long contractId, @RequestParam Year date) {
 		List<MonthlyIndicatorsDto> yearIndicators = statisticsService.getYearIndicators(contractId, date);
 
 		return BaseResponse.ok(yearIndicators);
+	}
+
+	/**
+	 * 연간 가중치 적용된 점수 조회 메서드입니다.
+	 * 
+	 * @param contractId 조회할 계약 아이디
+	 * @param date 조회할 연도
+	 * @return 연간 카테고리 별 가중치 적용된 점수 리스트
+	 */
+	@GetMapping("/common/{contractId}/weighted-score")
+	public BaseResponse<List<YearWeightedScore>> getWeightedScore(@PathVariable Long contractId, @RequestParam Year date) {
+		List<YearWeightedScore> yearWeightedScores = statisticsService.getWeightedScore(contractId, date);
+
+		return BaseResponse.ok(yearWeightedScores);
 	}
 
 	/**

@@ -5,6 +5,7 @@ import static project.slash.statistics.exception.StatisticsErrorCode.*;
 import java.time.LocalDate;
 import java.time.Year;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -25,6 +26,8 @@ import project.slash.statistics.dto.response.IndicatorExtraInfoDto;
 import project.slash.statistics.dto.response.MonthlyIndicatorsDto;
 import project.slash.statistics.dto.response.StatisticsStatusDto;
 import project.slash.statistics.dto.response.UnCalculatedStatisticsDto;
+import project.slash.statistics.dto.response.WeightedScore;
+import project.slash.statistics.dto.response.YearWeightedScore;
 import project.slash.statistics.mapper.StatisticsMapper;
 import project.slash.statistics.model.Statistics;
 import project.slash.statistics.repository.StatisticsRepository;
@@ -44,9 +47,7 @@ public class StatisticsService {
 	private final StatisticsMapper statisticsMapper;
 
 	public MonthlyIndicatorsDto getMonthlyIndicators(Long contractId, YearMonth yearMonth) {
-		LocalDate date = yearMonth.atEndOfMonth();
-
-		List<Statistics> statistics = statisticsRepository.findByDateAndEvaluationItemContractIdAndApprovalStatusTrueAndTargetSystem(date, contractId, TOTAL);
+		List<Statistics> statistics = getStatisticsByMonth(contractId, yearMonth);
 
 		if (statistics.size() < MINIMUM_STATISTICS_REQUIRED) {
 			return new MonthlyIndicatorsDto();
@@ -58,7 +59,8 @@ public class StatisticsService {
 
 	public List<MonthlyIndicatorsDto> getYearIndicators(Long contractId, Year year) {
 		return IntStream.rangeClosed(1, 12)
-			.mapToObj(month -> getMonthlyIndicators(contractId, YearMonth.of(year.getValue(), month)))
+			.mapToObj(month ->
+				getMonthlyIndicators(contractId, YearMonth.of(year.getValue(), month)))
 			.toList();
 	}
 
@@ -132,5 +134,35 @@ public class StatisticsService {
 		List<Statistics> statistics = statisticsRepository.findByEvaluationItemIdAndDate(evaluationItemId, date);
 
 		statisticsRepository.deleteAll(statistics);
+	}
+
+	public List<YearWeightedScore> getWeightedScore(Long contractId, Year year) {
+		List<YearWeightedScore> yearWeightedScores = new ArrayList<>();
+
+		for (int month = 1; month <= 12; month++) {
+			List<Statistics> statistics = getStatisticsByMonth(contractId, YearMonth.of(year.getValue(), month));
+
+			if (statistics.size() >= MINIMUM_STATISTICS_REQUIRED) {
+				YearWeightedScore weightedScore = getWeightedScore(statistics, yearWeightedScores, month);
+				yearWeightedScores.add(weightedScore);
+			}
+		}
+
+		return yearWeightedScores;
+	}
+
+	private YearWeightedScore getWeightedScore(List<Statistics> statistics, List<YearWeightedScore> yearWeightedScores, int month) {
+		List<WeightedScore> weightedScores = statistics.stream()
+			.map(statistic -> new WeightedScore(statistic.getServiceType(), statistic.getWeightedScore()))
+			.toList();
+
+		return new YearWeightedScore(month, weightedScores);
+	}
+
+	private List<Statistics> getStatisticsByMonth(Long contractId, YearMonth yearMonth) {
+		LocalDate date = yearMonth.atEndOfMonth();
+
+		return statisticsRepository.findByDateAndEvaluationItemContractIdAndApprovalStatusTrueAndTargetSystem(date,
+			contractId, TOTAL);
 	}
 }
