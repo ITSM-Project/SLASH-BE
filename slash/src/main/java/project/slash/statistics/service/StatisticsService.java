@@ -73,13 +73,13 @@ public class StatisticsService {
 			.orElse(null);
 	}
 
-	public StatisticsStatusDto getStatisticsStatus(Long contractId, LocalDate endDate) {
-		LocalDate startDate = endDate.withDayOfMonth(1);
+	public StatisticsStatusDto getStatisticsStatus(Long contractId, YearMonth yearMonth) {
+		LocalDate date = yearMonth.atEndOfMonth();
 
-		List<EvaluationItem> unCalculatedEvaluationItem = evaluationItemRepository.findUnCalculatedEvaluationItem(contractId, endDate);
+		List<EvaluationItem> unCalculatedEvaluationItem = evaluationItemRepository.findUnCalculatedEvaluationItem(contractId, date);
 		List<UnCalculatedStatisticsDto> unCalculatedStatistics = evaluationItemMapper.unCalculatedStatisticsList(unCalculatedEvaluationItem);	//미계산 된 지표
 
-		List<Statistics> statistics = statisticsRepository.findByDateBetweenAndEvaluationItemContractId(startDate, endDate, contractId);
+		List<Statistics> statistics = statisticsRepository.findByDateAndEvaluationItemContractId(date, contractId);
 		List<CalculatedStatisticsDto> calculatedStatistics = statistics.stream()	//계산된 지표중 전체 통계만 조회
 			.filter(statistic -> statistic.getTargetSystem().equals(TOTAL))
 			.map(statisticsMapper::toCalculatedStatistics)

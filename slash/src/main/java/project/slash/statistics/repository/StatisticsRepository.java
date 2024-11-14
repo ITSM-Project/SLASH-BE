@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import project.slash.statistics.model.Statistics;
 
 public interface StatisticsRepository extends JpaRepository<Statistics, Long>, StatisticsRepositoryCustom {
-	List<Statistics> findByDateBetweenAndEvaluationItemContractId(LocalDate startDate, LocalDate endDate, Long contractId);
+	List<Statistics> findByDateAndEvaluationItemContractId(LocalDate date, Long contractId);
 
 	List<Statistics> findByEvaluationItem_IdIn(List<Long> evaluationItemIds);
 

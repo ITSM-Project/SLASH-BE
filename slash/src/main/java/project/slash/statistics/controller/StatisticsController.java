@@ -47,7 +47,7 @@ public class StatisticsController {
 	 * @return 계산, 미계산 통계 지표 리스트
 	 */
 	@GetMapping("/contract-manager/statistics/status/{contractId}")
-	public BaseResponse<StatisticsStatusDto> getStatisticsStatus(@PathVariable Long contractId, @RequestParam LocalDate date) {
+	public BaseResponse<StatisticsStatusDto> getStatisticsStatus(@PathVariable Long contractId, @RequestParam YearMonth date) {
 		StatisticsStatusDto statisticsStatus = statisticsService.getStatisticsStatus(contractId, date);
 
 		return BaseResponse.ok(statisticsStatus);
