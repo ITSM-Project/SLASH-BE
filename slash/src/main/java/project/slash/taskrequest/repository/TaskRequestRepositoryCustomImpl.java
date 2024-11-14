@@ -1,5 +1,7 @@
 package project.slash.taskrequest.repository;
 
+import static project.slash.contract.model.QContract.*;
+import static project.slash.contract.model.QEvaluationItem.*;
 import static project.slash.system.model.QEquipment.*;
 import static project.slash.system.model.QSystems.*;
 import static project.slash.taskrequest.model.QTaskRequest.*;
@@ -26,7 +28,10 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
+import project.slash.contract.model.QContract;
+import project.slash.contract.model.QEvaluationItem;
 import project.slash.statistics.dto.IncidentInfoDto;
+import project.slash.system.model.QEquipment;
 import project.slash.system.model.QSystems;
 import project.slash.taskrequest.dto.request.RequestManagementDto;
 import project.slash.taskrequest.dto.response.StatusCountDto;
@@ -117,31 +122,35 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 
 	@Override
 	public Page<RequestManagementDto> findFilteredRequests(String equipmentName, String type,
-		String taskDetail, RequestStatus status, String keyword, Pageable pageable) {
+		String taskDetail, RequestStatus status, String keyword, Pageable pageable, int year, int month,
+		Long contractId, String user, String role) {
 
 		QTaskRequest taskRequestEntity = QTaskRequest.taskRequest;
-		QTaskType taskTypeEntity = taskType;
-		QSystems systemsEntity = systems;
+		QTaskType taskTypeEntity = QTaskType.taskType;
+		QSystems systemsEntity = QSystems.systems;
+		QContract contractEntity = QContract.contract;
+		QEvaluationItem evaluationItemEntity = QEvaluationItem.evaluationItem;
 
 		BooleanBuilder builder = new BooleanBuilder();
 
 		// 동적 필터 추가
 		if (equipmentName != null) {
-			builder.and((systemsEntity.name.eq(equipmentName)));
+			builder.and(systemsEntity.name.eq(equipmentName));
 		}
-
 		if (type != null) {
 			builder.and(taskRequestEntity.taskType.type.eq(type));
 		}
 		if (taskDetail != null) {
 			builder.and(taskRequestEntity.taskType.taskDetail.eq(taskDetail));
 		}
-
 		if (status != null) {
 			builder.and(taskRequestEntity.status.eq(status));
 		}
+		if (role.equals("ROLE_REQUEST_MANAGER")) {
+			builder.and(taskRequestEntity.manager.id.eq(user));
+		}
 
-		//검색어 필터 추가 (title이나 content에 검색어가 포함된 경우)
+		// 검색어 필터 추가
 		if (keyword != null && !keyword.isEmpty()) {
 			builder.and(
 				taskRequestEntity.title.containsIgnoreCase(keyword)
@@ -149,7 +158,12 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 			);
 		}
 
-		// QueryResults를 통해 결과와 총 개수를 한 번에 조회
+		// 필터에 계약 ID 및 날짜 추가
+		builder.and(contractEntity.id.eq(contractId))
+			.and(taskRequestEntity.createTime.year().eq(year))
+			.and(taskRequestEntity.createTime.month().eq(month));
+
+		// QueryResults를 통해 결과와 총 개수를 조회
 		QueryResults<RequestManagementDto> results = queryFactory
 			.select(Projections.constructor(RequestManagementDto.class,
 				taskRequestEntity.title,
@@ -160,16 +174,19 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 				taskRequestEntity.taskType.type,
 				taskRequestEntity.taskType.taskDetail,
 				taskRequestEntity.id,
+				contractEntity.id,
 				taskRequestEntity.requester.name,
 				taskRequestEntity.manager.name,
+				taskRequestEntity.manager.id,
 				taskRequestEntity.createTime,
 				taskRequestEntity.updateTime
 			))
 			.from(taskRequestEntity)
-			.join(taskRequestEntity.equipment, equipment)
+			.join(taskRequestEntity.equipment, QEquipment.equipment)
 			.join(taskRequestEntity.taskType, taskTypeEntity)
-			.leftJoin(systems)
-			.on(equipment.systems.name.eq(systemsEntity.name))
+			.leftJoin(systemsEntity).on(QEquipment.equipment.systems.name.eq(systemsEntity.name))
+			.leftJoin(evaluationItemEntity).on(evaluationItemEntity.id.eq(taskTypeEntity.evaluationItem.id))
+			.leftJoin(contractEntity).on(contractEntity.id.eq(evaluationItemEntity.contract.id))
 			.where(builder)
 			.orderBy(taskRequestEntity.createTime.desc())
 			.offset(pageable.getOffset())
@@ -179,6 +196,7 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 		// Page로 반환
 		return new PageImpl<>(results.getResults(), pageable, results.getTotal());
 	}
+
 
 	@Override
 	public void updateManagerByRequestId(Long requestId, String managerId) {
