@@ -81,16 +81,16 @@ public class StatisticsController {
 	}
 
 	/**
-	 * 지표 결과 조회하는 메서드입니다.
+	 * 지표 결과 조회하는 메서드입니다. (상세보기)
 	 *
 	 * @param evaluationItemId 조회할 평가 항목 아이디
-	 * @param calculateTime 계산된 시간
+	 * @param date 계산된 시간
 	 * @return 확정된 지표 결과
 	 */
 	@GetMapping("/common/statistics/evaluation-item/{id}")
 	public BaseResponse<List<MonthlyServiceStatisticsDto>> getStatistics(@PathVariable("id") Long evaluationItemId,
-		@RequestParam("date") LocalDate calculateTime) {
-		List<MonthlyServiceStatisticsDto> statistics = statisticsService.getStatistics(evaluationItemId, calculateTime);
+		@RequestParam("date") LocalDate date) {
+		List<MonthlyServiceStatisticsDto> statistics = statisticsService.getStatistics(evaluationItemId, date);
 
 		return BaseResponse.ok(statistics);
 	}
@@ -99,13 +99,13 @@ public class StatisticsController {
 	 * 계산된 통계 삭제하는 메서드입니다.
 	 *
 	 * @param evaluationItemId 삭제할 항목
-	 * @param calculateTime 계산된 시간
+	 * @param date 계산된 시간
 	 * @return 성공 여부
 	 */
 	@DeleteMapping("/contract-manager/statistics/{id}")
 	public BaseResponse<Void> deleteCalculateStatistics(@PathVariable("id") Long evaluationItemId,
-		@RequestParam("date") LocalDate calculateTime) {
-		statisticsService.deleteStatistics(evaluationItemId, calculateTime);
+		@RequestParam("date") LocalDate date) {
+		statisticsService.deleteStatistics(evaluationItemId, date);
 
 		return BaseResponse.ok();
 	}

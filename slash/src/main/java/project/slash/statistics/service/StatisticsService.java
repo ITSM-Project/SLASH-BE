@@ -114,15 +114,14 @@ public class StatisticsService {
 	}
 
 	public List<MonthlyServiceStatisticsDto> getStatistics(Long evaluationItemId, LocalDate date) {
-		List<Statistics> statistics = statisticsRepository.findByEvaluationItemIdAndCalculateTime(evaluationItemId, date);
+		List<Statistics> statistics = statisticsRepository.findByEvaluationItemIdAndDate(evaluationItemId, date);
 
 		return statisticsMapper.toCalculatedStatisticsDtos(statistics);
 	}
 
 	@Transactional
-	public void deleteStatistics(Long evaluationItemId, LocalDate calculateTime) {
-		List<Statistics> statistics = statisticsRepository.findByEvaluationItemIdAndCalculateTime(
-			evaluationItemId, calculateTime);
+	public void deleteStatistics(Long evaluationItemId, LocalDate date) {
+		List<Statistics> statistics = statisticsRepository.findByEvaluationItemIdAndDate(evaluationItemId, date);
 
 		statisticsRepository.deleteAll(statistics);
 	}
