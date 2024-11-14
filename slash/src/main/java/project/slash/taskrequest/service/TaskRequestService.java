@@ -150,24 +150,16 @@ public class TaskRequestService {
 		return taskRequestRepository.findTaskRequestOfManager();
 	}
 
-	public RequestManagementResponseDto findFilteredRequests(
-		String equipmentName,
-		String type,
-		String taskDetail,
-		RequestStatus status,
-		String keyword,
-		Pageable pageable, int year, int month, Long contractId, String user
+	public RequestManagementResponseDto findFilteredRequests(String equipmentName, String type, String taskDetail,
+		RequestStatus status, String keyword,
+		Pageable pageable, Integer year, Integer month, Long contractId, String userId
 	) {
 
-
-		Optional<User> usr=userRepository.findById(user);
-		String role = usr.get().getRole();
+		User user = userRepository.findById(userId).orElseThrow(() -> new BusinessException(NOT_FOUND_USER));
 
 		Page<RequestManagementDto> taskResponseRequestDtos = taskRequestRepository.findFilteredRequests(
 			equipmentName, type, taskDetail, status, keyword, pageable, year, month, contractId,
-			user,role);
-
-
+			user.getId(), user.getRole());
 
 		return new RequestManagementResponseDto(
 			taskResponseRequestDtos.getContent(),

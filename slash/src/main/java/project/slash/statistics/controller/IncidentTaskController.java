@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
-import project.slash.contract.model.EvaluationItem;
 import project.slash.statistics.dto.request.RequestStatisticsDto;
 import project.slash.statistics.dto.response.ResponseStatisticsDto;
 import project.slash.statistics.service.AutoStatisticsService;
@@ -44,6 +43,7 @@ public class IncidentTaskController {
 		@RequestParam("date") LocalDate date) {
 		ResponseStatisticsDto responseStatisticsDto = autoStatisticsService.getIncidentStatistics(evaluationItemId,
 			date);
+
 		return BaseResponse.ok(responseStatisticsDto);
 	}
 }

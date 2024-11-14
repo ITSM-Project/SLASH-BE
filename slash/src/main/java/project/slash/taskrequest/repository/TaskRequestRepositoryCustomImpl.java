@@ -33,6 +33,7 @@ import project.slash.contract.model.QEvaluationItem;
 import project.slash.statistics.dto.IncidentInfoDto;
 import project.slash.system.model.QEquipment;
 import project.slash.system.model.QSystems;
+import project.slash.system.model.Systems;
 import project.slash.taskrequest.dto.request.RequestManagementDto;
 import project.slash.taskrequest.dto.response.StatusCountDto;
 import project.slash.taskrequest.dto.response.SystemCountDto;
@@ -140,73 +141,71 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 
 	@Override
 	public Page<RequestManagementDto> findFilteredRequests(String equipmentName, String type,
-		String taskDetail, RequestStatus status, String keyword, Pageable pageable, int year, int month,
+		String taskDetail, RequestStatus status, String keyword, Pageable pageable, Integer year, Integer month,
 		Long contractId, String user, String role) {
-
-		QTaskRequest taskRequestEntity = QTaskRequest.taskRequest;
-		QTaskType taskTypeEntity = QTaskType.taskType;
-		QSystems systemsEntity = QSystems.systems;
-		QContract contractEntity = QContract.contract;
-		QEvaluationItem evaluationItemEntity = QEvaluationItem.evaluationItem;
 
 		BooleanBuilder builder = new BooleanBuilder();
 
 		// 동적 필터 추가
 		if (equipmentName != null) {
-			builder.and(systemsEntity.name.eq(equipmentName));
+			builder.and(systems.name.eq(equipmentName));
 		}
 		if (type != null) {
-			builder.and(taskRequestEntity.taskType.type.eq(type));
+			builder.and(taskRequest.taskType.type.eq(type));
 		}
 		if (taskDetail != null) {
-			builder.and(taskRequestEntity.taskType.taskDetail.eq(taskDetail));
+			builder.and(taskRequest.taskType.taskDetail.eq(taskDetail));
 		}
 		if (status != null) {
-			builder.and(taskRequestEntity.status.eq(status));
+			builder.and(taskRequest.status.eq(status));
 		}
 		if (role.equals("ROLE_REQUEST_MANAGER")) {
-			builder.and(taskRequestEntity.manager.id.eq(user));
+			builder.and(taskRequest.manager.id.eq(user));
+		}
+		if (year != null) {
+			builder.and(taskRequest.createTime.year().eq(year));
+			if (month != null) {
+				builder.and(taskRequest.createTime.month().eq(month));
+			}
 		}
 
 		// 검색어 필터 추가
 		if (keyword != null && !keyword.isEmpty()) {
 			builder.and(
-				taskRequestEntity.title.containsIgnoreCase(keyword)
-					.or(taskRequestEntity.content.containsIgnoreCase(keyword))
+				taskRequest.title.containsIgnoreCase(keyword)
+					.or(taskRequest.content.containsIgnoreCase(keyword))
 			);
 		}
 
 		// 필터에 계약 ID 및 날짜 추가
-		builder.and(contractEntity.id.eq(contractId))
-			.and(taskRequestEntity.createTime.year().eq(year))
-			.and(taskRequestEntity.createTime.month().eq(month));
+		builder.and(contract.id.eq(contractId));
 
 		// QueryResults를 통해 결과와 총 개수를 조회
 		QueryResults<RequestManagementDto> results = queryFactory
 			.select(Projections.constructor(RequestManagementDto.class,
-				taskRequestEntity.title,
-				taskRequestEntity.content,
-				taskRequestEntity.dueOnTime,
-				taskRequestEntity.status,
-				taskRequestEntity.equipment.name,
-				taskRequestEntity.taskType.type,
-				taskRequestEntity.taskType.taskDetail,
-				taskRequestEntity.id,
-				contractEntity.id,
-				taskRequestEntity.requester.name,
-				taskRequestEntity.manager.name,
-				taskRequestEntity.manager.id,
-				taskRequestEntity.createTime,
-				taskRequestEntity.updateTime
+				taskRequest.title,
+				taskRequest.content,
+				taskRequest.dueOnTime,
+				taskRequest.status,
+				taskRequest.equipment.name,
+				taskRequest.taskType.type,
+				taskRequest.taskType.taskDetail,
+				taskRequest.id,
+				contract.id,
+				taskRequest.requester.name,
+				taskRequest.manager.name,
+				taskRequest.manager.id,
+				taskRequest.createTime,
+				taskRequest.updateTime
 			))
-			.from(taskRequestEntity)
-			.join(taskRequestEntity.equipment, QEquipment.equipment)
-			.join(taskRequestEntity.taskType, taskTypeEntity)
-			.leftJoin(systemsEntity).on(QEquipment.equipment.systems.name.eq(systemsEntity.name))
-			.leftJoin(evaluationItemEntity).on(evaluationItemEntity.id.eq(taskTypeEntity.evaluationItem.id))
-			.leftJoin(contractEntity).on(contractEntity.id.eq(evaluationItemEntity.contract.id))
+			.from(taskRequest)
+			.join(taskRequest.equipment, QEquipment.equipment)
+			.join(taskRequest.taskType, taskType)
+			.leftJoin(systems).on(QEquipment.equipment.systems.name.eq(systems.name))
+			.leftJoin(evaluationItem).on(evaluationItem.id.eq(taskType.evaluationItem.id))
+			.leftJoin(contract).on(contract.id.eq(evaluationItem.contract.id))
 			.where(builder)
-			.orderBy(taskRequestEntity.createTime.desc())
+			.orderBy(taskRequest.createTime.desc())
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetchResults();

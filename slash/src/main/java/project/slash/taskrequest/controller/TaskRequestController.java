@@ -138,16 +138,16 @@ public class TaskRequestController {
 		@RequestParam(required = false) String keyword,
 		@RequestParam(defaultValue = "1") int page,
 		@RequestParam(defaultValue = "5") int size,
-		@RequestParam("year") int year,
-		@RequestParam("month") int month,
-		@RequestParam("contractId") long contractId,
+		@RequestParam(required = false) Integer year,
+		@RequestParam(required = false) Integer month,
+		@RequestParam("contractId") Long contractId,
 		@Login String user
 	) {
 		Pageable pageable = PageRequest.of(page - 1, size);
 
 		// 서비스 메서드를 호출하여 RequestManagementResponseDto 객체를 받음
 		RequestManagementResponseDto responseData = taskRequestService.findFilteredRequests(
-			equipmentName, type, taskDetail, status, keyword, pageable,year,month,contractId,user
+			equipmentName, type, taskDetail, status, keyword, pageable, year, month, contractId, user
 		);
 
 		return BaseResponse.ok(responseData);
