@@ -16,6 +16,7 @@ public class Systems {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "system_id")
 	private Long id;
+
 	private String name;
 
 	private Systems(String name) {
