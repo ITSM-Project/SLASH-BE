@@ -32,7 +32,7 @@ public class ResponseStatisticsDto {
 	private LocalDate date;
 
 	public static ResponseStatisticsDto fromResponseServiceTask(ResponseServiceTaskDto responseServiceTaskDto,
-		double score, double weightedScore, String grade) {
+		double score, double weightedScore, String grade, LocalDate date) {
 		return ResponseStatisticsDto.builder()
 			.serviceType(responseServiceTaskDto.getEvaluationItem().getCategory())
 			.targetSystem("전체")
@@ -47,6 +47,7 @@ public class ResponseStatisticsDto {
 			.totalDowntime(-1)
 			.systemIncidentCount(-1)
 			.evaluationItemId(responseServiceTaskDto.getEvaluationItem().getId())
+			.date(date)
 			.build();
 	}
 

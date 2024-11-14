@@ -266,6 +266,6 @@ public class AutoStatisticsService {
 			score / responseServiceTaskDto.getTotalWeight() * responseServiceTaskDto.getEvaluationItem().getWeight()
 				* 100) / 100.0;
 		String grade = getGrade(responseServiceTaskDto.getEvaluationItem().getId(), score);
-		return ResponseStatisticsDto.fromResponseServiceTask(responseServiceTaskDto, score, weightScore, grade);
+		return ResponseStatisticsDto.fromResponseServiceTask(responseServiceTaskDto, score, weightScore, grade,date);
 	}
 }
