@@ -140,7 +140,7 @@ public class TaskRequestController {
 		@RequestParam(defaultValue = "5") int size,
 		@RequestParam(required = false) Integer year,
 		@RequestParam(required = false) Integer month,
-		@RequestParam("contractId") Long contractId,
+		@RequestParam("contractId") long contractId,
 		@Login String user
 	) {
 		Pageable pageable = PageRequest.of(page - 1, size);

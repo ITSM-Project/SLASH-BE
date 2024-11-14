@@ -199,9 +199,9 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 				taskRequest.updateTime
 			))
 			.from(taskRequest)
-			.join(taskRequest.equipment, QEquipment.equipment)
+			.join(taskRequest.equipment, equipment)
 			.join(taskRequest.taskType, taskType)
-			.leftJoin(systems).on(QEquipment.equipment.systems.name.eq(systems.name))
+			.leftJoin(systems).on(equipment.systems.name.eq(systems.name))
 			.leftJoin(evaluationItem).on(evaluationItem.id.eq(taskType.evaluationItem.id))
 			.leftJoin(contract).on(contract.id.eq(evaluationItem.contract.id))
 			.where(builder)

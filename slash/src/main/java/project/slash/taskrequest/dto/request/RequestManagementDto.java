@@ -25,6 +25,5 @@ public class RequestManagementDto {
 	private String managerId;
 	private LocalDateTime createTime;
 	private LocalDateTime updateTime;
-
 }
 
