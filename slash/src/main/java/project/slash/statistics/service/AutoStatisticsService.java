@@ -177,32 +177,38 @@ public class AutoStatisticsService {
 
 	}
 
-	@Transactional
-	public void getIncidentStatistics(RequestStatisticsDto requestStatisticsDto) {
+	public ResponseStatisticsDto getIncidentStatistics(Long evaluationItemId, LocalDate date) {
 
 		// 장애 건수와 적기 처리 건수 계산
-		IncidentInfoDto incidentInfoDto = taskRequestRepository.getIncidentCount(
-			requestStatisticsDto.getEvaluationItemId(),
-			requestStatisticsDto.getDate());
+		IncidentInfoDto incidentInfoDto = taskRequestRepository.getIncidentCount(evaluationItemId, date);
 		long incidentCount = incidentInfoDto.getTotalOverdueCount();
 
 		// 점수와 등급 리스트
 		List<ServiceTarget> gradeList = serviceTargetRepository.getServiceTargetByEvaluationItem_Id(
-			requestStatisticsDto.getEvaluationItemId());
+			evaluationItemId);
 
 		// 환산 점수와 등급
 		GradeScoreDto gradeScoreDto = getGradeAndScore(incidentCount, gradeList);
-		int weight = evaluationItemRepository.getReferenceById(requestStatisticsDto.getEvaluationItemId())
+		int weight = evaluationItemRepository.getReferenceById(evaluationItemId)
 			.getWeight();
 		int totalWeight = evaluationItemRepository.findTotalWeightByEvaluationItemId(
-			requestStatisticsDto.getEvaluationItemId());
+			evaluationItemId);
 		double weightScore = getWeightedScore(weight, totalWeight, gradeScoreDto.getScore());
+		
+		return ResponseStatisticsDto.fromIncidentDto(incidentInfoDto,
+			date, gradeScoreDto.getScore(),
+			weightScore, gradeScoreDto.getGrade(), gradeScoreDto.getScore(),
+			evaluationItemId);
+	}
 
-		// 저장
-		statisticsRepository.save(
-			statisticsMapper.toEntityFromIncidentInfo(incidentInfoDto, requestStatisticsDto.getDate(), gradeScoreDto.getScore(),
-				weightScore, gradeScoreDto.getGrade(), gradeScoreDto.getScore(),
-				evaluationItemRepository.getReferenceById(requestStatisticsDto.getEvaluationItemId())));
+	@Transactional
+	public void addIncidentStatistics(RequestStatisticsDto requestStatisticsDto) {
+		ResponseStatisticsDto responseStatisticsDto = getIncidentStatistics(requestStatisticsDto.getEvaluationItemId(),
+			requestStatisticsDto.getDate());
+		Statistics statistics = statisticsMapper.toEntityFromResponseStatisticsDto(responseStatisticsDto,
+			evaluationItemRepository.getReferenceById(requestStatisticsDto.getEvaluationItemId())
+		);
+		statisticsRepository.save(statistics);
 	}
 
 	public GradeScoreDto getGradeAndScore(long score, List<ServiceTarget> gradeList) {
@@ -236,7 +242,7 @@ public class AutoStatisticsService {
 		statisticsRepository.save(statistics);
 	}
 
-	//등급산출
+	//등급 산출
 	public String getGrade(Long evaluationItemId, double score) {
 		return serviceTargetRepository.getServiceTargetByEvaluationItem_Id(
 				evaluationItemId)

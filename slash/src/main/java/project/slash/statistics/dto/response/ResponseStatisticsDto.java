@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import project.slash.statistics.dto.IncidentInfoDto;
 
 @Getter
 @Builder
@@ -46,6 +47,27 @@ public class ResponseStatisticsDto {
 			.totalDowntime(-1)
 			.systemIncidentCount(-1)
 			.evaluationItemId(responseServiceTaskDto.getEvaluationItem().getId())
+			.build();
+	}
+
+	public static ResponseStatisticsDto fromIncidentDto(IncidentInfoDto incidentInfoDto,
+		LocalDate date, double score,
+		double weightedScore, String grade, double estimate, Long evaluationItemId) {
+		return ResponseStatisticsDto.builder()
+			.targetSystem("전체")
+			.targetEquipment("전체")
+			.serviceType("장애 적기처리율")
+			.date(date)
+			.grade(grade)
+			.score(score)
+			.period("월별")
+			.totalDowntime(-1)
+			.weightedScore(weightedScore)
+			.requestCount(incidentInfoDto.getTotalIncidentCount())
+			.systemIncidentCount(incidentInfoDto.getTotalIncidentCount())
+			.dueOnTimeCount(incidentInfoDto.getTotalIncidentCount() - incidentInfoDto.getTotalOverdueCount())
+			.estimate(estimate)
+			.evaluationItemId(evaluationItemId)
 			.build();
 	}
 }
