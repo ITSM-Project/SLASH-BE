@@ -21,7 +21,7 @@ import project.slash.statistics.dto.request.RequestStatisticsDto;
 @Service
 @RequiredArgsConstructor
 public class StatisticsSchedulingService {
-	private static final String EVERY_LAST_DAY_OF_MONTH = "0 0 0 L * ?";	//매월의 마지막 달
+	private static final String EVERY_LAST_DAY_OF_MONTH = "0 0 0 L * ?";    //매월의 마지막 달
 	private final AutoStatisticsService autoStatisticsService;
 	private final EvaluationItemRepository evaluationItemRepository;
 	private final ContractRepository contractRepository;
@@ -31,7 +31,7 @@ public class StatisticsSchedulingService {
 	public void init() {
 		statisticsActions = Map.of(
 			"서비스 가동률", autoStatisticsService::createMonthlyStats,
-			"장애 적기처리율", autoStatisticsService::getIncidentStatistics,
+			"장애 적기처리율", autoStatisticsService::addIncidentStatistics,
 			"서비스요청 적기처리율", autoStatisticsService::createServiceTaskStatistics
 		);
 	}
