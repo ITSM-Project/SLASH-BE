@@ -6,6 +6,7 @@ import static project.slash.taskrequest.model.constant.RequestStatus.*;
 import static project.slash.user.exception.UserErrorCode.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -155,10 +156,18 @@ public class TaskRequestService {
 		String taskDetail,
 		RequestStatus status,
 		String keyword,
-		Pageable pageable
+		Pageable pageable, int year, int month, Long contractId, String user
 	) {
+
+
+		Optional<User> usr=userRepository.findById(user);
+		String role = usr.get().getRole();
+
 		Page<RequestManagementDto> taskResponseRequestDtos = taskRequestRepository.findFilteredRequests(
-			equipmentName, type, taskDetail, status, keyword, pageable);
+			equipmentName, type, taskDetail, status, keyword, pageable, year, month, contractId,
+			user,role);
+
+
 
 		return new RequestManagementResponseDto(
 			taskResponseRequestDtos.getContent(),

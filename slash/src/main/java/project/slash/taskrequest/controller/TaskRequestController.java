@@ -1,6 +1,7 @@
 package project.slash.taskrequest.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,11 +27,14 @@ import project.slash.taskrequest.dto.response.StatusCountDto;
 import project.slash.taskrequest.dto.response.TaskRequestOfManagerDto;
 import project.slash.taskrequest.model.constant.RequestStatus;
 import project.slash.taskrequest.service.TaskRequestService;
+import project.slash.user.model.User;
+import project.slash.user.repository.UserRepository;
 
 @RestController
 @RequiredArgsConstructor
 public class TaskRequestController {
 	private final TaskRequestService taskRequestService;
+	private final UserRepository userRepository;
 
 	/**
 	 * 요청 생성 메서드입니다.
@@ -133,15 +137,18 @@ public class TaskRequestController {
 		@RequestParam(required = false) RequestStatus status,
 		@RequestParam(required = false) String keyword,
 		@RequestParam(defaultValue = "1") int page,
-		@RequestParam(defaultValue = "5") int size
+		@RequestParam(defaultValue = "5") int size,
+		@RequestParam("year") int year,
+		@RequestParam("month") int month,
+		@RequestParam("contractId") long contractId,
+		@Login String user
 	) {
 		Pageable pageable = PageRequest.of(page - 1, size);
 
 		// 서비스 메서드를 호출하여 RequestManagementResponseDto 객체를 받음
 		RequestManagementResponseDto responseData = taskRequestService.findFilteredRequests(
-			equipmentName, type, taskDetail, status, keyword, pageable
+			equipmentName, type, taskDetail, status, keyword, pageable,year,month,contractId,user
 		);
-
 
 		return BaseResponse.ok(responseData);
 	}
