@@ -15,11 +15,11 @@ import project.slash.taskrequest.dto.response.TaskTypeCountDto;
 import project.slash.taskrequest.model.constant.RequestStatus;
 
 public interface TaskRequestRepositoryCustom {
-	List<StatusCountDto> findCountByStatus(int year, int month, String user);
+	List<StatusCountDto> findCountByStatus(int year, int month, String user,Long contractId);
 
-	List<TaskTypeCountDto> findCountByTaskType(int year, int month, String user);
+	List<TaskTypeCountDto> findCountByTaskType(int year, int month, String user,Long contractId);
 
-	List<SystemCountDto> findCountBySystem(int year, int month, String user);
+	List<SystemCountDto> findCountBySystem(int year, int month, String user,Long contractId);
 
 	List<TaskRequestOfManagerDto> findTaskRequestOfManager();
 
@@ -33,5 +33,7 @@ public interface TaskRequestRepositoryCustom {
 	IncidentInfoDto getIncidentCount(Long evaluationItemId, LocalDate endDate);
 
 	Long getDuration(Long requestId);
+
+	List<StatusCountDto> findStatusCountByUser(int year, int month, String user,Long contractId);
 
 }
