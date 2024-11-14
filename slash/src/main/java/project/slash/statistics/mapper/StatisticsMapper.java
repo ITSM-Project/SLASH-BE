@@ -22,7 +22,6 @@ public class StatisticsMapper {
 			statistics.getServiceType(),
 			statistics.isAuto(),
 			statistics.getDate(),
-			statistics.getCalculateTime(),
 			statistics.isApprovalStatus()
 		);
 	}
@@ -108,14 +107,11 @@ public class StatisticsMapper {
 		return new IndicatorDto(
 			statistics.getEvaluationItem().getId(),
 			statistics.getEvaluationItem().getCategory(),
-			statistics.getDate(),
-			statistics.getCalculateTime(),
 			statistics.isAuto(),
+			statistics.getDate(),
 			statistics.getGrade(),
 			statistics.getScore(),
-			statistics.getTargetSystem()
+			statistics.getWeightedScore()
 		);
 	}
 }
-
-

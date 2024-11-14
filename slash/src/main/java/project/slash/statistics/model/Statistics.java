@@ -16,7 +16,6 @@ import lombok.NoArgsConstructor;
 import project.slash.contract.model.EvaluationItem;
 import lombok.Getter;
 
-
 import java.time.LocalDate;
 
 import org.springframework.data.annotation.CreatedDate;

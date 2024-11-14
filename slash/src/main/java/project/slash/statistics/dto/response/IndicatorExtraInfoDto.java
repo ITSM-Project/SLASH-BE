@@ -8,6 +8,4 @@ import lombok.Getter;
 public class IndicatorExtraInfoDto {
 	private String grade;
 	private double score;
-	private long requestCount;
-	private long incidentTime;
 }

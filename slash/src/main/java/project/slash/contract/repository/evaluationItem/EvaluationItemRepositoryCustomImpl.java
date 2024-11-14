@@ -56,7 +56,7 @@ public class EvaluationItemRepositoryCustomImpl implements EvaluationItemReposit
 		  .where(evaluationItem.id.notIn(
 			  JPAExpressions.select(statistics.evaluationItem.id)
 				  .from(statistics)
-				  .where(statistics.calculateTime.eq(endDate))
+				  .where(statistics.date.eq(endDate))
 		  ))
 		  .fetch();
 	}

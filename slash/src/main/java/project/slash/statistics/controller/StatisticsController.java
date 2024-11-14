@@ -33,7 +33,7 @@ public class StatisticsController {
 	 * @return 월간 지표
 	 */
 	@GetMapping("/common/{contractId}/indicators")
-	public BaseResponse<?> getMonthlyIndicators(@PathVariable Long contractId, @RequestParam YearMonth date) {
+	public BaseResponse<MonthlyIndicatorsDto> getMonthlyIndicators(@PathVariable Long contractId, @RequestParam YearMonth date) {
 		MonthlyIndicatorsDto monthlyIndicators = statisticsService.getMonthlyIndicators(contractId, date);
 
 		return BaseResponse.ok(monthlyIndicators);

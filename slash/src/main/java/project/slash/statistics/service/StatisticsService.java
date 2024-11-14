@@ -58,21 +58,12 @@ public class StatisticsService {
 			statisticsMapper.toMonthlyIndicators(statistics));
 	}
 
-
 	private IndicatorExtraInfoDto getIndicatorExtraInfo(Long contractId, List<Statistics> statistics) {
-		double score = 0;
-		long requestCount = 0;
-		long incidentTime = 0;
+		double totalScore = statistics.stream()
+			.mapToDouble(Statistics::getWeightedScore)
+			.sum();
 
-		for (Statistics statistic : statistics) {
-			score += statistic.getWeightedScore();
-			if(statistic.getServiceType().equals("서비스 가동률")) {
-				requestCount = statistic.getRequestCount();
-				incidentTime = statistic.getTotalDowntime();
-			}
-		}
-
-		return new IndicatorExtraInfoDto(findTotalTarget(contractId, score), score, requestCount, incidentTime);
+		return new IndicatorExtraInfoDto(findTotalTarget(contractId, totalScore), totalScore);
 	}
 
 	public String findTotalTarget(Long contractId, double score) {
