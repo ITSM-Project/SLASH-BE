@@ -125,22 +125,22 @@ public class TaskRequestService {
 			.orElseThrow(() -> new BusinessException(NOT_FOUND_REQUEST));
 	}
 
-	public List<StatusCountDto> findCountByStatus(int year, int month, String user){
-		return taskRequestRepository.findCountByStatus(year, month, user);
+	public List<StatusCountDto> findCountByStatus(int year, int month, String user,Long contractId) {
+		return taskRequestRepository.findCountByStatus(year, month, user,contractId);
 	}
 
-	public List<TaskTypeCountDto> findCountByTaskType(int year, int month, String user) {
-		return taskRequestRepository.findCountByTaskType(year, month, user);
+	public List<TaskTypeCountDto> findCountByTaskType(int year, int month, String user,Long contractId) {
+		return taskRequestRepository.findCountByTaskType(year, month, user,contractId);
 	}
 
-	public List<SystemCountDto> findCountBySystem(int year, int month, String user) {
-		return taskRequestRepository.findCountBySystem(year, month, user);
+	public List<SystemCountDto> findCountBySystem(int year, int month, String user,Long contractId) {
+		return taskRequestRepository.findCountBySystem(year, month, user,contractId);
 	}
 
-	public RequestManagerMainResponseDto getMonthlyRequestData(int year, int month, String user) {
-		List<StatusCountDto> statusCounts = findCountByStatus(year, month, user);
-		List<TaskTypeCountDto> taskTypeCounts = findCountByTaskType(year, month, user);
-		List<SystemCountDto> systemCounts = findCountBySystem(year, month, user);
+	public RequestManagerMainResponseDto getMonthlyRequestData(int year, int month, String user,Long contractId) {
+		List<StatusCountDto> statusCounts = findCountByStatus(year, month, user,contractId);
+		List<TaskTypeCountDto> taskTypeCounts = findCountByTaskType(year, month, user,contractId);
+		List<SystemCountDto> systemCounts = findCountBySystem(year, month, user,contractId);
 
 		return new RequestManagerMainResponseDto(statusCounts, taskTypeCounts, systemCounts);
 	}
@@ -186,4 +186,9 @@ public class TaskRequestService {
 			systemIncidentRepository.save(systemIncident);
 		}
 	}
+
+	public List<StatusCountDto> getStatusCountByUser(int year, int month, String user,Long contractId){
+		return taskRequestRepository.findStatusCountByUser(year, month, user,contractId);
+	}
+
 }

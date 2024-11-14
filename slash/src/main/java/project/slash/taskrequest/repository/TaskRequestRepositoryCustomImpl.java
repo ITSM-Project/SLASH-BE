@@ -1,5 +1,7 @@
 package project.slash.taskrequest.repository;
 
+import static project.slash.contract.model.QContract.*;
+import static project.slash.contract.model.QEvaluationItem.*;
 import static project.slash.system.model.QEquipment.*;
 import static project.slash.system.model.QSystems.*;
 import static project.slash.taskrequest.model.QTaskRequest.*;
@@ -46,56 +48,74 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 
 	// 처리 상태 별 카운트 수
 	@Override
-	public List<StatusCountDto> findCountByStatus(int year, int month, String user) {
-		List<StatusCountDto> results = queryFactory
+	public List<StatusCountDto> findCountByStatus(int year, int month, String user,Long contractId) {
+
+		return queryFactory
 			.select(Projections.constructor(StatusCountDto.class,
 				taskRequest.status,
 				taskRequest.count()
 			))
 			.from(taskRequest)
+			.leftJoin(taskType)
+			.on(taskType.id.eq(taskRequest.taskType.id))
+			.leftJoin(evaluationItem)
+			.on(evaluationItem.id.eq(taskType.evaluationItem.id))
+			.leftJoin(contract)
+			.on(contract.id.eq(evaluationItem.contract.id))
 			.where(taskRequest.createTime.year().eq(year)
 				.and(taskRequest.createTime.month().eq(month))
-				.and(taskRequest.manager.id.eq(user)))
+				.and(taskRequest.manager.id.eq(user))
+				.and(contract.id.eq(contractId)))
 			.groupBy(taskRequest.status)
 			.fetch();
 
-		return results;
 	}
 
 	@Override
-	public List<TaskTypeCountDto> findCountByTaskType(int year, int month, String user) {
-		List<TaskTypeCountDto> results = queryFactory
+	public List<TaskTypeCountDto> findCountByTaskType(int year, int month, String user,Long contractId) {
+		return queryFactory
 			.select(Projections.constructor(TaskTypeCountDto.class,
 				taskType.type,
 				taskRequest.count()
 			))
 			.from(taskType)
-			.join(taskRequest).on(taskType.id.eq(taskRequest.taskType.id))
+			.leftJoin(taskRequest)
+			.on(taskType.id.eq(taskRequest.taskType.id))
+			.leftJoin(evaluationItem)
+			.on(evaluationItem.id.eq(taskType.evaluationItem.id))
+			.leftJoin(contract)
+			.on(contract.id.eq(evaluationItem.contract.id))
 			.where(taskRequest.createTime.year().eq(year)
 				.and(taskRequest.createTime.month().eq(month))
-				.and(taskRequest.manager.id.eq(user)))
+				.and(taskRequest.manager.id.eq(user))
+				.and(contract.id.eq(contractId)))
 			.groupBy(taskType.type)
 			.fetch();
-
-		return results;
 
 	}
 
 	@Override
-	public List<SystemCountDto> findCountBySystem(int year, int month, String user) {
-		List<SystemCountDto> results = queryFactory
+	public List<SystemCountDto> findCountBySystem(int year, int month, String user, Long contractId) {
+		return queryFactory
 			.select(Projections.constructor(SystemCountDto.class,
 				systems.name, taskRequest.count()))
-			.from(systems)
-			.join(equipment).on(systems.id.eq(equipment.systems.id))
-			.join(taskRequest).on(equipment.id.eq(taskRequest.equipment.id))
+			.from(taskRequest)
+			.leftJoin(equipment)
+			.on(equipment.id.eq(taskRequest.equipment.id))
+			.leftJoin(systems)
+			.on(systems.id.eq(equipment.systems.id))
+			.leftJoin(taskType)
+			.on(taskType.id.eq(taskRequest.taskType.id))
+			.leftJoin(evaluationItem)
+			.on(evaluationItem.id.eq(taskType.evaluationItem.id))
+			.leftJoin(contract)
+			.on(contract.id.eq(evaluationItem.contract.id))
 			.where(taskRequest.createTime.year().eq(year)
 				.and(taskRequest.createTime.month().eq(month))
-				.and(taskRequest.manager.id.eq(user)))
+				.and(taskRequest.manager.id.eq(user))
+				.and(contract.id.eq(contractId)))
 			.groupBy(systems.id)
 			.fetch();
-
-		return results;
 
 	}
 
@@ -266,4 +286,29 @@ public class TaskRequestRepositoryCustomImpl implements TaskRequestRepositoryCus
 			.where(taskRequest.id.eq(requestId))
 			.fetchOne();
 	}
+
+	public List<StatusCountDto> findStatusCountByUser(int year, int month, String user,Long contractId) {
+
+		return queryFactory
+			.select(Projections.constructor(StatusCountDto.class,
+				taskRequest.status,
+				taskRequest.count()
+			))
+			.from(taskRequest)
+			.leftJoin(taskType)
+			.on(taskType.id.eq(taskRequest.taskType.id))
+			.leftJoin(evaluationItem)
+			.on(evaluationItem.id.eq(taskType.evaluationItem.id))
+			.leftJoin(contract)
+			.on(contract.id.eq(evaluationItem.contract.id))
+			.where(taskRequest.createTime.year().eq(year)
+				.and(taskRequest.createTime.month().eq(month))
+				.and(taskRequest.requester.id.eq(user))
+				.and(contract.id.eq(contractId)))
+			.groupBy(taskRequest.status)
+			.fetch();
+
+	}
+
+
 }

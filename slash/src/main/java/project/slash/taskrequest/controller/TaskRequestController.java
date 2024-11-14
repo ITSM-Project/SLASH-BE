@@ -22,6 +22,7 @@ import project.slash.taskrequest.dto.request.UpdateTaskRequestManagerDto;
 import project.slash.taskrequest.dto.response.RequestManagementResponseDto;
 import project.slash.taskrequest.dto.response.RequestManagerMainResponseDto;
 import project.slash.taskrequest.dto.response.RequestDetailDto;
+import project.slash.taskrequest.dto.response.StatusCountDto;
 import project.slash.taskrequest.dto.response.TaskRequestOfManagerDto;
 import project.slash.taskrequest.model.constant.RequestStatus;
 import project.slash.taskrequest.service.TaskRequestService;
@@ -53,10 +54,17 @@ public class TaskRequestController {
 	 * @return 월간 요청 데이터(처리상태별, 장비유형별, 업무유형별 요청건수)
 	 */
 	@GetMapping("/request-manager/monthly-data")
-	public BaseResponse<?> getMonthlyRequestData(@RequestParam("year") int year, @RequestParam("month") int month, String user) {
-		RequestManagerMainResponseDto requestManager = taskRequestService.getMonthlyRequestData(year, month, "2");
+	public BaseResponse<?> getMonthlyRequestData(@RequestParam("year") int year, @RequestParam("month") int month,@Login String user,@RequestParam("contractId") long contractId) {
+		RequestManagerMainResponseDto requestManager = taskRequestService.getMonthlyRequestData(year, month, user, contractId);
 
 		return BaseResponse.ok(requestManager);
+	}
+
+	@GetMapping("/common/request-status-count")
+	public BaseResponse<?> getRequestStatus(@RequestParam("year") int year, @RequestParam("month") int month,@Login String user,@RequestParam("contractId") long contractId) {
+		List<StatusCountDto> statusCounts = taskRequestService.getStatusCountByUser(year, month, user,contractId);
+
+		return BaseResponse.ok(statusCounts);
 	}
 
 	/**
