@@ -6,15 +6,16 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import project.slash.contract.model.EvaluationItem;
-import project.slash.statistics.dto.IncidentInfoDto;
 import project.slash.statistics.dto.response.CalculatedStatisticsDto;
 import project.slash.statistics.dto.response.IndicatorDto;
 import project.slash.statistics.dto.response.MonthlyServiceStatisticsDto;
 import project.slash.statistics.dto.response.ResponseServiceTaskDto;
+import project.slash.statistics.dto.response.ResponseStatisticsDto;
 import project.slash.statistics.model.Statistics;
 
 @Component
 public class StatisticsMapper {
+
 	public CalculatedStatisticsDto toCalculatedStatistics(Statistics statistics) {
 		return new CalculatedStatisticsDto(
 			statistics.getId(),
@@ -59,28 +60,6 @@ public class StatisticsMapper {
 			.toList();
 	}
 
-	public Statistics toEntityFromIncidentInfo(IncidentInfoDto incidentInfoDto, LocalDate date, double score,
-		double weightedScore, String grade, double estimate, EvaluationItem evaluationItem) {
-		return Statistics.builder()
-			.targetSystem("전체")
-			.targetEquipment("전체")
-			.serviceType("장애 적기처리율")
-			.date(date)
-			.approvalStatus(false)
-			.grade(grade)
-			.score(score)
-			.period("월별")
-			.totalDowntime(-1)
-			.weightedScore(weightedScore)
-			.requestCount(incidentInfoDto.getTotalIncidentCount())
-			.systemIncidentCount(incidentInfoDto.getTotalIncidentCount())
-			.dueOnTimeCount(incidentInfoDto.getTotalIncidentCount() - incidentInfoDto.getTotalOverdueCount())
-			.estimate(estimate)
-			.evaluationItem(evaluationItem)
-			.isAuto(true)
-			.build();
-	}
-
 	public Statistics toEntityFromResponseServiceTask(ResponseServiceTaskDto responseServiceTaskDto, LocalDate endDate,
 		double score, double weightedScore, String grade) {
 		return Statistics.builder()
@@ -97,6 +76,28 @@ public class StatisticsMapper {
 			.dueOnTimeCount(responseServiceTaskDto.getDueOnTimeCount())
 			.estimate(score)
 			.evaluationItem(responseServiceTaskDto.getEvaluationItem())
+			.totalDowntime(-1)
+			.systemIncidentCount(-1)
+			.isAuto(false)
+			.build();
+	}
+
+	public Statistics toEntityFromResponseStatisticsDto(ResponseStatisticsDto responseStatisticsDto,
+		EvaluationItem evaluationItem) {
+		return Statistics.builder()
+			.date(responseStatisticsDto.getDate())
+			.serviceType(responseStatisticsDto.getServiceType())
+			.targetSystem(responseStatisticsDto.getTargetSystem())
+			.targetEquipment(responseStatisticsDto.getTargetEquipment())
+			.grade(responseStatisticsDto.getGrade())
+			.score(responseStatisticsDto.getScore())
+			.period(responseStatisticsDto.getPeriod())
+			.weightedScore(responseStatisticsDto.getWeightedScore())
+			.requestCount(responseStatisticsDto.getRequestCount())
+			.approvalStatus(false)
+			.dueOnTimeCount(responseStatisticsDto.getDueOnTimeCount())
+			.estimate(responseStatisticsDto.getEstimate())
+			.evaluationItem(evaluationItem)
 			.totalDowntime(-1)
 			.systemIncidentCount(-1)
 			.isAuto(false)

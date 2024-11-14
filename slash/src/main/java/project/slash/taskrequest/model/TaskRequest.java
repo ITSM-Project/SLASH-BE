@@ -40,7 +40,8 @@ public class TaskRequest extends BaseTimeEntity {
 
 	private String content;
 
-	@Column(name = "due_on_time")
+	// @Column(name = "due_on_time")
+	@Column(name = "due_on_time", columnDefinition = "TINYINT(1)")
 	private boolean dueOnTime;
 
 	@Enumerated(EnumType.STRING)
