@@ -3,8 +3,10 @@ package project.slash.statistics.service;
 import static project.slash.statistics.exception.StatisticsErrorCode.*;
 
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.YearMonth;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,6 +54,12 @@ public class StatisticsService {
 
 		return new MonthlyIndicatorsDto(getIndicatorExtraInfo(contractId, statistics),
 			statisticsMapper.toMonthlyIndicators(statistics));
+	}
+
+	public List<MonthlyIndicatorsDto> getYearIndicators(Long contractId, Year year) {
+		return IntStream.rangeClosed(1, 12)
+			.mapToObj(month -> getMonthlyIndicators(contractId, YearMonth.of(year.getValue(), month)))
+			.toList();
 	}
 
 	private IndicatorExtraInfoDto getIndicatorExtraInfo(Long contractId, List<Statistics> statistics) {

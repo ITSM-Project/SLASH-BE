@@ -1,6 +1,7 @@
 package project.slash.statistics.controller;
 
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.YearMonth;
 import java.util.List;
 
@@ -32,11 +33,18 @@ public class StatisticsController {
 	 * @param date 조회할 날짜
 	 * @return 월간 지표
 	 */
-	@GetMapping("/common/{contractId}/indicators")
+	@GetMapping("/common/{contractId}/month-indicators")
 	public BaseResponse<MonthlyIndicatorsDto> getMonthlyIndicators(@PathVariable Long contractId, @RequestParam YearMonth date) {
 		MonthlyIndicatorsDto monthlyIndicators = statisticsService.getMonthlyIndicators(contractId, date);
 
 		return BaseResponse.ok(monthlyIndicators);
+	}
+
+	@GetMapping("/common/{contractId}/year-indicators")
+	public BaseResponse<List<MonthlyIndicatorsDto>> getYearIndicators(@PathVariable Long contractId, @RequestParam Year date) {
+		List<MonthlyIndicatorsDto> yearIndicators = statisticsService.getYearIndicators(contractId, date);
+
+		return BaseResponse.ok(yearIndicators);
 	}
 
 	/**
