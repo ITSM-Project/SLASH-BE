@@ -34,7 +34,6 @@ public class StatisticsService {
 	private static final int MINIMUM_STATISTICS_REQUIRED = 3;
 	private static final String TOTAL = "전체";
 
-
 	private final StatisticsRepository statisticsRepository;
 	private final EvaluationItemRepository evaluationItemRepository;
 	private final TotalTargetRepository totalTargetRepository;
@@ -42,13 +41,10 @@ public class StatisticsService {
 	private final EvaluationItemMapper evaluationItemMapper;
 	private final StatisticsMapper statisticsMapper;
 
-	public MonthlyIndicatorsDto getMonthlyIndicators(Long contractId, YearMonth date) {
-		LocalDate startDate = date.atDay(1);
-		LocalDate endDate = date.atEndOfMonth();
+	public MonthlyIndicatorsDto getMonthlyIndicators(Long contractId, YearMonth yearMonth) {
+		LocalDate date = yearMonth.atEndOfMonth();
 
-		List<Statistics> statistics = statisticsRepository
-			.findByDateBetweenAndEvaluationItemContractIdAndApprovalStatusTrueAndTargetSystem(startDate, endDate,
-				contractId, TOTAL);
+		List<Statistics> statistics = statisticsRepository.findByDateAndEvaluationItemContractIdAndApprovalStatusTrueAndTargetSystem(date, contractId, TOTAL);
 
 		if (statistics.size() < MINIMUM_STATISTICS_REQUIRED) {
 			return new MonthlyIndicatorsDto();

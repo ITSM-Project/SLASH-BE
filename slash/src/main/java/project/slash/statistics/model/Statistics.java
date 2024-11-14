@@ -33,11 +33,11 @@ public class Statistics {
 	@Column(name = "statistics_id")
 	private Long id;
 
-	private LocalDate date;
+	private LocalDate date;	//측정한 지표월
 
 	@CreatedDate
 	@Column(updatable = false)
-	private LocalDate calculateTime;
+	private LocalDate calculateTime;	//지표 측정일
 
 	@Column(name = "target_system")
 	private String targetSystem;
