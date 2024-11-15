@@ -1,6 +1,7 @@
 package project.slash.statistics.service;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -53,7 +54,7 @@ public class StatisticsSchedulingService {
 	}
 
 	private void calculateStatisticsForItem(EvaluationItem evaluationItem, LocalDate now) {
-		RequestStatisticsDto requestStatisticsDto = new RequestStatisticsDto(evaluationItem.getId(), now);
+		RequestStatisticsDto requestStatisticsDto = new RequestStatisticsDto(evaluationItem.getId(), YearMonth.now());
 		Consumer<RequestStatisticsDto> action = statisticsActions.get(evaluationItem.getCategory());
 
 		action.accept(requestStatisticsDto);
