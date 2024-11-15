@@ -47,7 +47,8 @@ public class AutoStatisticsService {
 
 	@Transactional
 	public void createMonthlyStats(RequestStatisticsDto requestStatisticsDto) {
-		List<MonthlyStatisticsDto> monthlyStatisticsDtoList = calculateMonthlyStats(requestStatisticsDto.getDate(),
+		LocalDate endDate = requestStatisticsDto.getDate().atEndOfMonth();
+		List<MonthlyStatisticsDto> monthlyStatisticsDtoList = calculateMonthlyStats(endDate,
 			requestStatisticsDto.getEvaluationItemId());
 		MonthlyStatisticsDto monthlyStatisticsDto = getEntireStatistics(monthlyStatisticsDtoList);
 		monthlyStatisticsDtoList.add(monthlyStatisticsDto);
