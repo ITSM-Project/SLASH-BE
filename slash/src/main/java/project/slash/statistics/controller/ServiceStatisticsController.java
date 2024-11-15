@@ -27,7 +27,7 @@ public class ServiceStatisticsController {
 	 * @param requestStatisticsDto 통계낼 evaluationId와 Date 요청정보
 	 * @return 저장성공여부
 	 */
-	@PostMapping("/contract-manager/service-statistic")
+	@PostMapping("/contract-manager/service-statistics")
 	public BaseResponse<Void> createServiceStatics(
 		@RequestBody @Valid RequestStatisticsDto requestStatisticsDto) {
 		autoStatisticsService.createServiceTaskStatistics(requestStatisticsDto);
