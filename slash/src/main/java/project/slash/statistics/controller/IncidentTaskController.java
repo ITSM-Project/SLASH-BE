@@ -25,7 +25,7 @@ public class IncidentTaskController {
 	 *
 	 * @return success:true
 	 */
-	@PostMapping("/common/incident-statistics")
+	@PostMapping("/contract-manager/incident-statistics")
 	public BaseResponse<Void> addIncidentDueOnTimeRate(
 		@RequestBody @Valid RequestStatisticsDto requestStatisticsDto) {
 		autoStatisticsService.addIncidentStatistics(requestStatisticsDto);
