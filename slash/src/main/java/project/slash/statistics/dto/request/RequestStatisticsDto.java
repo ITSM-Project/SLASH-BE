@@ -1,6 +1,6 @@
 package project.slash.statistics.dto.request;
 
-import java.time.LocalDate;
+import java.time.YearMonth;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -13,5 +13,5 @@ public class RequestStatisticsDto {
 	private Long evaluationItemId;
 
 	@NotNull(message = "통계 조회일은 필수입니다.")
-	private LocalDate date;
+	private YearMonth date;
 }

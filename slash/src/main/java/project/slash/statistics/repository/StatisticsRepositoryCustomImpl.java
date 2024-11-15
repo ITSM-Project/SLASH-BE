@@ -1,7 +1,6 @@
 package project.slash.statistics.repository;
 
 import static project.slash.contract.model.QEvaluationItem.*;
-import static project.slash.statistics.model.QStatistics.*;
 import static project.slash.system.model.QEquipment.*;
 import static project.slash.system.model.QSystems.*;
 import static project.slash.systemincident.model.QSystemIncident.*;
@@ -16,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
@@ -29,9 +27,7 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import project.slash.statistics.dto.response.MonthlyDataDto;
 import project.slash.statistics.dto.response.MonthlyStatisticsDto;
-import project.slash.statistics.dto.response.StatisticsDto;
 import project.slash.statistics.dto.response.ResponseServiceTaskDto;
-import project.slash.taskrequest.model.constant.RequestStatus;
 
 @Repository
 @RequiredArgsConstructor
@@ -72,12 +68,8 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 	}
 
 	@Override
-	public ResponseServiceTaskDto getServiceTaskStatics(Long evaluationItemId, LocalDate date) {
-
-		LocalDateTime startDate = date
-			.withDayOfMonth(1)
-			.atTime(0, 0, 0);  // 시작일은 endDate의 첫 번째 날
-		LocalDateTime endDate = date.atTime(23, 59, 59);
+	public ResponseServiceTaskDto getServiceTaskStatics(Long evaluationItemId, LocalDateTime startDate,
+		LocalDateTime endDate) {
 
 		// evaluationItemId의 contractId 가져오기
 		Long contractId = new JPAQuery<>(entityManager)
@@ -123,6 +115,7 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 			.where(evaluationItem.id.eq(evaluationItemId))
 			.fetchOne(); // ResponseServiceTaskDto 타입으로 반환
 	}
+
 	@Override
 	public void saveMonthlyData(List<MonthlyStatisticsDto> statsDtoList) {
 		String sql = "INSERT INTO statistics (`date`, calculate_time, service_type, grade, score, period, weighted_score, " +
