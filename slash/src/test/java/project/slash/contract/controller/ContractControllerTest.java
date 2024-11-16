@@ -143,6 +143,21 @@ class ContractControllerTest {
 			.andExpect(jsonPath("$.success").value(true));
 	}
 
+	@DisplayName("새로운 종합 평가 등급을 생성할 수 있다.")
+	@Test
+	void newTotalTarget() throws Exception {
+		//given
+		Long contractId = 1L;
+		List<GradeDto> gradeDtos = createGradeDtos();
+
+		//when & then
+		mockMvc.perform(post("/contract-manager/total-target/{contractId}", contractId)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsBytes(gradeDtos)))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.success").value(true));
+	}
+
 	private ContractRequestDto createContractRequestDto() {
 		List<GradeDto> totalTargets = createGradeDtos();
 		LocalDate startDate = LocalDate.of(2024, 10, 11);
