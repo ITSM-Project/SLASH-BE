@@ -1,6 +1,7 @@
 package project.slash.contract.service;
 
 import static org.mockito.BDDMockito.*;
+import static project.slash.contract.exception.ContractErrorCode.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -16,8 +17,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
+import project.slash.common.exception.BusinessException;
 import project.slash.contract.dto.GradeDto;
 import project.slash.contract.dto.request.ContractRequestDto;
+import project.slash.contract.exception.ContractErrorCode;
 import project.slash.contract.model.Contract;
 import project.slash.contract.model.TotalTarget;
 import project.slash.contract.repository.TotalTargetRepository;
@@ -92,6 +95,35 @@ class ContractServiceTest {
 
 	    //then
 		verify(totalTargetRepository).saveAll(any());
+	}
+
+	@DisplayName("계약을 삭제하면 종료 여부가 true로 변경된다.")
+	@Test
+	void deleteContract() {
+		//given
+		Long contractId = 1L;
+		Contract contract = mock(Contract.class); // Mock 객체 생성
+		when(contractRepository.findById(contractId)).thenReturn(Optional.of(contract));
+
+		//when
+		contractService.deleteContract(contractId);
+
+		//then
+		verify(contract, times(1)).terminate();
+	}
+
+	@DisplayName("종료되지 않은 계약을 삭제하면 예외가 발생한다.")
+	@Test
+	void deleteContractBeforeTerminate(){
+	    //given
+		Long contractId = 1L;
+		Contract contract = createTestContract();
+		when(contractRepository.findById(contractId)).thenReturn(Optional.of(contract));
+
+	    //when //then
+		Assertions.assertThatThrownBy(() -> contractService.deleteContract(contractId))
+			.isInstanceOf(BusinessException.class)
+			.hasFieldOrPropertyWithValue("errorCode", NOT_TERMINATE_CONTRACT);
 	}
 
 	private ContractRequestDto createContractRequestDto() {
