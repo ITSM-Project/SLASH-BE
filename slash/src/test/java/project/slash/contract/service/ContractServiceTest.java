@@ -21,6 +21,7 @@ import project.slash.common.exception.BusinessException;
 import project.slash.contract.dto.GradeDto;
 import project.slash.contract.dto.request.ContractRequestDto;
 import project.slash.contract.dto.response.AllContractDto;
+import project.slash.contract.dto.response.ContractDetailDto;
 import project.slash.contract.dto.response.ContractNameDto;
 import project.slash.contract.mapper.ContractMapper;
 import project.slash.contract.mapper.TotalTargetMapper;
@@ -28,11 +29,13 @@ import project.slash.contract.model.Contract;
 import project.slash.contract.model.TotalTarget;
 import project.slash.contract.repository.TotalTargetRepository;
 import project.slash.contract.repository.contract.ContractRepository;
+import project.slash.contract.repository.evaluationItem.EvaluationItemRepository;
 
 @ExtendWith(MockitoExtension.class)
 class ContractServiceTest {
 	@Mock private ContractRepository contractRepository;
 	@Mock private TotalTargetRepository totalTargetRepository;
+	@Mock private EvaluationItemRepository evaluationItemRepository;
 	@Mock private TotalTargetMapper totalTargetMapper;
 	@Mock private ContractMapper contractMapper;
 
@@ -53,6 +56,23 @@ class ContractServiceTest {
 
 		// then
 		assertThat(contractId).isNotNull();
+	}
+
+	@DisplayName("특정 계약의 모든 정보를 조회할 수 있다.")
+	@Test
+	void showAllContractInfo(){
+		// given
+		Contract contract = new Contract();
+		ContractDetailDto contractDetailDto = new ContractDetailDto();
+
+		when(contractRepository.findById(1L)).thenReturn(Optional.of(contract));
+		when(contractMapper.toContractDetailDto(any(), any(), any())).thenReturn(contractDetailDto);
+
+		// when
+		ContractDetailDto result = contractService.showAllContractInfo(1L);
+
+		// then
+		assertThat(result).isEqualTo(contractDetailDto);
 	}
 
 	@DisplayName("종합 평가 등급을 업데이트 할 수 있다.")
