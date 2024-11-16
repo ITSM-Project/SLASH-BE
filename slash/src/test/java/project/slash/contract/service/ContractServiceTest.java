@@ -21,6 +21,7 @@ import project.slash.common.exception.BusinessException;
 import project.slash.contract.dto.GradeDto;
 import project.slash.contract.dto.request.ContractRequestDto;
 import project.slash.contract.dto.response.AllContractDto;
+import project.slash.contract.dto.response.ContractNameDto;
 import project.slash.contract.mapper.ContractMapper;
 import project.slash.contract.mapper.TotalTargetMapper;
 import project.slash.contract.model.Contract;
@@ -150,14 +151,29 @@ class ContractServiceTest {
 				Tuple.tuple(2L, "테스트 계약2"));
 	}
 
-	@DisplayName("")
+	@DisplayName("모든 계약의 협약서 이름을 조회할 수 있다.")
 	@Test
-	void test(){
-	    //given
+	void showAllContractName() {
+		//given
+		List<Contract> contracts = List.of(createTestContract(1L, "테스트 계약1"),
+			createTestContract(2L, "테스트 계약2"));
 
-	    //when
+		List<ContractNameDto> contractNameDtos = List.of(
+			new ContractNameDto(1L, "테스트 계약1"),
+			new ContractNameDto(2L, "테스트 계약2")
+		);
 
-	    //then
+		when(contractRepository.findAll()).thenReturn(contracts);
+		when(contractMapper.toAllContractNameList(contracts)).thenReturn(contractNameDtos);
+
+		//when
+		List<ContractNameDto> result = contractService.showAllContractName();
+
+		//then
+		assertThat(result).hasSize(2)
+			.extracting("contractId", "contractName")
+			.containsExactly(Tuple.tuple(1L, "테스트 계약1"),
+				Tuple.tuple(2L, "테스트 계약2"));
 	}
 
 	private ContractRequestDto createContractRequestDto() {
