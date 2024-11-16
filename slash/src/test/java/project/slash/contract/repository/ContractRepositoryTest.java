@@ -62,6 +62,23 @@ class ContractRepositoryTest {
 				LocalDate.of(2025, 10, 11));
 	}
 
+	@DisplayName("만료 날짜로 계약을 찾을 수 있다.")
+	@Test
+	void findByEndDate(){
+	    //given
+		LocalDate endDate = LocalDate.of(2025, 10, 11);
+		Contract contract = createContract(LocalDate.of(2024, 10, 12), endDate, false);
+		contractRepository.save(contract);
+
+	    //when
+		List<Contract> result = contractRepository.findByEndDate(endDate);
+
+		//then
+		assertThat(result).hasSize(1)
+			.extracting("contractName", "endDate")
+			.containsExactly(Tuple.tuple("테스트 회사", endDate));
+	}
+
 	private static Contract createContract(LocalDate startDate, LocalDate endDate, boolean isTerminate) {
 		return Contract.builder()
 			.contractName("테스트 회사")
