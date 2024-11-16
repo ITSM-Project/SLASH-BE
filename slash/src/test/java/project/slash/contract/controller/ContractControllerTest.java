@@ -24,12 +24,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import project.slash.contract.dto.GradeDto;
 import project.slash.contract.dto.request.ContractRequestDto;
+import project.slash.contract.dto.response.AllContractDto;
 import project.slash.contract.dto.response.ContractDetailDto;
 import project.slash.contract.dto.response.EvaluationItemDetailDto;
 import project.slash.contract.repository.contract.ContractRepository;
 import project.slash.contract.service.ContractService;
-import project.slash.user.model.User;
-import project.slash.user.repository.UserRepository;
+
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -44,18 +44,6 @@ class ContractControllerTest {
 
 	@MockBean private ContractRepository contractRepository;
 
-	@Autowired private UserRepository userRepository;
-
-	@BeforeEach
-	void initUser() {
-		User user = User.from("contract", "CONTRACT_MANAGER", "test", "1234", "test@test.com", "010-1111-1111");
-		userRepository.save(user);
-	}
-
-	@AfterEach
-	void tearDown() {
-		userRepository.deleteAllInBatch();
-	}
 
 	@DisplayName("계약을 생성할 수 있다.")
 	@Test
@@ -74,7 +62,7 @@ class ContractControllerTest {
 			.andExpect(jsonPath("$.data").value(1L));
 	}
 
-	@DisplayName("모든 계약 정보를 조회할 수 있다.")
+	@DisplayName("특정 계약의 모든 정보를 조회할 수 있다.")
 	@Test
 	void showAllContractInfo() throws Exception {
 	    //given
@@ -94,6 +82,21 @@ class ContractControllerTest {
 			.andExpect(jsonPath("$.data.totalTargets[0].grade").value("A"));
 	}
 
+	@DisplayName("모든 계약을 조회할 수 있다.")
+	@Test
+	void showAllContract() throws Exception {
+	    //given
+		when(contractService.showAllContract()).thenReturn(List.of(createAllContractDto()));
+
+	    //when & then
+		mockMvc.perform(get("/contract-manager/all-contract")
+			.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.data[0].contractId").value(1L))
+			.andExpect(jsonPath("$.data[0].contractName").value("테스트 계약"))
+			.andExpect(jsonPath("$.data[0].terminate").value(false));
+	}
+
 	private ContractRequestDto createContractRequestDto() {
 		List<GradeDto> totalTargets = createGradeDtos();
 		LocalDate startDate = LocalDate.of(2024, 10, 11);
@@ -107,7 +110,7 @@ class ContractControllerTest {
 	}
 
 	private ContractDetailDto createContractDetailDto() {
-		return  new ContractDetailDto(
+		return new ContractDetailDto(
 			1L,
 			"테스트 계약",
 			LocalDate.now(),
@@ -116,5 +119,13 @@ class ContractControllerTest {
 			List.of(new GradeDto("A", 90.0, 100.0, 50, true, true)),
 			List.of(new EvaluationItemDetailDto())
 		);
+	}
+
+	private AllContractDto createAllContractDto() {
+		return new AllContractDto(1L,
+			"테스트 계약",
+			LocalDate.now(),
+			LocalDate.now().plusYears(1),
+			false);
 	}
 }
