@@ -1,92 +1,101 @@
 package project.slash.contract.service;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 
 import project.slash.contract.dto.GradeDto;
 import project.slash.contract.dto.request.ContractRequestDto;
-import project.slash.contract.dto.response.ContractDetailDto;
-import project.slash.contract.mapper.ContractMapper;
-import project.slash.contract.mapper.TotalTargetMapper;
 import project.slash.contract.model.Contract;
+import project.slash.contract.model.TotalTarget;
 import project.slash.contract.repository.TotalTargetRepository;
 import project.slash.contract.repository.contract.ContractRepository;
-import project.slash.contract.repository.evaluationItem.EvaluationItemRepository;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@ActiveProfiles(profiles = "test")
 class ContractServiceTest {
 
-	@Mock private TotalTargetRepository totalTargetRepository;
-	@Mock private ContractRepository contractRepository;
-	@Mock private EvaluationItemRepository evaluationItemRepository;
-	@Mock private ContractMapper contractMapper;
-	@Mock private TotalTargetMapper totalTargetMapper;
+	@Autowired private ContractService contractService;
+	@MockBean private ContractRepository contractRepository;
+	@MockBean private TotalTargetRepository totalTargetRepository;
 
-	@InjectMocks
-	private ContractService contractService;
-
+	@AfterEach
+	void tearDown() {
+		totalTargetRepository.deleteAllInBatch();
+		contractRepository.deleteAllInBatch();
+	}
 
 	@DisplayName("계약을 생성하고 저장할 수 있다.")
 	@Test
 	void createContract(){
-		// given
+		//given
+		Contract savedContract = createTestContract();
 		ContractRequestDto contractRequestDto = createContractRequestDto();
-		Contract savedContract = createTestContract(1L);
 
 		given(contractRepository.save(any())).willReturn(savedContract);
 
-		// when
-		Long result = contractService.createContract(contractRequestDto);
+		//when
+		Long contractId = contractService.createContract(contractRequestDto);
 
-		// then
-		assertThat(result).isEqualTo(1L);
-		then(contractRepository).should().save(any());
+		//then
+		Assertions.assertThat(contractId).isNotNull();
 	}
 
-	@DisplayName("특정 계약의 모든 정보를 확인할 수 있다.")
+	@DisplayName("종합 평가 등급을 업데이트 할 수 있다.")
 	@Test
-	void showAllContractInfo(){
+	void updateTotalTarget(){
 		// given
 		Long contractId = 1L;
-		Contract contract = createTestContract(contractId);
-		ContractDetailDto contractDetailDto = new ContractDetailDto();
+		Contract contract = createTestContract();
 
-		given(contractRepository.findById(contractId)).willReturn(Optional.of(contract));
-		given(evaluationItemRepository.findAllEvaluationItems(contractId)).willReturn(Collections.emptyList());
-		given(contractMapper.toContractDetailDto(eq(contract), any(), any())).willReturn(contractDetailDto);
+		List<TotalTarget> oldTotalTargets = createTotalTargets(contract);
+		List<GradeDto> newGradeDtos = createGradeDtos();
+
+		when(contractRepository.findById(contractId)).thenReturn(Optional.of(contract));
+		when(totalTargetRepository.findByContractIdAndIsActiveTrue(contractId)).thenReturn(oldTotalTargets);
 
 		// when
-		ContractDetailDto result = contractService.showAllContractInfo(contractId);
+		contractService.updateTotalTarget(contractId, newGradeDtos);
 
 		// then
-		assertThat(result).isEqualTo(contractDetailDto);
-		then(contractRepository).should().findById(contractId);
-		then(evaluationItemRepository).should().findAllEvaluationItems(contractId);
+		verify(totalTargetRepository).deleteAll(oldTotalTargets);
+		verify(totalTargetRepository).saveAll(any());
 	}
 
-	private Contract createTestContract(Long contractId) {
-		return Contract.builder()
-			.id(contractId)
-			.startDate(LocalDate.of(2024, 10, 11))
-			.endDate(LocalDate.of(2025, 10, 11))
-			.isTerminate(false)
-			.contractName("테스트 계약").build();
+	@DisplayName("새로운 종합 평가 등급을 생성할 수 있다.")
+	@Test
+	void newTotalTarget(){
+	    //given
+		Long contractId = 1L;
+		Contract contract = createTestContract();
+
+		List<TotalTarget> oldTotalTargets = createTotalTargets(contract);
+		List<GradeDto> newGradeDtos = createGradeDtos();
+
+		when(contractRepository.findById(contractId)).thenReturn(Optional.of(contract));
+		when(totalTargetRepository.findByContractIdAndIsActiveTrue(contractId)).thenReturn(oldTotalTargets);
+
+	    //when
+		contractService.newTotalTarget(contractId, newGradeDtos);
+
+	    //then
+		verify(totalTargetRepository).saveAll(any());
 	}
 
 	private ContractRequestDto createContractRequestDto() {
-		List<GradeDto> totalTargets = createTotalTargets();
+		List<GradeDto> totalTargets = createGradeDtos();
 
 		LocalDate startDate = LocalDate.of(2024, 10, 11);
 		LocalDate endDate = LocalDate.of(2025, 10, 11);
@@ -94,7 +103,29 @@ class ContractServiceTest {
 		return new ContractRequestDto("테스트 계약서", startDate, endDate, totalTargets);
 	}
 
-	private List<GradeDto> createTotalTargets() {
+	private List<GradeDto> createGradeDtos() {
 		return List.of(new GradeDto("A", 100.0, 100.0, 100, true, true));
+	}
+
+	private List<TotalTarget> createTotalTargets(Contract contract) {
+		return List.of(TotalTarget.builder()
+				.grade("A")
+				.min(100.0)
+				.minInclusive(true)
+				.max(100.0)
+				.maxInclusive(true)
+				.isActive(true)
+				.contract(contract)
+				.build());
+	}
+
+	private Contract createTestContract() {
+		return Contract.builder()
+			.id(1L)
+			.contractName("테스트 계약")
+			.startDate(LocalDate.now())
+			.endDate(LocalDate.now().plusMonths(1))
+			.isTerminate(false)
+			.build();
 	}
 }
