@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,8 +14,10 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 @Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
+@Builder
 public class Contract {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,14 +35,6 @@ public class Contract {
 
 	@Column(name = "contract_name")
 	private String contractName;
-
-	@Builder
-	private Contract(String contractName, LocalDate startDate, LocalDate endDate, boolean isTerminate) {
-		this.startDate = startDate;
-		this.endDate = endDate;
-		this.contractName = contractName;
-		this.isTerminate = isTerminate;
-	}
 
 	public void terminate() {
 		this.isTerminate = true;

@@ -64,7 +64,6 @@ public class ContractService {
 			.map(evaluationItem -> {
 				List<TaskTypeDto> taskTypes = taskTypeMapper.toTaskTypeDtoList(
 					taskTypeRepository.findTaskTypesByEvaluationItemId(evaluationItem.getEvaluationItemId()));
-
 				return evaluationItemMapper.toEvaluationItemDetailDto(evaluationItem, taskTypes);
 			})
 			.toList();
