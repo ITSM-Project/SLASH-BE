@@ -193,6 +193,26 @@ class EvaluationItemServiceTest {
 		assertThat(result).isEqualTo(evaluationItemCategoryDtos);
 	}
 
+	@DisplayName("서비스 평가 항목을 업데이트 할 수 있다.")
+	@Test
+	void updateEvaluationItem(){
+		// given
+		Long evaluationItemId = 1L;
+		Long contractId = 1L;
+		Contract contract = createTestContract(contractId, "테스트 계약");
+
+		EvaluationItem evaluationItem = spy(createEvaluationItem(contract));
+		CreateEvaluationItemDto updateDto = createEvaluationItemDto(contractId);
+
+		when(evaluationItemRepository.findById(evaluationItemId)).thenReturn(Optional.of(evaluationItem));
+
+		// when
+		evaluationItemService.updateEvaluationItem(evaluationItemId, updateDto);
+
+		// then
+		verify(evaluationItem).update(updateDto);
+	}
+
 	private static EvaluationItem createEvaluationItem(Contract contract) {
 		return EvaluationItem.builder()
 			.category("가용성")
