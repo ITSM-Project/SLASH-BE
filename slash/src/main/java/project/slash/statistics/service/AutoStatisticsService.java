@@ -3,6 +3,7 @@ package project.slash.statistics.service;
 import static project.slash.contract.exception.EvaluationItemErrorCode.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -46,7 +47,8 @@ public class AutoStatisticsService {
 
 	@Transactional
 	public void createMonthlyStats(RequestStatisticsDto requestStatisticsDto) {
-		List<MonthlyStatisticsDto> monthlyStatisticsDtoList = calculateMonthlyStats(requestStatisticsDto.getDate(),
+		LocalDate endDate = requestStatisticsDto.getDate().atEndOfMonth();
+		List<MonthlyStatisticsDto> monthlyStatisticsDtoList = calculateMonthlyStats(endDate,
 			requestStatisticsDto.getEvaluationItemId());
 		MonthlyStatisticsDto monthlyStatisticsDto = getEntireStatistics(monthlyStatisticsDtoList);
 		monthlyStatisticsDtoList.add(monthlyStatisticsDto);
@@ -204,7 +206,7 @@ public class AutoStatisticsService {
 	@Transactional
 	public void addIncidentStatistics(RequestStatisticsDto requestStatisticsDto) {
 		ResponseStatisticsDto responseStatisticsDto = getIncidentStatistics(requestStatisticsDto.getEvaluationItemId(),
-			requestStatisticsDto.getDate());
+			requestStatisticsDto.getDate().atEndOfMonth());
 		Statistics statistics = statisticsMapper.toEntityFromResponseStatisticsDto(responseStatisticsDto,
 			evaluationItemRepository.getReferenceById(requestStatisticsDto.getEvaluationItemId())
 		);
@@ -228,8 +230,10 @@ public class AutoStatisticsService {
 
 	@Transactional
 	public void createServiceTaskStatistics(RequestStatisticsDto requestStatisticsDto) {
+		LocalDateTime startDate = requestStatisticsDto.getDate().atDay(1).atTime(0, 0, 0);
+		LocalDateTime endDate = requestStatisticsDto.getDate().atEndOfMonth().atTime(23, 59, 59);
 		ResponseServiceTaskDto responseServiceTaskDto = statisticsRepository.getServiceTaskStatics(
-			requestStatisticsDto.getEvaluationItemId(), requestStatisticsDto.getDate());
+			requestStatisticsDto.getEvaluationItemId(), startDate, endDate);
 		double score = Math.round(
 			(double)responseServiceTaskDto.getDueOnTimeCount() / responseServiceTaskDto.getTaskRequest() * 10000)
 			/ 100.0;
@@ -238,7 +242,7 @@ public class AutoStatisticsService {
 				* 100) / 100.0;
 		String grade = getGrade(responseServiceTaskDto.getEvaluationItem().getId(), score);
 		Statistics statistics = statisticsMapper.toEntityFromResponseServiceTask(responseServiceTaskDto,
-			requestStatisticsDto.getDate(), score, weightScore, grade);
+			endDate.toLocalDate(), score, weightScore, grade);
 		statisticsRepository.save(statistics);
 	}
 
@@ -257,8 +261,10 @@ public class AutoStatisticsService {
 	}
 
 	public ResponseStatisticsDto getServiceStatistics(Long evaluationItemId, LocalDate date) {
+		LocalDateTime startDate = date.withDayOfMonth(1).atTime(0, 0, 0);
+		LocalDateTime endDate = date.atTime(23, 59, 59);
 		ResponseServiceTaskDto responseServiceTaskDto = statisticsRepository.getServiceTaskStatics(
-			evaluationItemId, date);
+			evaluationItemId, startDate, endDate);
 		double score = Math.round(
 			(double)responseServiceTaskDto.getDueOnTimeCount() / responseServiceTaskDto.getTaskRequest() * 10000)
 			/ 100.0;
@@ -266,6 +272,6 @@ public class AutoStatisticsService {
 			score / responseServiceTaskDto.getTotalWeight() * responseServiceTaskDto.getEvaluationItem().getWeight()
 				* 100) / 100.0;
 		String grade = getGrade(responseServiceTaskDto.getEvaluationItem().getId(), score);
-		return ResponseStatisticsDto.fromResponseServiceTask(responseServiceTaskDto, score, weightScore, grade,date);
+		return ResponseStatisticsDto.fromResponseServiceTask(responseServiceTaskDto, score, weightScore, grade, date);
 	}
 }
