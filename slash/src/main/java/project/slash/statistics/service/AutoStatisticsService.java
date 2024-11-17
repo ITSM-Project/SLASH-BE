@@ -24,7 +24,6 @@ import project.slash.statistics.dto.IncidentInfoDto;
 import project.slash.statistics.dto.request.RequestStatisticsDto;
 import project.slash.statistics.dto.response.EvaluatedDto;
 import project.slash.statistics.dto.response.MonthlyDataDto;
-import project.slash.statistics.dto.response.MonthlyStatisticsDto;
 import project.slash.statistics.dto.response.ResponseServiceTaskDto;
 import project.slash.statistics.dto.response.ResponseStatisticsDto;
 import project.slash.statistics.mapper.StatisticsMapper;
@@ -46,62 +45,43 @@ public class AutoStatisticsService {
 	private final StatisticsMapper statisticsMapper;
 
 	@Transactional
-	public void createMonthlyStats(RequestStatisticsDto requestStatisticsDto) {
+	public void createMonthlyUptimeStatistics(RequestStatisticsDto requestStatisticsDto) {
 		LocalDate endDate = requestStatisticsDto.getDate().atEndOfMonth();
-		List<MonthlyStatisticsDto> monthlyStatisticsDtoList = calculateMonthlyStats(endDate,
+		List<ResponseStatisticsDto> responseStatisticsDtoList = calculateMonthlyStats(endDate,
 			requestStatisticsDto.getEvaluationItemId());
-		MonthlyStatisticsDto monthlyStatisticsDto = getEntireStatistics(monthlyStatisticsDtoList);
-		monthlyStatisticsDtoList.add(monthlyStatisticsDto);
+		ResponseStatisticsDto monthlyUptimeStatisticsDto = getEntireStatistics(responseStatisticsDtoList);
+		responseStatisticsDtoList.add(monthlyUptimeStatisticsDto);
 
-		statisticsRepository.saveMonthlyData(monthlyStatisticsDtoList);
+		statisticsRepository.saveMonthlyData(responseStatisticsDtoList);
+
 	}
 
-	public MonthlyStatisticsDto getEntireStatistics(List<MonthlyStatisticsDto> monthlyStatisticsDtoList) {
-		long evaluationItemId = monthlyStatisticsDtoList.get(0).getEvaluationItemId();
+	public ResponseStatisticsDto getEntireStatistics(List<ResponseStatisticsDto> responseStatisticsDtoList) {
+		long evaluationItemId = responseStatisticsDtoList.get(0).getEvaluationItemId();
 
 		long totalRequestCount = 0L;
 		double totalScore = 0.0;
 		double totalWeightedScore = 0.0;
 		long totalDownTime = 0L;
 		long totalSystemIncidentCount = 0L;
-		double totalEstimate = 0.0;
 
-		for (MonthlyStatisticsDto monthlyStatisticsDto : monthlyStatisticsDtoList) {
-			totalRequestCount += monthlyStatisticsDto.getRequestCount();
-			totalScore += monthlyStatisticsDto.getScore();
-			totalWeightedScore += monthlyStatisticsDto.getWeightedScore();
-			totalDownTime += monthlyStatisticsDto.getTotalDowntime();
-			totalSystemIncidentCount += monthlyStatisticsDto.getSystemIncidentCount();
-			totalEstimate += monthlyStatisticsDto.getEstimate();
+		for (ResponseStatisticsDto responseStatisticsDto : responseStatisticsDtoList) {
+			totalRequestCount += responseStatisticsDto.getRequestCount();
+			totalScore += responseStatisticsDto.getScore();
+			totalWeightedScore += responseStatisticsDto.getWeightedScore();
+			totalDownTime += responseStatisticsDto.getTotalDowntime();
+			totalSystemIncidentCount += responseStatisticsDto.getSystemIncidentCount();
 		}
 
-		double averageScore = Math.round((totalScore / monthlyStatisticsDtoList.size()) * 100.0) / 100.0;
+		double averageScore = Math.round((totalScore / responseStatisticsDtoList.size()) * 100.0) / 100.0;
 		double averageWeightedScore =
-			Math.round((totalWeightedScore / monthlyStatisticsDtoList.size()) * 100.0) / 100.0;
-		double averageEstimate = Math.round((totalEstimate / monthlyStatisticsDtoList.size()) * 100.0) / 100.0;
+			Math.round((totalWeightedScore / responseStatisticsDtoList.size()) * 100.0) / 100.0;
+
 
 		List<ContractDataDto> contractDataDto = getContractDataDto(evaluationItemId);
 		// 등급 계산
 		EvaluatedDto evaluatedDto = evaluateWithIndicator(contractDataDto, averageScore);
-
-		return new MonthlyStatisticsDto(
-			monthlyStatisticsDtoList.get(0).getDate(),
-			monthlyStatisticsDtoList.get(0).getServiceType(),
-			"전체",
-			evaluatedDto.getGrade(),
-			averageScore,
-			"월별",
-			averageWeightedScore,
-			false,
-			totalDownTime,
-			totalRequestCount,
-			evaluationItemId,
-			"전체",
-			averageEstimate,
-			totalSystemIncidentCount,
-			-1,
-			true
-		);
+		return ResponseStatisticsDto.ofResponseStatisticsDto(evaluatedDto,responseStatisticsDtoList.get(0),averageScore,averageWeightedScore,totalDownTime,totalRequestCount,evaluationItemId,totalSystemIncidentCount);
 	}
 
 	public List<ContractDataDto> getContractDataDto(long evaluationItemId) {
@@ -114,19 +94,13 @@ public class AutoStatisticsService {
 	}
 
 	// 자동 계산 로직
-	public List<MonthlyStatisticsDto> calculateMonthlyStats(LocalDate date, long evaluationItemId) {
+	public List<ResponseStatisticsDto> calculateMonthlyStats(LocalDate date, long evaluationItemId) {
 		List<MonthlyDataDto> monthlyData = statisticsRepository.getMonthlyData(date);
 		List<ContractDataDto> contractDataDto = getContractDataDto(evaluationItemId);
-		List<MonthlyStatisticsDto> result = new ArrayList<>();
+		List<ResponseStatisticsDto> result = new ArrayList<>();
 		for (MonthlyDataDto monthlyDataDto : monthlyData) {
 			EvaluatedDto evaluatedDto = calculateScoreAndEvaluate(monthlyDataDto, contractDataDto);
-			result.add(new MonthlyStatisticsDto(
-				date, contractDataDto.get(0).getCategory(), monthlyDataDto.getEquipmentName(), evaluatedDto.getGrade(),
-				evaluatedDto.getScore(),
-				"월별", evaluatedDto.getWeightedScore(), false, monthlyDataDto.getTotalDownTime(),
-				monthlyDataDto.getRequestCount(), evaluatedDto.getEvaluationItemId(), monthlyDataDto.getSystemName(),
-				evaluatedDto.getScore(), monthlyDataDto.getSystemIncidentCount(), -1, true
-			));
+			result.add(ResponseStatisticsDto.of(contractDataDto.get(0),monthlyDataDto,evaluatedDto,date));
 		}
 		return result;
 	}
