@@ -39,8 +39,7 @@ class ContractServiceTest {
 	@Mock private TotalTargetMapper totalTargetMapper;
 	@Mock private ContractMapper contractMapper;
 
-	@InjectMocks
-	private ContractService contractService;
+	@InjectMocks private ContractService contractService;
 
 	@DisplayName("계약을 생성하고 저장할 수 있다.")
 	@Test
