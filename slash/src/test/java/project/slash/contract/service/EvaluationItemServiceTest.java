@@ -2,6 +2,7 @@ package project.slash.contract.service;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static project.slash.contract.exception.EvaluationItemErrorCode.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import project.slash.common.exception.BusinessException;
 import project.slash.contract.dto.GradeDto;
 import project.slash.contract.dto.TaskTypeDto;
 import project.slash.contract.dto.request.CreateEvaluationItemDto;
@@ -82,6 +84,20 @@ class EvaluationItemServiceTest {
 		// then
 		assertThat(oldItem.isActive()).isFalse();
 		verify(evaluationItemRepository).save(any(EvaluationItem.class));
+	}
+
+	@DisplayName("존재하지 않는 서비스 평가 항목 아이디으로 새 서비스 평가 항목을 생성하면 예외가 발생한다.")
+	@Test
+	void newEvaluationItemWithNotFoundEvaluationItemId(){
+	    //given
+		Long unknownEvaluationItemId = 99L;
+		Long contractId = 1L;
+		CreateEvaluationItemDto evaluationItemDto = createEvaluationItemDto(contractId);
+
+		//when & then
+		assertThatThrownBy(() -> evaluationItemService.updateEvaluationItem(unknownEvaluationItemId, evaluationItemDto))
+			.isInstanceOf(BusinessException.class)
+			.hasFieldOrPropertyWithValue("errorCode", NOT_FOUND_ITEMS);
 	}
 
 	private static EvaluationItem createEvaluationItem(Contract contract) {
