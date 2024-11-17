@@ -26,8 +26,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import project.slash.statistics.dto.response.MonthlyDataDto;
-import project.slash.statistics.dto.response.MonthlyStatisticsDto;
 import project.slash.statistics.dto.response.ResponseServiceTaskDto;
+import project.slash.statistics.dto.response.ResponseStatisticsDto;
 
 @Repository
 @RequiredArgsConstructor
@@ -117,7 +117,7 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 	}
 
 	@Override
-	public void saveMonthlyData(List<MonthlyStatisticsDto> statsDtoList) {
+	public void saveMonthlyData(List<ResponseStatisticsDto> statsDtoList) {
 		String sql = "INSERT INTO statistics (`date`, calculate_time, service_type, grade, score, period, weighted_score, " +
 			"approval_status, total_downtime, request_count, evaluation_item_id, target_system, estimate, system_incident_count, due_on_time_count, target_equipment, is_auto) " +
 			"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -139,7 +139,7 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 			ps.setLong(14, dto.getSystemIncidentCount());                             // 열네 번째 필드 (system_incident_count)
 			ps.setLong(15, dto.getDueOnTimeCount());                                  // 열다섯 번째 필드 (due_on_time_count)
 			ps.setString(16, dto.getTargetEquipment());                               // 열여섯 번째 필드 (target_equipment)
-			ps.setBoolean(17, dto.getIsAuto());                                       // 열일곱 번째 필드 (is_auto)
+			ps.setBoolean(17, dto.isAuto());                                       // 열일곱 번째 필드 (is_auto)
 		});
 	}
 
