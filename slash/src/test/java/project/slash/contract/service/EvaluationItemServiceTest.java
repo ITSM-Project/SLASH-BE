@@ -19,6 +19,8 @@ import project.slash.common.exception.BusinessException;
 import project.slash.contract.dto.GradeDto;
 import project.slash.contract.dto.TaskTypeDto;
 import project.slash.contract.dto.request.CreateEvaluationItemDto;
+import project.slash.contract.dto.response.EvaluationItemCategoryDto;
+import project.slash.contract.dto.response.EvaluationItemDto;
 import project.slash.contract.mapper.EvaluationItemMapper;
 import project.slash.contract.mapper.ServiceTargetMapper;
 import project.slash.contract.model.Contract;
@@ -27,6 +29,8 @@ import project.slash.contract.model.TotalTarget;
 import project.slash.contract.repository.ServiceTargetRepository;
 import project.slash.contract.repository.contract.ContractRepository;
 import project.slash.contract.repository.evaluationItem.EvaluationItemRepository;
+import project.slash.statistics.model.Statistics;
+import project.slash.statistics.repository.StatisticsRepository;
 import project.slash.taskrequest.mapper.TaskTypeMapper;
 import project.slash.taskrequest.repository.TaskTypeRepository;
 
@@ -35,6 +39,7 @@ class EvaluationItemServiceTest {
 	@Mock private ContractRepository contractRepository;
 	@Mock private EvaluationItemRepository evaluationItemRepository;
 	@Mock private ServiceTargetRepository serviceTargetRepository;
+	@Mock private StatisticsRepository statisticsRepository;
 	@Mock private TaskTypeRepository taskTypeRepository;
 	@Mock private EvaluationItemMapper evaluationItemMapper;
 	@Mock private ServiceTargetMapper serviceTargetMapper;
@@ -98,6 +103,94 @@ class EvaluationItemServiceTest {
 		assertThatThrownBy(() -> evaluationItemService.updateEvaluationItem(unknownEvaluationItemId, evaluationItemDto))
 			.isInstanceOf(BusinessException.class)
 			.hasFieldOrPropertyWithValue("errorCode", NOT_FOUND_ITEMS);
+	}
+
+	@DisplayName("서비스 평가 항목 아이디로 서비스 평가 항목 세부 내용을 조회할 수 있다.")
+	@Test
+	void findDetailByItemId(){
+		// given
+		Long evaluationItemId = 1L;
+		EvaluationItemDto evaluationItemDto = new EvaluationItemDto();
+
+		when(evaluationItemRepository.findEvaluationItem(evaluationItemId)).thenReturn(Optional.of(evaluationItemDto));
+		when(taskTypeRepository.findTaskTypesByEvaluationItemId(evaluationItemId)).thenReturn(List.of());
+
+		// when
+		evaluationItemService.findDetailByItemId(evaluationItemId);
+
+		// then
+		verify(evaluationItemRepository).findEvaluationItem(evaluationItemId);
+		verify(taskTypeRepository).findTaskTypesByEvaluationItemId(evaluationItemId);
+	}
+
+	@Test
+	@DisplayName("통계가 없는 경우 수정 가능하다")
+	void checkModifiableWhenNoStatistics() {
+		// given
+		Long contractId = 1L;
+		List<Long> evaluationItemIds = List.of(1L, 2L);
+
+		when(evaluationItemRepository.findIdsByContractId(contractId)).thenReturn(evaluationItemIds);
+		when(statisticsRepository.findByEvaluationItem_IdIn(evaluationItemIds)).thenReturn(List.of());
+
+		// when
+		boolean result = evaluationItemService.checkModifiable(contractId);
+
+		// then
+		assertThat(result).isTrue();
+	}
+
+	@Test
+	@DisplayName("통계가 있는 경우 수정 불가능하다")
+	void checkModifiableWhenHasStatistics() {
+		// given
+		Long contractId = 1L;
+		List<Long> evaluationItemIds = List.of(1L, 2L);
+		List<Statistics> statistics = List.of(new Statistics());
+
+		when(evaluationItemRepository.findIdsByContractId(contractId)).thenReturn(evaluationItemIds);
+		when(statisticsRepository.findByEvaluationItem_IdIn(evaluationItemIds)).thenReturn(statistics);
+
+		// when
+		boolean result = evaluationItemService.checkModifiable(contractId);
+
+		// then
+		assertThat(result).isFalse();
+	}
+
+	@DisplayName("서비스 평가항목을 삭제하면 비활성화가 된다.")
+	@Test
+	void deleteEvaluationItem(){
+		// given
+		Long evaluationItemId = 1L;
+		Contract contract = createTestContract(1L, "테스트 계약");
+		EvaluationItem evaluationItem = createEvaluationItem(contract);
+
+		when(evaluationItemRepository.findById(evaluationItemId)).thenReturn(Optional.of(evaluationItem));
+
+		// when
+		evaluationItemService.deleteEvaluationItem(evaluationItemId);
+
+		// then
+		assertThat(evaluationItem.isActive()).isFalse();
+	}
+
+	@DisplayName("계약 아이디에 해당하는 서비스 평가 항목을 조회할 수 있다.")
+	@Test
+	void getEvaluationItemCategory(){
+		// given
+		Long contractId = 1L;
+		List<EvaluationItem> evaluationItems = List.of(new EvaluationItem());
+		List<EvaluationItemCategoryDto> evaluationItemCategoryDtos = List.of(new EvaluationItemCategoryDto());
+
+		when(evaluationItemRepository.findByContractIdAndIsActiveTrue(contractId)).thenReturn(evaluationItems);
+		when(evaluationItemMapper.toEvaluationItemCategoryDtos(evaluationItems)).thenReturn(evaluationItemCategoryDtos);
+
+		// when
+		List<EvaluationItemCategoryDto> result = evaluationItemService.getEvaluationItemCategory(contractId);
+
+		// then
+		assertThat(result).isEqualTo(evaluationItemCategoryDtos);
 	}
 
 	private static EvaluationItem createEvaluationItem(Contract contract) {

@@ -140,8 +140,7 @@ public class EvaluationItemService {
 
 	@Transactional
 	public void deleteEvaluationItem(Long evaluationItemId) {
-		EvaluationItem evaluationItem = evaluationItemRepository.findById(evaluationItemId)
-			.orElseThrow(() -> new BusinessException(NOT_FOUND_ITEMS));
+		EvaluationItem evaluationItem = findEvaluationItem(evaluationItemId);
 
 		evaluationItem.deactivate();
 	}
