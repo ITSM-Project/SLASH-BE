@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import project.slash.contract.dto.GradeDto;
 import project.slash.contract.dto.TaskTypeDto;
 import project.slash.contract.dto.request.CreateEvaluationItemDto;
+import project.slash.contract.dto.response.EvaluationItemCategoryDto;
 import project.slash.contract.dto.response.EvaluationItemDetailDto;
 import project.slash.contract.service.EvaluationItemService;
 
@@ -124,6 +125,30 @@ class EvaluationItemControllerTest {
 		mockMvc.perform(delete("/contract-manager/evaluation-item/{id}", evaluationItemId))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.success").value(true));
+	}
+
+	@DisplayName("서비스 평가 항목 이름을 조회할 수 있다.")
+	@Test
+	void getEvaluationItemCategory() throws Exception {
+	    //given
+		Long contractId = 1L;
+
+		when(evaluationItemService.getEvaluationItemCategory(contractId)).thenReturn(createEvaluationItemCategoryDto());
+
+	    //when & then
+		mockMvc.perform(get("/common/evaluation-item-category/{contractId}", contractId))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.data[0].evaluationItemId").value(1L))
+			.andExpect(jsonPath("$.data[0].category").value("서비스 가동률"))
+			.andExpect(jsonPath("$.data[1].evaluationItemId").value(2L))
+			.andExpect(jsonPath("$.data[1].category").value("서비스 요청 적기처리율"));
+	}
+
+	private List<EvaluationItemCategoryDto> createEvaluationItemCategoryDto() {
+		return List.of(
+			new EvaluationItemCategoryDto(1L, "서비스 가동률"),
+			new EvaluationItemCategoryDto(2L, "서비스 요청 적기처리율")
+		);
 	}
 
 	private EvaluationItemDetailDto createEvaluationItemDetailDto(Long evaluationItemId) {

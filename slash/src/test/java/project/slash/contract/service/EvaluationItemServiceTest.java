@@ -174,7 +174,7 @@ class EvaluationItemServiceTest {
 		assertThat(evaluationItem.isActive()).isFalse();
 	}
 
-	@DisplayName("계약 아이디에 해당하는 서비스 평가 항목을 조회할 수 있다.")
+	@DisplayName("계약 아이디에 해당하는 서비스 평가 항목 이름을 조회할 수 있다.")
 	@Test
 	void getEvaluationItemCategory(){
 		// given
