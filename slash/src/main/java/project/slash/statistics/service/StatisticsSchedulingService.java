@@ -31,7 +31,7 @@ public class StatisticsSchedulingService {
 	@PostConstruct
 	public void init() {
 		statisticsActions = Map.of(
-			"서비스 가동률", autoStatisticsService::createMonthlyStats,
+			"서비스 가동률", autoStatisticsService::createMonthlyUptimeStatistics,
 			"장애 적기처리율", autoStatisticsService::addIncidentStatistics,
 			"서비스요청 적기처리율", autoStatisticsService::createServiceTaskStatistics
 		);
