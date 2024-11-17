@@ -25,7 +25,6 @@ import project.slash.contract.mapper.EvaluationItemMapper;
 import project.slash.contract.mapper.ServiceTargetMapper;
 import project.slash.contract.model.Contract;
 import project.slash.contract.model.EvaluationItem;
-import project.slash.contract.model.TotalTarget;
 import project.slash.contract.repository.ServiceTargetRepository;
 import project.slash.contract.repository.contract.ContractRepository;
 import project.slash.contract.repository.evaluationItem.EvaluationItemRepository;
@@ -246,18 +245,6 @@ class EvaluationItemServiceTest {
 
 	private List<TaskTypeDto> createTaskTypeDtos() {
 		return List.of(new TaskTypeDto("서비스 요청", "업무 지원", 0, false, false));
-	}
-
-	private List<TotalTarget> createTotalTargets(Contract contract) {
-		return List.of(TotalTarget.builder()
-			.grade("A")
-			.min(100.0)
-			.minInclusive(true)
-			.max(100.0)
-			.maxInclusive(true)
-			.isActive(true)
-			.contract(contract)
-			.build());
 	}
 
 	private Contract createTestContract(Long contractId, String contractName) {
