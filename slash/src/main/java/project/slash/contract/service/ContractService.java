@@ -64,7 +64,6 @@ public class ContractService {
 			.map(evaluationItem -> {
 				List<TaskTypeDto> taskTypes = taskTypeMapper.toTaskTypeDtoList(
 					taskTypeRepository.findTaskTypesByEvaluationItemId(evaluationItem.getEvaluationItemId()));
-
 				return evaluationItemMapper.toEvaluationItemDetailDto(evaluationItem, taskTypes);
 			})
 			.toList();
@@ -108,7 +107,7 @@ public class ContractService {
 	public void deleteContract(Long contractId) {
 		Contract contract = findContract(contractId);
 
-		if(LocalDate.now().isAfter(contract.getEndDate())){
+		if(!LocalDate.now().isAfter(contract.getEndDate())){
 			throw new BusinessException(NOT_TERMINATE_CONTRACT);
 		}
 

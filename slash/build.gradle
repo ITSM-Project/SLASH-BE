@@ -1,7 +1,13 @@
 plugins {
     id 'java'
+    id 'jacoco'
     id 'org.springframework.boot' version '3.3.4'
     id 'io.spring.dependency-management' version '1.1.6'
+}
+
+jacoco {
+    // JaCoCo 버전
+    toolVersion = "0.8.7"
 }
 
 group = 'project'
@@ -30,6 +36,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     // lombok
     compileOnly 'org.projectlombok:lombok'
@@ -44,7 +51,7 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
 
     // Jasypt
-    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4'
+    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
 
     // QueryDSL
     implementation 'com.querydsl:querydsl-jpa:5.1.0:jakarta'
