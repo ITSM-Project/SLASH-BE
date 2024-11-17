@@ -98,6 +98,34 @@ class EvaluationItemControllerTest {
 			.andExpect(jsonPath("$.success").value(true));
 	}
 
+	@DisplayName("새 서비스 평가 항목을 생성할 수 있다.")
+	@Test
+	void newEvaluationItem() throws Exception {
+		//given
+		Long evaluationItemId = 1L;
+		Long contractId = 1L;
+		CreateEvaluationItemDto evaluationItemDto = createEvaluationItemDto(contractId);
+
+		//when & then
+		mockMvc.perform(post("/contract-manager/evaluation-item/{id}", evaluationItemId)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsBytes(evaluationItemDto)))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.success").value(true));
+	}
+
+	@DisplayName("서비스 평가 항목을 삭제할 수 있다.")
+	@Test
+	void deleteEvaluationItem() throws Exception {
+	    //given
+		Long evaluationItemId = 1L;
+
+	    //when & then
+		mockMvc.perform(delete("/contract-manager/evaluation-item/{id}", evaluationItemId))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.success").value(true));
+	}
+
 	private EvaluationItemDetailDto createEvaluationItemDetailDto(Long evaluationItemId) {
 		return EvaluationItemDetailDto.builder()
 			.evaluationItemId(evaluationItemId)
