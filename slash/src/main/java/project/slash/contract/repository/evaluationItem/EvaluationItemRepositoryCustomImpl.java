@@ -46,7 +46,7 @@ public class EvaluationItemRepositoryCustomImpl implements EvaluationItemReposit
 				queryFactory.select(evaluationItem.contract.id)
 					.from(evaluationItem)
 					.where(evaluationItem.id.eq(evaluationItemId))
-			)).fetchOne();
+			).and(evaluationItem.isActive.isTrue())).fetchOne();
   }
   
   @Override
