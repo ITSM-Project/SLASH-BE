@@ -6,7 +6,6 @@ import static project.slash.taskrequest.model.constant.RequestStatus.*;
 import static project.slash.user.exception.UserErrorCode.*;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -52,11 +51,14 @@ public class TaskRequestService {
 
 	@Transactional
 	public void createRequest(TaskRequestDto taskRequestDto, String userId) {    //요청 생성
-		TaskType taskType = findTaskType(taskRequestDto.getTaskDetail(), taskRequestDto.isServiceRelevance(), taskRequestDto.getContractId());
+		TaskType taskType = findTaskType(taskRequestDto.getTaskDetail(), taskRequestDto.isServiceRelevance(),
+			taskRequestDto.getContractId());
 		Equipment equipment = findEquipment(taskRequestDto.getEquipmentName());
 
 		User requester = userRepository.findById(userId).orElseThrow(() -> new BusinessException(NOT_FOUND_USER));
-		TaskRequest taskRequest = taskRequestMapper.toEntity(taskRequestDto, taskType, requester, equipment);
+		User mockUser = userRepository.findById("4").orElseThrow(() -> new BusinessException(NOT_FOUND_USER));
+
+		TaskRequest taskRequest = taskRequestMapper.toEntity(taskRequestDto, taskType, requester, mockUser, equipment);
 
 		taskRequestRepository.save(taskRequest);
 	}

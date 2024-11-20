@@ -25,7 +25,9 @@ public class UserService {
 				User.from("2", "ROLE_REQUEST_MANAGER", "b", passwordEncoder.encode("1234"),
 					"test2@test.com", "010-1234-2222"),
 				User.from("3", "ROLE_USER", "c", passwordEncoder.encode("1234"),
-					"test3@test.com", "010-1234-3333")
+					"test3@test.com", "010-1234-3333"),
+				User.from("4", "ROLE_USER", "미할당", passwordEncoder.encode("1234"),
+					"test4@test.com", "010-1234-4444")
 			);
 			userRepository.saveAll(customs);
 		}
