@@ -47,22 +47,19 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 			.select(Projections.constructor(MonthlyDataDto.class,
 				systems.name,
 				equipment.name,
-				taskRequest.count(),
-				systemIncident.incidentTime.sum(),
+				taskRequest.count().coalesce(0L),
+				systemIncident.incidentTime.sum().coalesce(0L),
 				Expressions.numberTemplate(Integer.class, "DAY({0})", date),
-				systemIncident.count()
+				systemIncident.count().coalesce(0L)
 			))
-			.from(taskRequest)
-			.leftJoin(equipment).on(taskRequest.equipment.id.eq(equipment.id))
+			.from(equipment)
 			.leftJoin(systems).on(equipment.systems.id.eq(systems.id))
+			.leftJoin(taskRequest).on(taskRequest.equipment.id.eq(equipment.id)
+				.and(taskRequest.createTime.year().eq(date.getYear()))
+				.and(taskRequest.createTime.month().eq(date.getMonthValue()))
+				.and(taskRequest.createTime.dayOfMonth().loe(date.getDayOfMonth())))
 			.leftJoin(systemIncident).on(systemIncident.taskRequest.id.eq(taskRequest.id))
-			.leftJoin(taskType).on(taskRequest.taskType.id.eq(taskType.id))
-			.where(
-				taskRequest.createTime.year().eq(date.getYear())
-					.and(taskRequest.createTime.month().eq(date.getMonthValue()))
-					.and(taskRequest.createTime.dayOfMonth().loe(date.getDayOfMonth()))
-			)
-			.groupBy(equipment.name)
+			.groupBy(systems.name, equipment.name)
 			.orderBy(systems.name.asc(), equipment.name.asc())
 			.fetch();
 	}
