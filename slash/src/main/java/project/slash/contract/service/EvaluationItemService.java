@@ -54,6 +54,14 @@ public class EvaluationItemService {
 		return contractRepository.findById(contractId).orElseThrow(() -> new BusinessException(NOT_FOUND_CONTRACT));
 	}
 
+	private void saveEvaluationItem(CreateEvaluationItemDto createEvaluationItemDto, Contract contract) {
+		EvaluationItem evaluationItem = evaluationItemMapper.toEntity(createEvaluationItemDto, contract);
+		evaluationItemRepository.save(evaluationItem);	//서비스 평가 항목 생성
+
+		saveServiceTargets(createEvaluationItemDto.getServiceTargets(), evaluationItem);	//서비스 목표 저장
+		saveTaskTypes(createEvaluationItemDto.getTaskTypes(), evaluationItem);	//업무 유형 저장
+	}
+
 	@Transactional
 	public void newEvaluationItem(Long evaluationItemId, CreateEvaluationItemDto evaluationItemDto) {
 		EvaluationItem evaluationItem = findEvaluationItem(evaluationItemId);
@@ -61,14 +69,6 @@ public class EvaluationItemService {
 
 		Contract contract = findContract(evaluationItemDto.getContractId());
 		saveEvaluationItem(evaluationItemDto, contract);
-	}
-
-	private void saveEvaluationItem(CreateEvaluationItemDto createEvaluationItemDto, Contract contract) {
-		EvaluationItem evaluationItem = evaluationItemMapper.toEntity(createEvaluationItemDto, contract);
-		evaluationItemRepository.save(evaluationItem);	//서비스 평가 항목 생성
-
-		saveServiceTargets(createEvaluationItemDto.getServiceTargets(), evaluationItem);	//서비스 목표 저장
-		saveTaskTypes(createEvaluationItemDto.getTaskTypes(), evaluationItem);	//업무 유형 저장
 	}
 
 	public EvaluationItemDetailDto findDetailByItemId(Long evaluationItemId) {
@@ -140,8 +140,7 @@ public class EvaluationItemService {
 
 	@Transactional
 	public void deleteEvaluationItem(Long evaluationItemId) {
-		EvaluationItem evaluationItem = evaluationItemRepository.findById(evaluationItemId)
-			.orElseThrow(() -> new BusinessException(NOT_FOUND_ITEMS));
+		EvaluationItem evaluationItem = findEvaluationItem(evaluationItemId);
 
 		evaluationItem.deactivate();
 	}

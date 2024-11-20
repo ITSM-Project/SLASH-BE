@@ -26,13 +26,11 @@ import project.slash.taskrequest.dto.response.StatusCountDto;
 import project.slash.taskrequest.dto.response.TaskRequestOfManagerDto;
 import project.slash.taskrequest.model.constant.RequestStatus;
 import project.slash.taskrequest.service.TaskRequestService;
-import project.slash.user.repository.UserRepository;
 
 @RestController
 @RequiredArgsConstructor
 public class TaskRequestController {
 	private final TaskRequestService taskRequestService;
-	private final UserRepository userRepository;
 
 	/**
 	 * 요청 생성 메서드입니다.
@@ -43,6 +41,7 @@ public class TaskRequestController {
 	@PostMapping("/user/request")
 	public BaseResponse<Void> createRequest(@Login String userId, @RequestBody @Valid TaskRequestDto taskRequestDto) {
 		taskRequestService.createRequest(taskRequestDto, userId);
+
 		return BaseResponse.ok();
 	}
 
@@ -98,7 +97,7 @@ public class TaskRequestController {
 	 * @param requestId 삭제할 요청 ID
 	 * @return 성공 여부
 	 */
-	@DeleteMapping("/request-manager/request/{requestId}")
+	@DeleteMapping("/user/request/{requestId}")
 	public BaseResponse<Void> deleteRequest(@Login String userId, @PathVariable("requestId") Long requestId) {
 		taskRequestService.deleteRequest(requestId, userId);
 
