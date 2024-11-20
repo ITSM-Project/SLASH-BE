@@ -12,7 +12,7 @@ import project.slash.user.model.User;
 
 @Component
 public class TaskRequestMapper {
-	public TaskRequest toEntity(TaskRequestDto taskRequestDto, TaskType taskType, User requester,
+	public TaskRequest toEntity(TaskRequestDto taskRequestDto, TaskType taskType, User requester, User mockUser,
 		Equipment equipment) {
 		return TaskRequest.builder()
 			.title(taskRequestDto.getTitle())
@@ -20,6 +20,7 @@ public class TaskRequestMapper {
 			.status(RequestStatus.REGISTERED)
 			.taskType(taskType)
 			.requester(requester)
+			.manager(mockUser)
 			.equipment(equipment)
 			.build();
 	}

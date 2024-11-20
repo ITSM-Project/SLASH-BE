@@ -27,7 +27,7 @@ import project.slash.contract.dto.request.CreateEvaluationItemDto;
 @Getter
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class EvaluationItem {
 	@Id
