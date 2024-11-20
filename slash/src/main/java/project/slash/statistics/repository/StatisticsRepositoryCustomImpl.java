@@ -42,7 +42,7 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 	private EntityManager entityManager;
 
 	@Override
-	public List<MonthlyDataDto> getMonthlyData(LocalDate date) {
+	public List<MonthlyDataDto> getMonthlyData(LocalDate date,long contractId) {
 		return queryFactory
 			.select(Projections.constructor(MonthlyDataDto.class,
 				systems.name,
@@ -59,6 +59,8 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 				.and(taskRequest.createTime.month().eq(date.getMonthValue()))
 				.and(taskRequest.createTime.dayOfMonth().loe(date.getDayOfMonth())))
 			.leftJoin(systemIncident).on(systemIncident.taskRequest.id.eq(taskRequest.id))
+			.leftJoin(taskType).on(taskRequest.taskType.id.eq(taskType.id))
+			.leftJoin(evaluationItem).on(taskType.evaluationItem.id.eq(evaluationItem.id).and(evaluationItem.contract.id.eq(contractId)))
 			.groupBy(systems.name, equipment.name)
 			.orderBy(systems.name.asc(), equipment.name.asc())
 			.fetch();
