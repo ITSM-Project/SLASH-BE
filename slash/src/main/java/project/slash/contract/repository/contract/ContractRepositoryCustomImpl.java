@@ -39,7 +39,7 @@ public class ContractRepositoryCustomImpl implements ContractRepositoryCustom {
 				ExpressionUtils.as(
 					JPAExpressions.select(evaluationItem.weight.sum())
 						.from(evaluationItem)
-						.where(evaluationItem.contract.id.eq(contractId)),
+						.where(evaluationItem.contract.id.eq(contractId).and(evaluationItem.isActive.isTrue())),
 					"weightTotal"
 				), evaluationItem.id,
 				evaluationItem.category))
