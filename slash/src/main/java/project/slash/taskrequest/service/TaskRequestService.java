@@ -52,11 +52,14 @@ public class TaskRequestService {
 
 	@Transactional
 	public void createRequest(TaskRequestDto taskRequestDto, String userId) {    //요청 생성
-		TaskType taskType = findTaskType(taskRequestDto.getTaskDetail(), taskRequestDto.isServiceRelevance(), taskRequestDto.getContractId());
+		TaskType taskType = findTaskType(taskRequestDto.getTaskDetail(), taskRequestDto.isServiceRelevance(),
+			taskRequestDto.getContractId());
 		Equipment equipment = findEquipment(taskRequestDto.getEquipmentName());
 
 		User requester = userRepository.findById(userId).orElseThrow(() -> new BusinessException(NOT_FOUND_USER));
-		TaskRequest taskRequest = taskRequestMapper.toEntity(taskRequestDto, taskType, requester, equipment);
+		User mockUser = userRepository.findById("미할당").orElseThrow(() -> new BusinessException(NOT_FOUND_USER));
+
+		TaskRequest taskRequest = taskRequestMapper.toEntity(taskRequestDto, taskType, requester, mockUser, equipment);
 
 		taskRequestRepository.save(taskRequest);
 	}

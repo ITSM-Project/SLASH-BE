@@ -1,7 +1,6 @@
 package project.slash.taskrequest.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,14 +26,12 @@ import project.slash.taskrequest.dto.response.StatusCountDto;
 import project.slash.taskrequest.dto.response.TaskRequestOfManagerDto;
 import project.slash.taskrequest.model.constant.RequestStatus;
 import project.slash.taskrequest.service.TaskRequestService;
-import project.slash.user.model.User;
 import project.slash.user.repository.UserRepository;
 
 @RestController
 @RequiredArgsConstructor
 public class TaskRequestController {
 	private final TaskRequestService taskRequestService;
-	private final UserRepository userRepository;
 
 	/**
 	 * 요청 생성 메서드입니다.
