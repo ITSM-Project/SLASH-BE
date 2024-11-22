@@ -9,7 +9,7 @@ import project.slash.statistics.dto.response.ResponseServiceTaskDto;
 import project.slash.statistics.dto.response.ResponseStatisticsDto;
 
 public interface StatisticsRepositoryCustom {
-	List<MonthlyDataDto> getMonthlyData(LocalDate date,long contractId);
+	List<MonthlyDataDto> getMonthlyData(LocalDate date, long contractId);
 
 	void saveMonthlyData(List<ResponseStatisticsDto> monthlyUptimeStatisticsDtoList);
 

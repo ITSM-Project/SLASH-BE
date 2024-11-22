@@ -33,7 +33,8 @@ public class ServiceUptimeController {
 	public BaseResponse<?> getServiceUptimeStatistics(
 		@RequestParam("date") LocalDate date,
 		@RequestParam("evaluationItemId") long evaluationItemId) {
-		List<ResponseStatisticsDto> statisticsList = autoStatisticsService.calculateMonthlyStats(date, evaluationItemId);
+		List<ResponseStatisticsDto> statisticsList = autoStatisticsService.calculateMonthlyStats(date,
+			evaluationItemId);
 		return BaseResponse.ok(statisticsList);
 	}
 
