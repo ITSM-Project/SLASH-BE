@@ -36,7 +36,7 @@ jobs:
     # create or replace secret.yml file and build
     - name: Build with Gradle
       run: |
-        echo ${{secrets.APPLICATION_SECRET}} | base64 --decode > ./src/main/resources/application-secret.yml
+        echo ${{secrets.APPLICATION_SECRET}} | base64 --decode > ./slash/src/main/resources/application-secret.yml
         chmod +x ./gradlew
         ./gradlew clean build
 
