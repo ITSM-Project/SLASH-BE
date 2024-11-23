@@ -91,9 +91,11 @@ jobs:
             sudo docker pull ${{ secrets.DOCKER_USER_NAME }}/slash:latest
             sudo docker-compose -f docker-compose-${{env.TARGET_UPSTREAM}}.yml up -d
             sudo docker run -e JASYPT_ENCRYPTOR_PASSWORD=${{ secrets.JASYPT_ENCRYPTOR_PASSWORD }} -d ${{ secrets.DOCKER_USER_NAME }}/slash:latest
-
+        
       - name: Check deploy server URL
         uses: jtalk/url-health-check-action@v3
+        env:
+          JASYPT_ENCRYPTOR_PASSWORD: ${{ secrets.JASYPT_ENCRYPTOR_PASSWORD }}
         with:
           url: http://${{ secrets.SLASH_IP }}:${{env.STOPPED_PORT}}/env
           max-attempts: 3
