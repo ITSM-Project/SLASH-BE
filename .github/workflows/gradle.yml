@@ -38,7 +38,7 @@ jobs:
       run: |
         echo ${{secrets.APPLICATION_SECRET}} | base64 --decode > ./slash/src/main/resources/application-secret.yml
         cd ./slash
-        chmod +x ./gradlew./gradlew clean build
+        chmod +x ./gradlew
         ./gradlew clean build
 
     # DockerHub to upload build image
