@@ -49,7 +49,7 @@ jobs:
         password: ${{ secrets.DOCKER_TOKEN }}
 
     - name: Build Docker
-      run: docker build --platform linux/amd64 -t ${{ secrets.DOCKER_USER_NAME }}/slash .
+      run: docker build --platform linux/amd64 -t ${{ secrets.DOCKER_USER_NAME }}/slash -f ./slash/Dockerfile .
 
     - name: Push Docker
       run: docker push ${{ secrets.DOCKER_USER_NAME }}/slash:latest
