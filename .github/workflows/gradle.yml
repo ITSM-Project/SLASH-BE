@@ -37,8 +37,9 @@ jobs:
     - name: Build with Gradle
       run: |
         echo ${{secrets.APPLICATION_SECRET}} | base64 --decode > ./slash/src/main/resources/application-secret.yml
-        chmod +x ./slash/gradlew
-        ./slash/gradlew clean build
+        cd ./slash
+        chmod +x ./gradlew./gradlew clean build
+        ./gradlew clean build
 
     # DockerHub to upload build image
     - name: Login to DockerHub
