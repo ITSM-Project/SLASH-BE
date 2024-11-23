@@ -37,6 +37,7 @@ jobs:
     - name: Build with Gradle
       run: |
         echo ${{secrets.APPLICATION_SECRET}} | base64 --decode > ./slash/src/main/resources/application-secret.yml
+        echo "JASYPT_ENCRYPTOR_PASSWORD=${{ secrets.JASYPT_ENCRYPTOR_PASSWORD }}"
         cd ./slash
         chmod +x ./gradlew
         ./gradlew clean build -x test
