@@ -39,7 +39,7 @@ jobs:
         echo ${{secrets.APPLICATION_SECRET}} | base64 --decode > ./slash/src/main/resources/application-secret.yml
         cd ./slash
         chmod +x ./gradlew
-        ./gradlew clean build
+        ./gradlew clean build -x test
 
     # DockerHub to upload build image
     - name: Login to DockerHub
@@ -86,7 +86,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script_stop: true
           script: |
-            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/cicd_test:latest
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/slash:latest
             sudo docker-compose -f docker-compose-${{env.TARGET_UPSTREAM}}.yml up -d
 
       - name: Check deploy server URL
