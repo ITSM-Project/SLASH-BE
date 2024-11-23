@@ -50,7 +50,7 @@ jobs:
         password: ${{ secrets.DOCKER_TOKEN }}
 
     - name: Build Docker
-      run: docker build --platform linux/amd64 -t ${{ secrets.DOCKER_USER_NAME }}/slash -f ./slash/Dockerfile .
+      run: docker build --platform linux/amd64 --build-arg JASYPT_ENCRYPTOR_PASSWORD=${{ secrets.JASYPT_ENCRYPTOR_PASSWORD }} -t ${{ secrets.DOCKER_USER_NAME }}/slash -f ./slash/Dockerfile .
 
     - name: Push Docker
       run: docker push ${{ secrets.DOCKER_USER_NAME }}/slash:latest
