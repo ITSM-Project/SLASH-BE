@@ -61,13 +61,14 @@ jobs:
     steps:
       - name: Set target IP
         run: |
-          STATUS=$(curl -o /dev/null -w "%{http_code}" "http://${{ secrets.SLASH_IP }}/env")
+          STATUS=$(curl -o /dev/null -w "%{http_code}" "http://${{ secrets.DDOGDOG_IP }}/env")
+          echo $STATUS
           if [ $STATUS = 200 ]; then
-            CURRENT_UPSTREAM=$(curl -s "http://${{ secrets.SLASH_IP }}/env")
+            CURRENT_UPSTREAM=$(curl -s "http://${{ secrets.DDOGDOG_IP }}/env")
           else
-            CURRENT_UPSTREAM=${CURRENT_UPSTREAM:-green}
+            CURRENT_UPSTREAM=green
           fi
-            echo CURRENT_UPSTREAM=$CURRENT_UPSTREAM >> $GITHUB_ENV
+          echo CURRENT_UPSTREAM=$CURRENT_UPSTREAM >> $GITHUB_ENV
           if [ $CURRENT_UPSTREAM = blue ]; then
             echo "CURRENT_PORT=8080" >> $GITHUB_ENV
             echo "STOPPED_PORT=8081" >> $GITHUB_ENV
