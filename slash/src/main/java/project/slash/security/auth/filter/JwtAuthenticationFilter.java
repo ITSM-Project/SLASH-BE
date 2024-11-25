@@ -37,7 +37,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 		String requestURI = httpRequest.getRequestURI();
 
 		// 로그인 요청 경로는 JWT 검증을 건너뜀
-		if ("/login".equals(requestURI)) {
+		if ("/login".equals(requestURI) || "/env".equals(requestURI) || "/hc".equals(requestURI)) {
 			chain.doFilter(request, response);
 			return;
 		}
