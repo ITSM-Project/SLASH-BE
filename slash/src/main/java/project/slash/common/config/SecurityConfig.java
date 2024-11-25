@@ -40,7 +40,7 @@ public class SecurityConfig {
 			.formLogin(AbstractHttpConfigurer::disable
 			)
 			.authorizeHttpRequests(requests -> requests
-				.requestMatchers("/", "/login", "/logout", "/error").permitAll()
+				.requestMatchers("/", "/login", "/logout", "/error", "/hc", "/env").permitAll()
 				.requestMatchers("/common/**").hasAnyRole("REQUEST_MANAGER", "CONTRACT_MANAGER", "USER")
 				.requestMatchers("/request-manager/**").hasRole("REQUEST_MANAGER")
 				.requestMatchers("/contract-manager/**").hasRole("CONTRACT_MANAGER")
