@@ -20,6 +20,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -43,6 +44,11 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 
 	@Override
 	public List<MonthlyDataDto> getMonthlyData(LocalDate date, long contractId) {
+		JPQLQuery<Long> taskTypeSubQuery = JPAExpressions.select(taskType.id)
+			.from(taskType)
+			.leftJoin(taskType.evaluationItem, evaluationItem)
+			.where(evaluationItem.contract.id.eq(contractId));
+
 		return queryFactory
 			.select(Projections.constructor(MonthlyDataDto.class,
 				systems.name,
@@ -59,13 +65,13 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 			.on(taskRequest.equipment.id.eq(equipment.id)
 				.and(taskRequest.createTime.year().eq(date.getYear()))
 				.and(taskRequest.createTime.month().eq(date.getMonthValue()))
-				.and(taskRequest.createTime.dayOfMonth().loe(date.getDayOfMonth())))
+				.and(taskRequest.createTime.dayOfMonth().loe(date.getDayOfMonth()))
+				.and(taskRequest.taskType.id.in(taskTypeSubQuery))
+			)
 			.leftJoin(systemIncident)
 			.on(systemIncident.taskRequest.id.eq(taskRequest.id))
 			.leftJoin(taskType)
 			.on(taskRequest.taskType.id.eq(taskType.id))
-			.leftJoin(evaluationItem)
-			.on(taskType.evaluationItem.id.eq(evaluationItem.id).and(evaluationItem.contract.id.eq(contractId)))
 			.groupBy(systems.name, equipment.name)
 			.orderBy(systems.name.asc(), equipment.name.asc())
 			.fetch();
