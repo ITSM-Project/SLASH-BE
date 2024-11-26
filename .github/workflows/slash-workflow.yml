@@ -10,8 +10,9 @@ name: Java CICD with Gradle
 on:
   push:
     branches: [ "main" ] 
-  pull_request:
-    branches: [ "main" ]
+
+permissions:
+  contents: read
 
 jobs:
   build:
@@ -44,20 +45,24 @@ jobs:
 
     # DockerHub to upload build image
     - name: Login to DockerHub
+      if: github.event_name == 'push'
       uses: docker/login-action@v1
       with:
         username: ${{ secrets.DOCKER_USER_NAME }}
         password: ${{ secrets.DOCKER_TOKEN }}
 
     - name: Build Docker
+      if: github.event_name == 'push'
       run: docker build --platform linux/amd64 --build-arg JASYPT_ENCRYPTOR_PASSWORD=${{ secrets.JASYPT_ENCRYPTOR_PASSWORD }} -t ${{ secrets.DOCKER_USER_NAME }}/slash -f ./slash/Dockerfile .
 
     - name: Push Docker
+      if: github.event_name == 'push'
       run: docker push ${{ secrets.DOCKER_USER_NAME }}/slash:latest
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
     steps:
       - name: Set target IP
         run: |
@@ -118,15 +123,5 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script_stop: true
           script: |
-            if [ -z "${{env.CURRENT_UPSTREAM}}" ]; then
-              echo "CURRENT_UPSTREAM is empty. Skipping stop and remove commands."
-            else
-              echo "Checking if container ${{env.CURRENT_UPSTREAM}} exists..."
-              if [ "$(sudo docker ps -a -q -f name=${{env.CURRENT_UPSTREAM}})" ]; then
-                echo "Stopping current upstream container: ${{env.CURRENT_UPSTREAM}}"
-                sudo docker stop ${{env.CURRENT_UPSTREAM}} || true
-                sudo docker rm ${{env.CURRENT_UPSTREAM}} || true
-              else
-                echo "Container ${{env.CURRENT_UPSTREAM}} does not exist. Skipping."
-              fi
-            fi
+            sudo docker stop ${{env.CURRENT_UPSTREAM}} || true
+            sudo docker rm ${{env.CURRENT_UPSTREAM}} || true
