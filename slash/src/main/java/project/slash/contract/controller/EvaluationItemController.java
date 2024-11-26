@@ -14,6 +14,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import project.slash.common.response.BaseResponse;
 import project.slash.contract.dto.request.CreateEvaluationItemDto;
+import project.slash.contract.dto.response.DefaultEvaluationItemDto;
 import project.slash.contract.dto.response.EvaluationItemCategoryDto;
 import project.slash.contract.dto.response.EvaluationItemDetailDto;
 import project.slash.contract.service.EvaluationItemService;
@@ -116,5 +117,18 @@ public class EvaluationItemController {
 		evaluationItemService.deleteEvaluationItem(evaluationItemId);
 
 		return BaseResponse.ok();
+	}
+
+	/**
+	 * 기본으로 저장된 서비스 평가항목 내용 조회 메서드
+	 *
+	 * @param category 서비스 평가 항목 이름
+	 * @return 서비스 평가 항목 내용
+	 */
+	@GetMapping("/contract-manager/evaluation-item/{category}")
+	public BaseResponse<DefaultEvaluationItemDto> fetchEvaluationItem(@PathVariable("category") String category) {
+		DefaultEvaluationItemDto defaultEvaluationItemDto = evaluationItemService.fetchEvaluationItem(category);
+
+		return BaseResponse.ok(defaultEvaluationItemDto);
 	}
 }
