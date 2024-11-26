@@ -10,5 +10,5 @@ public class ResponseServiceTaskDto {
 	private EvaluationItem evaluationItem;
 	private Long taskRequest;
 	private Integer totalWeight;
-	private Integer dueOnTimeCount;
+	private Long dueOnTimeCount;
 }

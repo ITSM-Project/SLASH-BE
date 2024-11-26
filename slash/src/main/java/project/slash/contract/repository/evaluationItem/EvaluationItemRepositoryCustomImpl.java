@@ -46,7 +46,7 @@ public class EvaluationItemRepositoryCustomImpl implements EvaluationItemReposit
 				queryFactory.select(evaluationItem.contract.id)
 					.from(evaluationItem)
 					.where(evaluationItem.id.eq(evaluationItemId))
-			)).fetchOne();
+			).and(evaluationItem.isActive.isTrue())).fetchOne();
   }
   
   @Override
@@ -57,7 +57,7 @@ public class EvaluationItemRepositoryCustomImpl implements EvaluationItemReposit
 			  JPAExpressions.select(statistics.evaluationItem.id)
 				  .from(statistics)
 				  .where(statistics.date.eq(endDate))
-		  ).and(evaluationItem.isActive.isTrue())
+		  ).and(evaluationItem.createDate.before(endDate))
 			  .and(evaluationItem.contract.id.eq(contractId)))
 		  .fetch();
 	}

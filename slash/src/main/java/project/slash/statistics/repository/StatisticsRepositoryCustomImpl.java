@@ -26,6 +26,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import project.slash.contract.model.EvaluationItem;
 import project.slash.statistics.dto.response.MonthlyDataDto;
 import project.slash.statistics.dto.response.ResponseServiceTaskDto;
 import project.slash.statistics.dto.response.ResponseStatisticsDto;
@@ -81,50 +82,49 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 	public ResponseServiceTaskDto getServiceTaskStatics(Long evaluationItemId, LocalDateTime startDate,
 		LocalDateTime endDate) {
 
-		// evaluationItemId의 contractId 가져오기
-		Long contractId = new JPAQuery<>(entityManager)
-			.select(evaluationItem.contract.id)
-			.from(evaluationItem)
+		// evaluationItem 개별 조회 (항상 존재해야 함)
+		EvaluationItem evaluationItemData = queryFactory
+			.selectFrom(evaluationItem)
 			.where(evaluationItem.id.eq(evaluationItemId))
 			.fetchOne();
 
 		// totalWeight 서브쿼리
-		NumberExpression<Integer> totalWeightSubquery = Expressions.numberTemplate(
-			Integer.class,
-			"({0})",
-			JPAExpressions
-				.select(evaluationItem.weight.sum())  // contract_id에 대한 weight 합계 계산
-				.from(evaluationItem)
-				.where(evaluationItem.contract.id.eq(contractId))
-		);
-
-		//요청 완료 건수 서브 쿼리
-		NumberTemplate<Integer> dueOnTimeCountSubquery = Expressions.numberTemplate(
-			Integer.class,
-			"({0})",
-			JPAExpressions
-				.select(taskRequest.status.count())  // 완료된 요청을 카운트
-				.from(taskRequest)
-				.where(taskRequest.dueOnTime.eq(true))
-				.where(taskRequest.createTime.between(startDate, endDate))
-				.where(taskRequest.taskType.evaluationItem.id.eq(evaluationItemId))
-		);
-
-		return queryFactory
-			.select(Projections.constructor(
-				ResponseServiceTaskDto.class,
-				evaluationItem.as("evaluationItem"), // evaluationItemId
-				taskRequest.count().as("taskRequest"), // 전체 요청 수
-				totalWeightSubquery,
-				dueOnTimeCountSubquery
+		Integer totalWeight = queryFactory
+			.select(evaluationItem.weight.sum())
+			.from(evaluationItem)
+			.where(evaluationItem.contract.id.eq(
+				queryFactory.select(evaluationItem.contract.id)
+					.from(evaluationItem)
+					.where(evaluationItem.id.eq(evaluationItemId))
 			))
+			.fetchOne();
+
+		// 요청 완료 건수 서브쿼리
+		Long dueOnTimeCount = queryFactory
+			.select(taskRequest.status.count())
 			.from(taskRequest)
-			.leftJoin(taskRequest.taskType, taskType)
-			.leftJoin(taskType.evaluationItem, evaluationItem)
+			.where(taskRequest.dueOnTime.eq(true))
 			.where(taskRequest.createTime.between(startDate, endDate))
-			.where(evaluationItem.id.eq(evaluationItemId))
-			.fetchOne(); // ResponseServiceTaskDto 타입으로 반환
+			.where(taskRequest.taskType.evaluationItem.id.eq(evaluationItemId))
+			.fetchOne();
+
+		// 전체 요청 건수 조회
+		Long taskRequestCount = queryFactory
+			.select(taskRequest.count())
+			.from(taskRequest)
+			.where(taskRequest.createTime.between(startDate, endDate))
+			.where(taskRequest.taskType.evaluationItem.id.eq(evaluationItemId))
+			.fetchOne();
+
+		// 기본값 설정 (데이터가 없는 경우)
+		return new ResponseServiceTaskDto(
+			evaluationItemData,                       // 항상 조회된 evaluationItem
+			taskRequestCount == null ? 0 : taskRequestCount, // 요청이 없으면 0
+			totalWeight == null ? 0 : totalWeight,    // totalWeight가 없으면 0
+			dueOnTimeCount == null ? 100 : dueOnTimeCount                          // 점수 계산 (기본 100)
+		);
 	}
+
 
 	@Override
 	public void saveMonthlyData(List<ResponseStatisticsDto> statsDtoList) {

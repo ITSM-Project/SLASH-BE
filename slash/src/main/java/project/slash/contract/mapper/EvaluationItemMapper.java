@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import project.slash.contract.dto.TaskTypeDto;
 import project.slash.contract.dto.request.CreateEvaluationItemDto;
+import project.slash.contract.dto.response.DefaultEvaluationItemDto;
 import project.slash.contract.dto.response.EvaluationItemCategoryDto;
 import project.slash.contract.dto.response.EvaluationItemDetailDto;
 import project.slash.contract.dto.response.EvaluationItemDto;
@@ -33,6 +34,16 @@ public class EvaluationItemMapper {
 
 	public EvaluationItemCategoryDto toEvaluationItemCategoryDto(EvaluationItem evaluationItem) {
 		return new EvaluationItemCategoryDto(evaluationItem.getId(), evaluationItem.getCategory());
+	}
+
+	public DefaultEvaluationItemDto toDefaultEvaluationItemDto(EvaluationItem evaluationItem) {
+		return DefaultEvaluationItemDto.builder()
+			.weight(evaluationItem.getWeight())
+			.period(evaluationItem.getPeriod())
+			.purpose(evaluationItem.getPurpose())
+			.formula(evaluationItem.getFormula())
+			.unit(evaluationItem.getUnit())
+			.build();
 	}
 
 	public EvaluationItemDetailDto toEvaluationItemDetailDto(EvaluationItemDto evaluationItemDto, List<TaskTypeDto> taskTypeDto) {

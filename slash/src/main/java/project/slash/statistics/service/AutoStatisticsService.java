@@ -77,11 +77,12 @@ public class AutoStatisticsService {
 		double averageWeightedScore =
 			Math.round((totalWeightedScore / responseStatisticsDtoList.size()) * 100.0) / 100.0;
 
-
 		List<ContractDataDto> contractDataDto = getContractDataDto(evaluationItemId);
 		// 등급 계산
 		EvaluatedDto evaluatedDto = evaluateWithIndicator(contractDataDto, averageScore);
-		return ResponseStatisticsDto.ofResponseStatisticsDto(evaluatedDto,responseStatisticsDtoList.get(0),averageScore,averageWeightedScore,totalDownTime,totalRequestCount,evaluationItemId,totalSystemIncidentCount);
+		return ResponseStatisticsDto.ofResponseStatisticsDto(evaluatedDto, responseStatisticsDtoList.get(0),
+			averageScore, averageWeightedScore, totalDownTime, totalRequestCount, evaluationItemId,
+			totalSystemIncidentCount);
 	}
 
 	public List<ContractDataDto> getContractDataDto(long evaluationItemId) {
@@ -104,7 +105,7 @@ public class AutoStatisticsService {
 		List<ResponseStatisticsDto> result = new ArrayList<>();
 		for (MonthlyDataDto monthlyDataDto : monthlyData) {
 			EvaluatedDto evaluatedDto = calculateScoreAndEvaluate(monthlyDataDto, contractDataDto);
-			result.add(ResponseStatisticsDto.of(contractDataDto.get(0),monthlyDataDto,evaluatedDto,date));
+			result.add(ResponseStatisticsDto.of(contractDataDto.get(0), monthlyDataDto, evaluatedDto, date));
 		}
 		return result;
 	}
@@ -174,7 +175,7 @@ public class AutoStatisticsService {
 		int totalWeight = evaluationItemRepository.findTotalWeightByEvaluationItemId(
 			evaluationItemId);
 		double weightScore = getWeightedScore(weight, totalWeight, gradeScoreDto.getScore());
-		
+
 		return ResponseStatisticsDto.fromIncidentDto(incidentInfoDto,
 			date, gradeScoreDto.getScore(),
 			weightScore, gradeScoreDto.getGrade(), gradeScoreDto.getScore(),
@@ -212,7 +213,7 @@ public class AutoStatisticsService {
 		LocalDateTime endDate = requestStatisticsDto.getDate().atEndOfMonth().atTime(23, 59, 59);
 		ResponseServiceTaskDto responseServiceTaskDto = statisticsRepository.getServiceTaskStatics(
 			requestStatisticsDto.getEvaluationItemId(), startDate, endDate);
-		double score = Math.round(
+		double score = responseServiceTaskDto.getTaskRequest() == 0 ? 100 : Math.round(
 			(double)responseServiceTaskDto.getDueOnTimeCount() / responseServiceTaskDto.getTaskRequest() * 10000)
 			/ 100.0;
 		double weightScore = Math.round(
@@ -243,7 +244,7 @@ public class AutoStatisticsService {
 		LocalDateTime endDate = date.atTime(23, 59, 59);
 		ResponseServiceTaskDto responseServiceTaskDto = statisticsRepository.getServiceTaskStatics(
 			evaluationItemId, startDate, endDate);
-		double score = Math.round(
+		double score = responseServiceTaskDto.getTaskRequest() == 0 ? 100 : Math.round(
 			(double)responseServiceTaskDto.getDueOnTimeCount() / responseServiceTaskDto.getTaskRequest() * 10000)
 			/ 100.0;
 		double weightScore = Math.round(
