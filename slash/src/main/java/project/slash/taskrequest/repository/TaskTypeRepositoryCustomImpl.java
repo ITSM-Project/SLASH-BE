@@ -30,7 +30,8 @@ public class TaskTypeRepositoryCustomImpl implements TaskTypeRepositoryCustom {
 					.from(evaluationItem)
 					.join(contract)
 					.on(evaluationItem.contract.id.eq(contract.id))
-					.where(contract.id.eq(contractId))
+					.where(contract.id.eq(contractId)
+						.and(evaluationItem.isActive.isTrue()))
 			))
 			.transform(GroupBy.groupBy(taskType.type).list(
 				constructor(AllTaskTypeDto.class,
