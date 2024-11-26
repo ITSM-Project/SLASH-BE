@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import project.slash.common.exception.BusinessException;
 import project.slash.contract.dto.GradeDto;
+import project.slash.contract.dto.response.DefaultEvaluationItemDto;
 import project.slash.contract.dto.response.EvaluationItemCategoryDto;
 import project.slash.contract.mapper.EvaluationItemMapper;
 import project.slash.contract.mapper.ServiceTargetMapper;
@@ -143,5 +144,11 @@ public class EvaluationItemService {
 		EvaluationItem evaluationItem = findEvaluationItem(evaluationItemId);
 
 		evaluationItem.deactivate();
+	}
+
+	public DefaultEvaluationItemDto fetchEvaluationItem(String category) {
+		EvaluationItem evaluationItem = evaluationItemRepository.findByCategoryAndContractIsNull(category);
+
+		return evaluationItemMapper.toDefaultEvaluationItemDto(evaluationItem);
 	}
 }

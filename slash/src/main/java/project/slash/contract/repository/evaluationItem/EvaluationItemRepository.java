@@ -13,4 +13,6 @@ public interface EvaluationItemRepository extends JpaRepository<EvaluationItem, 
 	List<Long> findIdsByContractId(@Param("contractId") Long contractId);
 
 	List<EvaluationItem> findByContractIdAndIsActiveTrue(Long contractId);
+
+	EvaluationItem findByCategoryAndContractIsNull(String category);
 }
