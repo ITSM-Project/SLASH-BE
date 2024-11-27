@@ -12,9 +12,12 @@ spring:
   jpa:
     open-in-view: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate.format_sql: true
       hibernate.show_sql: true
       hibernate:
           dialect: org.hibernate.dialect.MySQLDialect
+jasypt:
+  encryptor:
+    password: itsm-slash
