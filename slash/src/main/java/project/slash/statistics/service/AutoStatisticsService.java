@@ -96,7 +96,11 @@ public class AutoStatisticsService {
 
 	// 자동 계산 로직
 	public List<ResponseStatisticsDto> calculateMonthlyStats(LocalDate date, long evaluationItemId) {
-		List<MonthlyDataDto> monthlyData = statisticsRepository.getMonthlyData(date);
+		Optional<EvaluationItem> evaluationItem = evaluationItemRepository.findById(evaluationItemId);
+		EvaluationItem item = evaluationItem
+			.orElseThrow(() -> new BusinessException(NOT_FOUND_ITEMS));
+		long contractId = item.getContract().getId();
+		List<MonthlyDataDto> monthlyData = statisticsRepository.getMonthlyData(date,contractId);
 		List<ContractDataDto> contractDataDto = getContractDataDto(evaluationItemId);
 		List<ResponseStatisticsDto> result = new ArrayList<>();
 		for (MonthlyDataDto monthlyDataDto : monthlyData) {

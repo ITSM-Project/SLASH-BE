@@ -17,6 +17,11 @@ import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.core.types.dsl.NumberTemplate;
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
@@ -39,27 +44,36 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 	private EntityManager entityManager;
 
 	@Override
-	public List<MonthlyDataDto> getMonthlyData(LocalDate date) {
+	public List<MonthlyDataDto> getMonthlyData(LocalDate date, long contractId) {
+		JPQLQuery<Long> taskTypeSubQuery = JPAExpressions.select(taskType.id)
+			.from(taskType)
+			.leftJoin(taskType.evaluationItem, evaluationItem)
+			.where(evaluationItem.contract.id.eq(contractId));
+
 		return queryFactory
 			.select(Projections.constructor(MonthlyDataDto.class,
 				systems.name,
 				equipment.name,
-				taskRequest.count(),
-				systemIncident.incidentTime.sum(),
+				taskRequest.count().coalesce(0L),
+				systemIncident.incidentTime.sum().coalesce(0L),
 				Expressions.numberTemplate(Integer.class, "DAY({0})", date),
-				systemIncident.count()
+				systemIncident.count().coalesce(0L)
 			))
-			.from(taskRequest)
-			.leftJoin(equipment).on(taskRequest.equipment.id.eq(equipment.id))
-			.leftJoin(systems).on(equipment.systems.id.eq(systems.id))
-			.leftJoin(systemIncident).on(systemIncident.taskRequest.id.eq(taskRequest.id))
-			.leftJoin(taskType).on(taskRequest.taskType.id.eq(taskType.id))
-			.where(
-				taskRequest.createTime.year().eq(date.getYear())
-					.and(taskRequest.createTime.month().eq(date.getMonthValue()))
-					.and(taskRequest.createTime.dayOfMonth().loe(date.getDayOfMonth()))
+			.from(equipment)
+			.leftJoin(systems)
+			.on(equipment.systems.id.eq(systems.id))
+			.leftJoin(taskRequest)
+			.on(taskRequest.equipment.id.eq(equipment.id)
+				.and(taskRequest.createTime.year().eq(date.getYear()))
+				.and(taskRequest.createTime.month().eq(date.getMonthValue()))
+				.and(taskRequest.createTime.dayOfMonth().loe(date.getDayOfMonth()))
+				.and(taskRequest.taskType.id.in(taskTypeSubQuery))
 			)
-			.groupBy(equipment.name)
+			.leftJoin(systemIncident)
+			.on(systemIncident.taskRequest.id.eq(taskRequest.id))
+			.leftJoin(taskType)
+			.on(taskRequest.taskType.id.eq(taskType.id))
+			.groupBy(systems.name, equipment.name)
 			.orderBy(systems.name.asc(), equipment.name.asc())
 			.fetch();
 	}
@@ -122,22 +136,23 @@ public class StatisticsRepositoryCustomImpl implements StatisticsRepositoryCusto
 
 		jdbcTemplate.batchUpdate(sql, statsDtoList, 50, (ps, dto) -> {
 			ps.setDate(1, java.sql.Date.valueOf(dto.getDate()));
-			ps.setDate(2, java.sql.Date.valueOf(LocalDate.now()));               // 두 번째 필드 (calculateTime)
-			ps.setString(3, dto.getServiceType());                                    // 세 번째 필드 (service_type)
-			ps.setString(4, dto.getGrade());                                          // 네 번째 필드 (grade)
-			ps.setDouble(5, dto.getScore());                                          // 다섯 번째 필드 (score)
-			ps.setString(6, dto.getPeriod());                                         // 여섯 번째 필드 (period)
-			ps.setDouble(7, dto.getWeightedScore());                                  // 일곱 번째 필드 (weighted_score)
-			ps.setBoolean(8, dto.isApprovalStatus());                                 // 여덟 번째 필드 (approval_status)
-			ps.setLong(9, dto.getTotalDowntime());                                    // 아홉 번째 필드 (total_downtime)
-			ps.setLong(10, dto.getRequestCount());                                    // 열 번째 필드 (request_count)
-			ps.setLong(11, dto.getEvaluationItemId());                                // 열한 번째 필드 (evaluation_item_id)
-			ps.setString(12, dto.getTargetSystem());                                  // 열두 번째 필드 (target_system)
-			ps.setDouble(13, dto.getEstimate());                                      // 열세 번째 필드 (estimate)
-			ps.setLong(14, dto.getSystemIncidentCount());                             // 열네 번째 필드 (system_incident_count)
-			ps.setLong(15, dto.getDueOnTimeCount());                                  // 열다섯 번째 필드 (due_on_time_count)
-			ps.setString(16, dto.getTargetEquipment());                               // 열여섯 번째 필드 (target_equipment)
-			ps.setBoolean(17, dto.isAuto());                                       // 열일곱 번째 필드 (is_auto)
+			ps.setDate(2, java.sql.Date.valueOf(LocalDate.now()));
+			ps.setString(3, dto.getServiceType());
+			ps.setString(4, dto.getGrade());
+			ps.setDouble(5, dto.getScore());
+			ps.setString(6, dto.getPeriod());
+			ps.setDouble(7, dto.getWeightedScore());
+			ps.setBoolean(8, dto.isApprovalStatus());
+			ps.setLong(9, dto.getTotalDowntime());
+			ps.setLong(10, dto.getRequestCount());
+			ps.setLong(11, dto.getEvaluationItemId());
+			ps.setString(12, dto.getTargetSystem());
+			ps.setDouble(13, dto.getEstimate());
+			ps.setLong(14,
+				dto.getSystemIncidentCount());
+			ps.setLong(15, dto.getDueOnTimeCount());
+			ps.setString(16, dto.getTargetEquipment());
+			ps.setBoolean(17, dto.isAuto());
 		});
 	}
 

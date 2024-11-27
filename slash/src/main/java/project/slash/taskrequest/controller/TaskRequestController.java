@@ -60,6 +60,16 @@ public class TaskRequestController {
 		return BaseResponse.ok(requestManager);
 	}
 
+	/**
+	 * 특정 연도와 월, 사용자, 계약 ID에 따라 요청 상태별 카운트를 조회하는 메서드.
+	 *
+	 * @param year       조회할 연도 (예: 2024).
+	 * @param month      조회할 월 (1~12).
+	 * @param user       현재 로그인한 사용자 ID. @Login 어노테이션을 통해 주입됨.
+	 * @param contractId 조회할 계약의 ID.
+	 * @return List<StatusCountDto> 형태로 상태별 카운트 리스트를 반환.
+	 *
+	 */
 	@GetMapping("/common/request-status-count")
 	public BaseResponse<?> getRequestStatus(@RequestParam("year") int year, @RequestParam("month") int month,@Login String user,@RequestParam("contractId") long contractId) {
 		List<StatusCountDto> statusCounts = taskRequestService.getStatusCountByUser(year, month, user,contractId);
@@ -108,6 +118,13 @@ public class TaskRequestController {
 		return BaseResponse.ok();
 	}
 
+
+	/**
+	 * 계약관리자에서 할당 전 요청 매니저 전체 업무 현황 리스트 조회
+	 *
+	 * @return List<TaskRequestOfManagerDto>형태로
+	 * 요청 매니저 전체 업무 현황 리스트를 포함한 응답 객체
+	 */
 	@GetMapping("/contract-manager/status")
 	public BaseResponse<?> getManagerStatus() {
 		List<TaskRequestOfManagerDto> taskRequestOfManager = taskRequestService.getTaskRequestOfManager();
@@ -150,12 +167,28 @@ public class TaskRequestController {
 		return BaseResponse.ok(responseData);
 	}
 
+	/**
+	 * 요청을 특정 계약 관리자에게 할당하는 메서드.
+	 *
+	 * @param updateTaskRequestManagerDto 요청 할당 정보를 포함하는 DTO.
+	 *                                    이 객체는 요청 ID와 요청 관리자 ID 등을 포함.
+	 * @return {@link BaseResponse} 형태로 성공 여부를 반환.
+	 */
 	@PatchMapping("/contract-manager/request/allocate")
 	public BaseResponse<Void> allocateRequest(@RequestBody UpdateTaskRequestManagerDto updateTaskRequestManagerDto) {
 		taskRequestService.allocateRequest(updateTaskRequestManagerDto);
 		return BaseResponse.ok();
 	}
 
+
+	/**
+	 * 요청을 완료 상태로 변경하는 메서드.
+	 *
+	 * @param requestId 완료 처리할 요청의 ID.
+	 * @param managerId 요청을 완료 처리하는 관리자의 ID.
+	 *                  @Login 어노테이션을 통해 주입됨.
+	 * @return BaseResponse 형태로 성공 여부를 반환.
+	 */
 	@PatchMapping("/request-manager/request/complete")
 	public BaseResponse<Void> completeRequest(@RequestParam("requestId") long requestId,
 		@Login String managerId) {
