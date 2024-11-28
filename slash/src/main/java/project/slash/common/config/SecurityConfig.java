@@ -1,5 +1,6 @@
 package project.slash.common.config;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 import org.springframework.context.annotation.Bean;
@@ -49,7 +50,7 @@ public class SecurityConfig {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));  // 허용할 클라이언트 도메인
+		config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://slash-fe.vercel.app"));
 		config.setAllowedMethods(Collections.singletonList("*"));
 		config.setAllowedHeaders(Collections.singletonList("*"));
 		config.setAllowCredentials(true);
