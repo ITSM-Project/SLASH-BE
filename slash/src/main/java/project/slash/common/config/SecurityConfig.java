@@ -50,7 +50,8 @@ public class SecurityConfig {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://slash-fe.vercel.app"));
+		config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://slash-fe.vercel.app",
+			"https://slash-fe-ssoos-projects.vercel.app"));
 		config.setAllowedMethods(Collections.singletonList("*"));
 		config.setAllowedHeaders(Collections.singletonList("*"));
 		config.setAllowCredentials(true);
